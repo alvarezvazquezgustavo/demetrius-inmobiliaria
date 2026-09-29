@@ -725,46 +725,149 @@
   .rel{position:relative;}
 
   /* ---------- MENÚ MÓVIL ---------- */
-  .hamburger{
+   .hamburger{
     display:none;
     flex-direction:column;
-    gap:5px;
-    background:none;border:none;cursor:pointer;
-    padding:6px;
+    justify-content:space-between;
+    width:30px;
+    height:21px;
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:0;
+    z-index:101;
   }
   .hamburger span{
-    width:24px;height:2px;background:var(--dorado-claro);display:block;
+    width:100%;
+    height:2.5px;
+    background:var(--dorado-claro);
+    border-radius:2px;
+    transition:all .3s ease;
   }
-  .mobile-nav{
-    display:none;
-    position:fixed;top:0;right:0;
-    width:78%;max-width:320px;height:100vh;
-    background:var(--negro);
-    z-index:100;
-    padding:28px 26px;
-    box-shadow:-10px 0 40px rgba(0,0,0,.4);
-    transform:translateX(100%);
-    transition:transform .3s ease;
+  .hamburger.is-active span:nth-child(1){
+    transform:translateY(9px) rotate(45deg);
   }
-  .mobile-nav.open{transform:translateX(0);}
-  .mobile-nav-close{
-    background:none;border:none;color:var(--dorado-claro);
-    font-size:1.4rem;margin-bottom:30px;cursor:pointer;
+  .hamburger.is-active span:nth-child(2){
+    opacity:0;
   }
-  .mobile-nav a{
-    display:block;color:var(--hueso);
-    font-size:.95rem;letter-spacing:.04em;text-transform:uppercase;
-    padding:16px 0;border-bottom:1px solid rgba(201,169,97,.15);
+  .hamburger.is-active span:nth-child(3){
+    transform:translateY(-9.5px) rotate(-45deg);
   }
-  .mobile-nav .cta-btn{
-    display:block;text-align:center;margin-top:26px;
-  }
-  .nav-overlay{
-    display:none;
-    position:fixed;inset:0;background:rgba(13,13,13,.6);z-index:99;
-  }
-  .nav-overlay.open{display:block;}
 
+  .nav-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(13,13,13,.75);
+    backdrop-filter:blur(3px);
+    z-index:98;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity .3s ease, visibility .3s ease;
+  }
+  .nav-overlay.open{
+    opacity:1;
+    visibility:visible;
+  }
+
+  .mobile-nav{
+    position:fixed;
+    top:0;
+    right:0;
+    width:82%;
+    max-width:340px;
+    height:100vh;
+    height:100dvh;
+    background:var(--negro-suave);
+    z-index:99;
+    padding:28px 24px 40px;
+    box-shadow:-10px 0 40px rgba(0,0,0,.6);
+    transform:translateX(100%);
+    transition:transform .35s cubic-bezier(0.16, 1, 0.3, 1);
+    display:flex;
+    flex-direction:column;
+    overflow-y:auto;
+    border-left:1px solid rgba(201,169,97,.3);
+  }
+  .mobile-nav.open{
+    transform:translateX(0);
+  }
+
+  .mobile-nav-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding-bottom:20px;
+    border-bottom:1px solid rgba(201,169,97,.2);
+    margin-bottom:20px;
+  }
+  .mobile-nav-header .logo-badge{
+    padding:4px 10px;
+  }
+  .mobile-nav-header .logo-badge img{
+    height:28px;
+  }
+
+  .mobile-nav-close{
+    background:rgba(201,169,97,.12);
+    border:1px solid rgba(201,169,97,.3);
+    color:var(--dorado-claro);
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    font-size:1.1rem;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:background .2s;
+  }
+  .mobile-nav-close:hover{
+    background:rgba(201,169,97,.25);
+  }
+
+  .mobile-links{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    margin-bottom:28px;
+  }
+  .mobile-links a{
+    color:var(--hueso);
+    font-size:.9rem;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    padding:13px 12px;
+    border-radius:4px;
+    font-weight:500;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    transition:background .2s, color .2s;
+  }
+  .mobile-links a:hover, .mobile-links a:active{
+    background:rgba(201,169,97,.12);
+    color:var(--dorado-claro);
+  }
+  .mobile-links a::after{
+    content:"→";
+    font-size:.85rem;
+    color:var(--dorado);
+    opacity:.6;
+  }
+
+  .mobile-contact-box{
+    margin-top:auto;
+    background:rgba(13,13,13,.5);
+    border:1px solid rgba(201,169,97,.2);
+    padding:18px;
+    border-radius:4px;
+    text-align:center;
+  }
+  .mobile-contact-box p{
+    font-size:.72rem;
+    color:#B9B3A6;
+    margin-bottom:12px;
+  }
   /* ---------- RESPONSIVE ---------- */
   @media (max-width: 980px){
     nav{display:none;}
