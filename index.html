@@ -1401,41 +1401,41 @@ header {
       <div class="form-row">
         <div class="form-group">
           <label>m² de construcción</label>
-          <input type="text" placeholder="Ej. 320 m²">
+          <input type="text" id="valConstruccion" placeholder="Ej. 320 m²">
         </div>
         <div class="form-group">
           <label>m² de terreno</label>
-          <input type="text" placeholder="Ej. 450 m²">
+          <input type="text" id="valTerreno" placeholder="Ej. 450 m²">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
           <label>Recámaras</label>
-          <select><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option></select>
+          <select id="valRecamaras"><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option></select>
         </div>
         <div class="form-group">
           <label>Baños</label>
-          <select><option>1</option><option>2</option><option>3</option><option>4+</option></select>
+          <select id="valBaños"><option>1</option><option>2</option><option>3</option><option>4+</option></select>
         </div>
       </div>
       <div class="form-group full">
         <label>Precio en el que esperas vender (opcional)</label>
-        <input type="text" placeholder="Ej. $12,000,000">
+        <input type="text" id="valPrecio" placeholder="Ej. $12,000,000">
       </div>
 
       <div class="form-fieldset-title">Agenda tu visita</div>
       <div class="form-row">
         <div class="form-group">
           <label>Fecha preferida</label>
-          <input type="date">
+          <input type="date" id="valFecha">
         </div>
         <div class="form-group">
           <label>Horario preferido</label>
-          <select><option>Mañana (9:00 – 13:00)</option><option>Tarde (13:00 – 18:00)</option></select>
+          <select id="valHorario"><option>Mañana (9:00 – 13:00)</option><option>Tarde (13:00 – 18:00)</option></select>
         </div>
       </div>
 
-      <button class="form-submit">Agendar visita de valuación</button>
+     <button type="button" class="form-submit" id="btnAgendarValuacion">Agendar visita de valuación</button>
     </div>
   </div>
 </section>
@@ -1738,6 +1738,61 @@ header {
   // Cierra el menú al tocar cualquier opción y navega al apartado
   mobileLinks.forEach(link => {
     link.addEventListener('click', toggleMenu);
+  });
+</script>
+  <script>
+  function enviarWhatsAppValuacion(event) {
+    event.preventDefault(); // Evita que se recargue la página
+
+    // Capturamos los valores de cada campo usando los IDs que pusimos
+    const nombre = document.getElementById('valNombre')?.value || 'No especificado';
+    const telefono = document.getElementById('valTelefono')?.value || 'No especificado';
+    const correo = document.getElementById('valCorreo')?.value || 'No especificado';
+    const tipoPropiedad = document.getElementById('valTipo')?.value || 'No especificado';
+    const municipio = document.getElementById('valMunicipio')?.value || 'No especificado';
+    const colonia = document.getElementById('valColonia')?.value || 'No especificado';
+    const antiguedad = document.getElementById('valAntiguedad')?.value || 'No especificado';
+    const mConstruccion = document.getElementById('valConstruccion')?.value || 'No especificado';
+    const mTerreno = document.getElementById('valTerreno')?.value || 'No especificado';
+    const recamaras = document.getElementById('valRecamaras')?.value || 'No especificado';
+    const banos = document.getElementById('valBanos')?.value || 'No especificado';
+    const precio = document.getElementById('valPrecio')?.value || 'No especificado';
+    const fecha = document.getElementById('valFecha')?.value || 'No especificado';
+    const horario = document.getElementById('valHorario')?.value || 'No especificado';
+
+    // Armamos el mensaje ordenado al estilo de anuncio de Facebook
+    const mensaje = `Hola, me interesa agendar una cita de valuación con estos datos:\n\n` +
+      `👤 *Nombre:* ${nombre}\n` +
+      `📞 *Teléfono:* ${telefono}\n` +
+      `📧 *Correo:* ${correo}\n` +
+      `🏠 *Tipo de propiedad:* ${tipoPropiedad}\n` +
+      `📍 *Municipio:* ${municipio}\n` +
+      `🏘️ *Colonia:* ${colonia}\n` +
+      `🏗️ *Antigüedad:* ${antiguedad}\n` +
+      `📐 *m² Construcción:* ${mConstruccion}\n` +
+      `🟩 *m² Terreno:* ${mTerreno}\n` +
+      `🛏️ *Recámaras:* ${recamaras}\n` +
+      `🚿 *Baños:* ${banos}\n` +
+      `💰 *Precio esperado:* ${precio}\n` +
+      `📅 *Fecha preferida:* ${fecha}\n` +
+      `⏰ *Horario preferido:* ${horario}`;
+
+    // Tu número de WhatsApp configurado
+    const numeroWhatsApp = "5213351070944";
+
+    // Creamos el enlace oficial con el texto codificado
+    const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`;
+
+    // Abrimos WhatsApp en una pestaña nueva
+    window.open(urlWhatsApp, '_blank');
+  }
+
+  // Vinculamos la función al botón final del formulario
+  document.addEventListener('DOMContentLoaded', () => {
+    const botonAgendar = document.getElementById('btnAgendarValuacion');
+    if (botonAgendar) {
+      botonAgendar.addEventListener('click', enviarWhatsAppValuacion);
+    }
   });
 </script>
 </body>
