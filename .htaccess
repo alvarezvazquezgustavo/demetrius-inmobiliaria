@@ -1,0 +1,85 @@
+# =========================================================
+#  Demetrius Grupo Inmobiliario — Apache (.htaccess)
+#  https://inmobiliariademetrius.com
+#  Solo aplica en hosting Apache (cPanel, Hostinger, GoDaddy, etc.).
+#  GitHub Pages y Netlify ignoran este archivo.
+# =========================================================
+
+Options -Indexes
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+
+AddDefaultCharset UTF-8
+AddType application/manifest+json .webmanifest
+AddType image/x-icon .ico
+AddType text/plain .txt
+AddCharset UTF-8 .txt .xml .webmanifest
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # 1) Forzar HTTPS + dominio sin www en un solo salto (301)
+  RewriteCond %{HTTPS} off [OR]
+  RewriteCond %{HTTP_HOST} ^www\. [NC]
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https [OR]
+  RewriteCond %{HTTP_HOST} ^www\. [NC]
+  RewriteRule ^ https://inmobiliariademetrius.com%{REQUEST_URI} [L,R=301,NE]
+
+  # 2) /index.html → / (evita contenido duplicado)
+  RewriteCond %{THE_REQUEST} \s/+index\.html[\s?] [NC]
+  RewriteRule ^index\.html$ / [L,R=301]
+
+  # 3) Bloquea archivos ocultos (.env, .git, etc.), excepto /.well-known
+  RewriteRule (^|/)\.(?!well-known/) - [F,L]
+
+  # 4) Archivos internos: carpeta supabase/ y archivos de configuración de otros servidores
+  RewriteRule ^(supabase/|_headers$|netlify\.toml$) - [R=404,L]
+</IfModule>
+
+# Bloqueo adicional de archivos sensibles
+<FilesMatch "(^\.env|\.env\..*|\.git.*|\.htpasswd|\.log|\.bak|\.sql|\.sh)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# ---------------------------------------------------------
+#  Cabeceras de seguridad
+# ---------------------------------------------------------
+<IfModule mod_headers.c>
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js https://www.googletagmanager.com/gtag/; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://images.unsplash.com https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.google-analytics.com https://*.googletagmanager.com; connect-src 'self' https://*.supabase.co https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; manifest-src 'self'; worker-src 'none'; upgrade-insecure-requests"
+  Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), browsing-topics=()"
+  Header always set X-XSS-Protection "0"
+  Header always set Cross-Origin-Opener-Policy "same-origin-allow-popups"
+  Header always set X-Permitted-Cross-Domain-Policies "none"
+  Header always set X-Robots-Tag "noindex, nofollow" "expr=%{REQUEST_URI} =~ m#^/generador-og-1200x630\.html#"
+  Header unset X-Powered-By
+</IfModule>
+
+# ---------------------------------------------------------
+#  Caché y compresión
+# ---------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 hour"
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType application/xml "access plus 1 day"
+  ExpiresByType text/plain "access plus 1 day"
+  ExpiresByType image/jpeg "access plus 7 days"
+  ExpiresByType image/png "access plus 30 days"
+  ExpiresByType image/webp "access plus 7 days"
+  ExpiresByType image/x-icon "access plus 30 days"
+  ExpiresByType application/manifest+json "access plus 7 days"
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml application/xml application/javascript application/json application/manifest+json image/svg+xml
+</IfModule>

@@ -1,0 +1,30 @@
+# ---- Secretos y llaves de API ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ---- Sistema operativo ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- Editores ----
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ---- Dependencias y builds ----
+node_modules/
+dist/
+.netlify/
+.vercel/
+
+# ---- Logs ----
+*.log
+npm-debug.log*
+
+# ---- Herramientas locales ----
+.claude/
