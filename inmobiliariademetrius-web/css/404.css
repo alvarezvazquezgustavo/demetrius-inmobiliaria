@@ -1,0 +1,123 @@
+/* Demetrius Grupo Inmobiliario — página 404 */
+  :root{
+    --negro: #0D0D0D;
+    --negro-suave: #1A1A1A;
+    --dorado: #C9A961;
+    --dorado-claro: #E4CD8F;
+    --dorado-oscuro: #8A6E2F;
+    --hueso: #F8F6F2;
+    --grafito: #3A3A3A;
+    --grafito-suave: #6b6560;
+    --ease-apple: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{min-height:100%;}
+  body{
+    font-family:'Montserrat',sans-serif;
+    background:var(--negro);
+    color:var(--hueso);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;min-height:100svh;
+    display:flex;flex-direction:column;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,169,97,.16), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 100% 100%, rgba(138,110,47,.18), transparent 60%),
+      var(--negro);
+    overflow-x:hidden;
+  }
+  a{text-decoration:none;color:inherit;}
+  header{
+    display:flex;justify-content:center;
+    padding:28px 22px 0;
+  }
+  .logo-badge{
+    background:var(--hueso);
+    padding:8px 16px;border-radius:8px;
+    display:inline-flex;align-items:center;
+    box-shadow:0 6px 16px rgba(0,0,0,.35);
+    transition:transform .45s var(--ease-apple);
+  }
+  .logo-badge:hover{transform:translateY(-2px);}
+  .logo-badge img{height:38px;width:auto;display:block;}
+  main{
+    flex:1;display:flex;align-items:center;justify-content:center;
+    padding:48px 22px 64px;
+  }
+  .card{
+    position:relative;
+    width:min(640px, 100%);
+    text-align:center;
+    padding:56px 48px 48px;
+    background:rgba(26,26,26,.72);
+    border:1px solid rgba(201,169,97,.35);
+    border-radius:14px;
+    backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    box-shadow:0 1px 2px rgba(0,0,0,.2), 0 40px 100px rgba(0,0,0,.5);
+    animation:entrar .9s var(--ease-apple) both;
+  }
+  .card::before{
+    content:"";position:absolute;left:32px;right:32px;top:-1px;height:1px;
+    background:linear-gradient(90deg, transparent, var(--dorado), transparent);
+  }
+  @keyframes entrar{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:none;}}
+  .roof{width:120px;height:auto;display:block;margin:0 auto 6px;}
+  .codigo{
+    font-family:'Playfair Display',serif;font-weight:900;
+    font-size:clamp(5rem, 18vw, 8.5rem);line-height:1;
+    background:linear-gradient(120deg,var(--dorado-oscuro),var(--dorado-claro) 55%,var(--dorado));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    letter-spacing:.02em;
+  }
+  .eyebrow{
+    font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--dorado-claro);font-weight:600;
+    display:inline-flex;align-items:center;gap:10px;margin:14px 0 18px;
+  }
+  .eyebrow::before, .eyebrow::after{content:"";width:22px;height:1px;background:var(--dorado);}
+  h1{
+    font-family:'Playfair Display',serif;font-weight:600;
+    font-size:clamp(1.5rem, 4.5vw, 2.1rem);line-height:1.2;margin-bottom:16px;
+  }
+  h1 em{font-style:normal;color:var(--dorado-claro);}
+  p{
+    font-size:.92rem;line-height:1.75;color:#C9C3B6;font-weight:300;
+    max-width:440px;margin:0 auto 34px;
+  }
+  .acciones{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:10px;
+    padding:15px 26px;border-radius:10px;
+    font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .45s var(--ease-apple), box-shadow .45s var(--ease-apple), filter .45s var(--ease-apple), background-color .3s ease;
+  }
+  .btn svg{width:18px;height:18px;fill:currentColor;flex:none;}
+  .btn-dorado{background:linear-gradient(120deg,var(--dorado-oscuro),var(--dorado-claro));color:var(--negro);}
+  .btn-wa{border:1px solid var(--dorado);color:var(--dorado-claro);}
+  @media (hover:hover){
+    .btn-dorado:hover{filter:brightness(1.07);transform:translateY(-2px);box-shadow:0 12px 28px rgba(201,169,97,.32);}
+    .btn-wa:hover{background:rgba(201,169,97,.12);transform:translateY(-2px);}
+  }
+  .btn:active{transform:scale(0.95) translateY(1px);transition:transform 0.1s cubic-bezier(0.2, 0, 0, 1);}
+  .btn:focus-visible, .inicio:focus-visible, .logo-badge:focus-visible{outline:2px solid var(--dorado);outline-offset:3px;}
+  .inicio{
+    display:inline-block;margin-top:26px;
+    font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
+    color:#B9B3A6;border-bottom:1px solid rgba(201,169,97,.4);padding-bottom:2px;
+    transition:color .3s ease;
+  }
+  .inicio:hover{color:var(--dorado-claro);}
+  footer{
+    text-align:center;padding:0 22px calc(26px + env(safe-area-inset-bottom));
+    font-size:.7rem;color:#8a847a;line-height:1.8;
+  }
+  footer a{color:#B9B3A6;}
+  @media (max-width:640px){
+    .card{padding:44px 24px 36px;}
+    .logo-badge img{height:30px;}
+    .acciones .btn{width:100%;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+  }

@@ -1,0 +1,52 @@
+# =========================================================
+#  Demetrius Grupo Inmobiliario — Cabeceras HTTP (OWASP Secure Headers)
+#  Lo leen Netlify y Cloudflare Pages. GitHub Pages NO permite cabeceras propias.
+#  Si agregas un script, estilo, fuente o servicio externo nuevo, agrégalo a la CSP.
+# =========================================================
+
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js https://www.googletagmanager.com/gtag/; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://images.unsplash.com https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.google-analytics.com https://*.googletagmanager.com; connect-src 'self' https://*.supabase.co https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; manifest-src 'self'; worker-src 'none'; upgrade-insecure-requests
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), browsing-topics=()
+  X-XSS-Protection: 0
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+  X-Permitted-Cross-Domain-Policies: none
+
+# ---------- Caché ----------
+/css/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/js/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/*.jpeg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/*.jpg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/*.png
+  Cache-Control: public, max-age=2592000
+
+# ---------- Tipos de contenido (acentos correctos para rastreadores e IA) ----------
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
+
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+
+/llms-full.txt
+  Content-Type: text/plain; charset=utf-8
+
+/sitemap.xml
+  Content-Type: application/xml; charset=utf-8
+
+/site.webmanifest
+  Content-Type: application/manifest+json; charset=utf-8
+
+# ---------- Herramienta interna ----------
+/generador-og-1200x630.html
+  X-Robots-Tag: noindex, nofollow
