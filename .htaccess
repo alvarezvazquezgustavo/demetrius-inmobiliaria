@@ -32,8 +32,8 @@ AddCharset UTF-8 .txt .xml .webmanifest
   # 3) Bloquea archivos ocultos (.env, .git, etc.), excepto /.well-known
   RewriteRule (^|/)\.(?!well-known/) - [F,L]
 
-  # 4) Archivos internos: carpeta supabase/ y archivos de configuración de otros servidores
-  RewriteRule ^(supabase/|_headers$|netlify\.toml$) - [R=404,L]
+  # 4) Archivos internos: carpeta supabase/, notas del proyecto y archivos de configuración de otros servidores
+  RewriteRule ^(supabase/|_headers$|netlify\.toml$|CLAUDE\.md$) - [R=404,L]
 </IfModule>
 
 # Bloqueo adicional de archivos sensibles
