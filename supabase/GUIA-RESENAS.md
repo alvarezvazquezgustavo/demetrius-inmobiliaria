@@ -9,11 +9,16 @@ Mientras no completes esta guía, la sección de reseñas muestra «Sé el prime
 ## 1. Crear el proyecto
 
 1. Entra a <https://supabase.com> y crea tu cuenta (puedes usar tu Gmail o GitHub).
-2. Da clic en **New project**.
-   - **Name:** `demetrius-resenas`
-   - **Database Password:** genera una contraseña segura y guárdala en un lugar seguro.
-   - **Region:** la más cercana a México (por ejemplo, *East US* o *West US*).
-3. Espera 1–2 minutos a que el proyecto termine de crearse.
+2. Da clic en **New project** y llena el formulario así:
+   - **GitHub (optional):** déjalo vacío.
+   - **Project name:** `demetrius-resenas`
+   - **Database password:** da clic en *Generate a password* y guárdala en un lugar seguro (por ejemplo, la app Contraseñas de tu Mac). La página no la necesita y no se la compartas a nadie.
+   - **Region:** *Americas*.
+   - **Security:**
+     - ✅ **Enable Data API**: déjala activada (la página la usa para leer y enviar reseñas).
+     - ⬜ **Automatically expose new tables**: desactívala (es lo que Supabase recomienda; el SQL ya da los permisos exactos).
+     - ✅ **Enable automatic RLS**: actívala (protección extra).
+3. Da clic en **Create new project** y espera 1–2 minutos a que termine de crearse.
 
 ## 2. Crear la tabla y las reglas de seguridad
 

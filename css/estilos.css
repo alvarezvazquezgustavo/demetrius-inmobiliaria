@@ -484,6 +484,43 @@ header.is-scrolled{
     border-bottom:1px solid var(--dorado);padding-bottom:2px;
     white-space:nowrap;
   }
+  /* ---------- PROPIEDAD DESTACADA (tarjeta ancha con varias modalidades) ---------- */
+  .prop-card.prop-destacada{
+    grid-column:1 / -1;
+    flex-direction:row;
+    border-color:rgba(201,169,97,.35);
+  }
+  .prop-destacada .prop-media{flex:0 0 46%;height:auto;min-height:440px;}
+  .prop-destacada .prop-img{position:absolute;inset:0;height:100%;}
+  .prop-destacada .prop-body{padding:34px 38px 30px;justify-content:center;}
+  .prop-destacada .prop-tag{position:static;align-self:flex-start;margin-bottom:14px;}
+  .prop-destacada .prop-zone{margin-top:0;}
+  .prop-destacada .prop-body h3{font-size:1.85rem;margin:8px 0 2px;}
+  .destacada-lema{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--dorado-oscuro);margin-bottom:12px;}
+  .destacada-desc{font-size:.85rem;line-height:1.7;color:var(--grafito-suave);margin-bottom:18px;font-weight:300;}
+  .destacada-datos{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+    background:var(--negro);border-radius:12px;padding:16px 20px;margin-bottom:16px;
+  }
+  .destacada-datos b{display:block;font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:var(--hueso);line-height:1.2;}
+  .destacada-datos span{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dorado-claro);font-weight:600;}
+  .destacada-opciones{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .opcion{
+    display:flex;flex-direction:column;gap:4px;
+    padding:14px 16px;border-radius:12px;
+    background:var(--hueso);border:1px solid rgba(201,169,97,.4);
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .45s var(--ease-apple), box-shadow .45s var(--ease-apple), border-color .3s ease, background-color .3s ease;
+  }
+  .opcion-tipo{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--dorado-oscuro);}
+  .opcion-precio{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--negro);}
+  .opcion-cta{margin-top:6px;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--dorado-oscuro);}
+  @media (hover:hover){
+    .opcion:hover{transform:translateY(-3px);border-color:var(--dorado);background:#fff;box-shadow:0 12px 28px rgba(201,169,97,.22);}
+  }
+  .opcion:active{transform:scale(0.95) translateY(1px);transition:transform 0.1s cubic-bezier(0.2, 0, 0, 1);}
+  .destacada-nota{margin-top:14px;font-size:.68rem;line-height:1.6;color:var(--grafito-suave);}
+
   .ver-mas-container{text-align:center;margin-top:40px;margin-bottom:25px;}
   #btn-ver-mas{
     display:inline-block;padding:14px 32px;
@@ -1513,6 +1550,9 @@ header.is-scrolled{
     .zone-grid{grid-template-columns:1fr;grid-template-rows:repeat(5,200px);}
     .zone-1{grid-row:auto;}
     .proceso-pasos{grid-template-columns:1fr;gap:0;max-width:600px;}
+    .prop-card.prop-destacada{flex-direction:column;}
+    .prop-destacada .prop-media{flex:none;min-height:0;height:280px;}
+    .prop-destacada .prop-body{padding:28px 26px 26px;}
     .proceso-pasos::before{top:28px;bottom:56px;left:28px;right:auto;width:1px;height:auto;
       background:linear-gradient(180deg, var(--dorado), var(--dorado) 85%, rgba(201,169,97,0));}
     .proceso-paso{display:grid;grid-template-columns:56px 1fr;column-gap:20px;text-align:left;padding:0 0 28px;}
@@ -1555,6 +1595,14 @@ header.is-scrolled{
     .build-form, .sell-form{padding:26px 22px;}
     .resena-form{padding:26px 22px;margin-top:40px;}
     .proceso-docs, .proceso-cta{padding:26px 22px;}
+    .destacada-opciones{grid-template-columns:1fr;}
+    .opcion{flex-direction:row;flex-wrap:wrap;align-items:baseline;column-gap:12px;}
+    .opcion-cta{margin:0 0 0 auto;}
+    .prop-destacada .prop-body h3{font-size:1.5rem;}
+    .destacada-datos{display:flex;justify-content:space-between;gap:10px;padding:14px 16px;}
+    .destacada-datos b{white-space:nowrap;}
+    .destacada-datos span{font-size:.52rem;letter-spacing:.06em;}
+    .destacada-datos b{font-size:1.1rem;}
     .proceso-cta .final-buttons a{flex:1;}
     .resenas-resumen{padding:18px;margin-top:-30px;}
     .resenas-resumen .cta-btn{width:100%;}
@@ -1598,6 +1646,8 @@ header.is-scrolled{
 
   @media (max-width: 380px){
     .social-icons a:nth-child(n+3){display:none;}
+    .destacada-datos{display:grid;grid-template-columns:1fr 1fr;row-gap:12px;}
+    .destacada-datos div:last-child{grid-column:1 / -1;}
   }
 
   /* Accesibilidad: respeta "reducir movimiento" */

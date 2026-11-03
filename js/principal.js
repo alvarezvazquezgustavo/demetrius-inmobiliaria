@@ -21,8 +21,8 @@
     MAPS_PUBLIC_KEY: "",      // solo si en el futuro usas un proveedor de mapas con llave pública restringida por dominio
     // Reseñas (Supabase). La URL y la llave PUBLICABLE son públicas por diseño: la seguridad la dan
     // las reglas RLS de supabase/resenas.sql. NUNCA pongas aquí la llave secreta / service_role.
-    SUPABASE_URL: "",         // p. ej. "https://abcdefghijklmnop.supabase.co"
-    SUPABASE_ANON_KEY: "",    // "Publishable key" (sb_publishable_…) o la llave "anon public" (eyJ…)
+    SUPABASE_URL: "https://tnzewcoqimldxwmvwbxi.supabase.co",
+    SUPABASE_ANON_KEY: "sb_publishable_KFbJFxQLzn-IxVetjEOhlg_5WMnvA53", // llave publicable: pública por diseño, protegida por RLS
     RESENAS_POR_PAGINA: 6
   });
 
@@ -332,12 +332,14 @@
     if (tipo === 'coto' && d.coto !== 'si') return false;
     if (tipo === 'preventa' && d.preventa !== 'si') return false;
     if (!estadoCatalogo.busqueda) return true;
-    if (estadoCatalogo.operacion === 'Comprar' && d.operacion !== 'venta') return false;
-    if (estadoCatalogo.operacion === 'Rentar' && d.operacion !== 'renta') return false;
+    const operaciones = (d.operacion || '').split(' ');
+    if (estadoCatalogo.operacion === 'Comprar' && !operaciones.includes('venta')) return false;
+    if (estadoCatalogo.operacion === 'Rentar' && !operaciones.includes('renta')) return false;
     if (estadoCatalogo.operacion === 'Administrar') return false;
     if (estadoCatalogo.municipio !== 'todos' && !(d.municipio || '').split(' ').includes(estadoCatalogo.municipio)) return false;
     if (estadoCatalogo.colonia && normalizar(d.colonia) !== normalizar(estadoCatalogo.colonia)) return false;
-    const precio = Number(d.precio || 0);
+    // En búsquedas de renta se compara contra el precio de renta (data-precio-renta) si la propiedad lo tiene
+    const precio = Number((estadoCatalogo.operacion === 'Rentar' && d.precioRenta) ? d.precioRenta : (d.precio || 0));
     return precio >= estadoCatalogo.min && precio <= estadoCatalogo.max;
   }
 
@@ -443,8 +445,9 @@
 
   // "Ver ficha →" abre WhatsApp con la propiedad, zona y precio exactos
   tarjetas.forEach(card => {
-    const d = datosTarjeta(card);
     const cta = $('.prop-cta', card);
+    if (!cta) return; // las tarjetas destacadas traen sus propios botones (data-wa-msg)
+    const d = datosTarjeta(card);
     cta.href = waLink(`Hola Demetrius Grupo Inmobiliario, me interesa ver la ficha de: ${d.titulo} en ${d.zona} (${d.precio})`);
     cta.setAttribute('aria-label', `Ver ficha de ${d.titulo} en ${d.zona} por WhatsApp`);
     cta.addEventListener('click', () => track('solicitar_ficha_propiedad', { propiedad: d.titulo, zona: d.zona, precio: d.precio }));
@@ -925,6 +928,7 @@
     { lat: 20.766653331806882, lng: -103.39456730008078, zona: "Los Almendros · Zapopan", titulo: "Casa En Venta", precio: "$6,980,000.00 M.N." },  // (listo)}
     { lat: 20.65738913571202, lng: -103.28536297097166, zona: "Col. Insurgentes · Guadalajara", titulo: "Bodega En Venta", precio: "$3,750,000.00 M.N." },    // (listo)
     { lat: 20.785784, lng: -103.411437, zona: "Zoi Capital Norte · Río Blanco, Zapopan", titulo: "Casa En Venta", precio: "$3,199,000.00 M.N." },    // Av. D, Capital Norte (ubicación aproximada de la calle)
+    { lat: 20.673519, lng: -103.371727, zona: "López Cotilla 1701 · Col. Americana, Guadalajara", titulo: "Edificio Luviano · Venta y Renta", precio: "Venta $80,000,000 · Renta completa $500,000" },    // C. Manuel López Cotilla 1701
   ];
 
   let mapaIniciado = false;

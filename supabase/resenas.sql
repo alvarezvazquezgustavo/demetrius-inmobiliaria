@@ -48,8 +48,12 @@ create policy "Enviar reseñas para revisión"
   to anon, authenticated
   with check (aprobada = false and respuesta is null);
 
+-- Permisos explícitos: funciona aunque desactives "Automatically expose new tables" (recomendado)
+grant usage on schema public to anon, authenticated;
+grant select on public.resenas to anon, authenticated;   -- las reglas RLS de arriba limitan a reseñas aprobadas
+
 -- Nadie del público puede editar ni borrar (solo tú, desde el panel de Supabase)
-revoke update, delete, truncate on public.resenas from anon, authenticated;
+revoke update, delete, truncate, references, trigger on public.resenas from anon, authenticated;
 
 -- El público solo puede escribir estas columnas
 revoke insert on public.resenas from anon, authenticated;

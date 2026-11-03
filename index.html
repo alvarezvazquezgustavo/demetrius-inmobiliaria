@@ -281,8 +281,68 @@
       "@type": "OfferCatalog",
       "@id": "https://inmobiliariademetrius.com/#catalogo-propiedades",
       "name": "Propiedades destacadas en venta",
-      "numberOfItems": 13,
+      "numberOfItems": 15,
       "itemListElement": [
+        {
+          "@type": "Offer",
+          "@id": "https://inmobiliariademetrius.com/#propiedad-edificio-luviano-venta",
+          "name": "Edificio Luviano en venta — Col. Americana, Guadalajara",
+          "category": "Edificio",
+          "description": "Edificio Luviano: edificio de concreto aparente del Arq. Félix Aceves Ortega (1978) con 2,720 m² de construcción, 727 m² de terreno y 34 estacionamientos. Venta: $80,000,000 (moneda por confirmar).",
+          "businessFunction": "http://purl.org/goodrelations/v1#Sell",
+          "image": "https://inmobiliariademetrius.com/edificioluviano.jpg",
+          "url": "https://inmobiliariademetrius.com/#catalogo",
+          "availableAtOrFrom": {
+            "@type": "Place",
+            "name": "Edificio Luviano",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "C. Manuel López Cotilla 1701, Col. Americana",
+              "postalCode": "44150",
+              "addressLocality": "Guadalajara",
+              "addressRegion": "Jalisco",
+              "addressCountry": "MX"
+            },
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": 20.673519,
+              "longitude": -103.371727
+            }
+          },
+          "seller": {
+            "@id": "https://inmobiliariademetrius.com/#organizacion"
+          }
+        },
+        {
+          "@type": "Offer",
+          "@id": "https://inmobiliariademetrius.com/#propiedad-edificio-luviano-renta",
+          "name": "Edificio Luviano en renta — completo u oficinas por piso — Col. Americana, Guadalajara",
+          "category": "Edificio de oficinas",
+          "description": "Edificio Luviano: edificio de concreto aparente del Arq. Félix Aceves Ortega (1978) con 2,720 m² de construcción, 727 m² de terreno y 34 estacionamientos. Renta completa: $500,000; oficinas por piso: precio a convenir (moneda y periodicidad por confirmar).",
+          "businessFunction": "http://purl.org/goodrelations/v1#LeaseOut",
+          "image": "https://inmobiliariademetrius.com/edificioluviano.jpg",
+          "url": "https://inmobiliariademetrius.com/#catalogo",
+          "availableAtOrFrom": {
+            "@type": "Place",
+            "name": "Edificio Luviano",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "C. Manuel López Cotilla 1701, Col. Americana",
+              "postalCode": "44150",
+              "addressLocality": "Guadalajara",
+              "addressRegion": "Jalisco",
+              "addressCountry": "MX"
+            },
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": 20.673519,
+              "longitude": -103.371727
+            }
+          },
+          "seller": {
+            "@id": "https://inmobiliariademetrius.com/#organizacion"
+          }
+        },
         {
           "@type": "Offer",
           "@id": "https://inmobiliariademetrius.com/#propiedad-zoi-capital-norte",
@@ -811,6 +871,41 @@
   <p class="catalog-status" id="catalogStatus" aria-live="polite"></p>
 
   <div class="prop-grid" id="propGrid">
+    <article class="prop-card prop-destacada" data-tipo="edificio" data-municipio="guadalajara" data-colonia="Americana" data-precio="80000000" data-precio-renta="500000" data-operacion="venta renta" data-coto="no" data-preventa="no">
+      <div class="prop-media">
+        <img class="prop-img" src="edificioluviano.jpg" alt="Edificio Luviano en venta y renta: edificio de oficinas de concreto aparente en López Cotilla 1701, Col. Americana, Guadalajara - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+      </div>
+      <div class="prop-body">
+        <span class="prop-tag">Venta · Renta · Oficinas por piso</span>
+        <div class="prop-zone">López Cotilla 1701 · Col. Americana, Guadalajara</div>
+        <h3>Edificio Luviano</h3>
+        <p class="destacada-lema">Un edificio. Tres posibilidades.</p>
+        <p class="destacada-desc">Arquitectura con personalidad: concreto aparente, espacios amplios y detalles escultóricos. Obra del Arq. Félix Aceves Ortega, construida en 1978.</p>
+        <div class="destacada-datos">
+          <div><b>2,720 m²</b><span>Construcción</span></div>
+          <div><b>727 m²</b><span>Terreno</span></div>
+          <div><b>34</b><span>Estacionamientos</span></div>
+        </div>
+        <div class="destacada-opciones">
+          <a class="opcion" href="https://wa.me/5213351070944" target="_blank" rel="noopener noreferrer" data-wa-msg="Hola Demetrius Grupo Inmobiliario, me interesa la VENTA del Edificio Luviano (López Cotilla 1701, Col. Americana, Guadalajara) de $80,000,000. ¿Podemos agendar una visita?" data-ubicacion="edificio_luviano_venta">
+            <span class="opcion-tipo">Venta</span>
+            <span class="opcion-precio">$80,000,000</span>
+            <span class="opcion-cta">Me interesa →</span>
+          </a>
+          <a class="opcion" href="https://wa.me/5213351070944" target="_blank" rel="noopener noreferrer" data-wa-msg="Hola Demetrius Grupo Inmobiliario, me interesa la RENTA COMPLETA del Edificio Luviano (López Cotilla 1701, Col. Americana, Guadalajara) de $500,000. ¿Me comparten disponibilidad y condiciones?" data-ubicacion="edificio_luviano_renta">
+            <span class="opcion-tipo">Renta completa</span>
+            <span class="opcion-precio">$500,000*</span>
+            <span class="opcion-cta">Me interesa →</span>
+          </a>
+          <a class="opcion" href="https://wa.me/5213351070944" target="_blank" rel="noopener noreferrer" data-wa-msg="Hola Demetrius Grupo Inmobiliario, me interesa rentar OFICINAS POR PISO en el Edificio Luviano (López Cotilla 1701, Col. Americana, Guadalajara). ¿Qué pisos están disponibles y cuál es la cotización?" data-ubicacion="edificio_luviano_piso">
+            <span class="opcion-tipo">Oficinas por piso</span>
+            <span class="opcion-precio">A convenir</span>
+            <span class="opcion-cta">Cotizar →</span>
+          </a>
+        </div>
+        <p class="destacada-nota">Solicita disponibilidad, cotización y una visita al inmueble. *Moneda de los importes y periodicidad de la renta por confirmar.</p>
+      </div>
+    </article>
     <article class="prop-card" data-tipo="casa" data-municipio="zapopan" data-colonia="Río Blanco" data-precio="3199000" data-operacion="venta" data-coto="si" data-preventa="no">
       <div class="prop-media">
         <img class="prop-img" src="zoicapitalnorte.jpg" alt="Casa en coto en Venta en Zoi Capital Norte, Río Blanco, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
@@ -1389,7 +1484,7 @@ FIN ZONAS -->
     <div id="map-zmg" role="region" aria-label="Mapa de propiedades en la Zona Metropolitana de Guadalajara"></div>
     <div class="map-legend">
       <span><span class="dot"></span>Propiedad publicadas — Actuales</span>
-      <span><b>11</b> propiedades activas en el mapa</span>
+      <span><b>12</b> propiedades activas en el mapa</span>
     </div>
   </div>
 </section>
