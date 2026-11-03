@@ -201,7 +201,6 @@
   const mobileNav = $('#mobileNav');
   const navOverlay = $('#navOverlay');
   const closeBtn = $('#closeMobileNav');
-  $('#mobileNavLogo').src = $('.logo-badge img').src;
 
   function setMenu(abierto) {
     hamburger.classList.toggle('is-active', abierto);

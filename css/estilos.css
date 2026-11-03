@@ -137,15 +137,15 @@ header.is-scrolled{
 .logo {
   display: flex; align-items: center;
 }
+/* Logo horizontal (hueso y dorado, fondo transparente) directo sobre fondos oscuros */
 .logo-badge {
-  background: var(--hueso);
-  padding: 8px 16px;
-  border-radius: 8px;
   display: flex; align-items: center;
-  box-shadow: 0 6px 16px rgba(0,0,0,.25);
+  border-radius: 8px;
+  transition: opacity .3s ease, transform .45s var(--ease-apple);
 }
+.logo-badge:hover { opacity: .88; }
 .logo-badge img {
-  height: 38px;
+  height: 36px;
   width: auto;
   display: block;
 }
@@ -1131,8 +1131,7 @@ header.is-scrolled{
   .footer-grid a:hover{color:var(--dorado-claro) !important;}
   footer address{font-style:normal;}
   .footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:18px;color:var(--hueso);}
-  .footer-logo .logo-badge{padding:6px 12px;}
-  .footer-logo .logo-badge img{height:26px;}
+  .footer-logo .logo-badge img{height:46px;}
   .footer-grid .footer-inline{display:inline;color:#B9B3A6;}
   .footer-grid .footer-inline.subrayado{text-decoration:underline;}
   .footer-bottom{
@@ -1237,11 +1236,8 @@ header.is-scrolled{
     border-bottom:1px solid rgba(201,169,97,.2);
     margin-bottom:20px;
   }
-  .mobile-nav-header .logo-badge{
-    padding:4px 10px;
-  }
   .mobile-nav-header .logo-badge img{
-    height:28px;
+    height:30px;
   }
 
   .mobile-nav-close{
@@ -1500,7 +1496,7 @@ header.is-scrolled{
   /* El menú completo necesita ~1370px: se compacta y luego pasa a hamburguesa */
   @media (max-width: 1439px){
     header{padding-left:32px;padding-right:32px;}
-    .desktop-nav{gap:18px;}
+    .desktop-nav{gap:16px;}
   }
   @media (max-width: 1259px){
     .desktop-nav{display:none;}
@@ -1564,8 +1560,7 @@ header.is-scrolled{
     .resenas-resumen .cta-btn{width:100%;}
     .search-head{padding:16px 18px 12px;}
     .search-title{font-size:1.15rem;}
-    .logo-badge{padding:6px 10px;}
-    .logo-badge img{height:30px;}
+    .logo-badge img{height:28px;}
 
     /* CTA siempre visible en celular */
     body{padding-bottom:calc(var(--mbar-h) + env(safe-area-inset-bottom));}

@@ -31,14 +31,11 @@
     padding:28px 22px 0;
   }
   .logo-badge{
-    background:var(--hueso);
-    padding:8px 16px;border-radius:8px;
-    display:inline-flex;align-items:center;
-    box-shadow:0 6px 16px rgba(0,0,0,.35);
-    transition:transform .45s var(--ease-apple);
+    display:inline-flex;align-items:center;border-radius:8px;
+    transition:transform .45s var(--ease-apple), opacity .3s ease;
   }
-  .logo-badge:hover{transform:translateY(-2px);}
-  .logo-badge img{height:38px;width:auto;display:block;}
+  .logo-badge:hover{transform:translateY(-2px);opacity:.88;}
+  .logo-badge img{height:46px;width:auto;display:block;}
   main{
     flex:1;display:flex;align-items:center;justify-content:center;
     padding:48px 22px 64px;
@@ -115,7 +112,7 @@
   footer a{color:#B9B3A6;}
   @media (max-width:640px){
     .card{padding:44px 24px 36px;}
-    .logo-badge img{height:30px;}
+    .logo-badge img{height:36px;}
     .acciones .btn{width:100%;}
   }
   @media (prefers-reduced-motion: reduce){
