@@ -484,6 +484,19 @@ header.is-scrolled{
     border-bottom:1px solid var(--dorado);padding-bottom:2px;
     white-space:nowrap;
   }
+  /* ---------- PROPIEDADES VENDIDAS ---------- */
+  .sello-vendida{
+    position:absolute;top:14px;left:14px;z-index:3;
+    padding:7px 14px;border-radius:999px;
+    background:linear-gradient(120deg,var(--dorado-oscuro),var(--dorado-claro));
+    color:var(--negro);font-size:.64rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+    box-shadow:0 8px 20px rgba(13,13,13,.28);
+  }
+  .prop-card.is-vendida .prop-img{filter:grayscale(.35) brightness(.94);}
+  .prop-card.is-vendida .prop-price{color:var(--grafito-suave);white-space:nowrap;}
+  .prop-card.is-vendida .prop-foot{flex-wrap:wrap;row-gap:10px;}
+  .prop-card.is-vendida .prop-cta{margin-left:auto;}
+
   /* ---------- PROPIEDAD DESTACADA (tarjeta ancha con varias modalidades) ---------- */
   .prop-card.prop-destacada{
     grid-column:1 / -1;

@@ -327,6 +327,8 @@
   function coincide(card) {
     const d = card.dataset;
     const { tipo } = estadoCatalogo;
+    // Las vendidas solo se muestran en el catálogo completo, nunca en filtros ni búsquedas
+    if (d.vendida === 'si' && (tipo !== 'todas' || estadoCatalogo.busqueda)) return false;
     if (tipo === 'casas' && d.tipo !== 'casa') return false;
     if (tipo === 'departamentos' && d.tipo !== 'departamento') return false;
     if (tipo === 'coto' && d.coto !== 'si') return false;
@@ -448,6 +450,12 @@
     const cta = $('.prop-cta', card);
     if (!cta) return; // las tarjetas destacadas traen sus propios botones (data-wa-msg)
     const d = datosTarjeta(card);
+    if (card.dataset.vendida === 'si') {
+      cta.href = waLink(`Hola Demetrius Grupo Inmobiliario, vi que vendieron: ${d.titulo} en ${d.zona}. Busco algo similar, ¿tienen opciones disponibles?`);
+      cta.setAttribute('aria-label', `Pedir una propiedad similar a ${d.titulo} en ${d.zona} (vendida) por WhatsApp`);
+      cta.addEventListener('click', () => track('solicitar_similar_vendida', { propiedad: d.titulo, zona: d.zona }));
+      return;
+    }
     cta.href = waLink(`Hola Demetrius Grupo Inmobiliario, me interesa ver la ficha de: ${d.titulo} en ${d.zona} (${d.precio})`);
     cta.setAttribute('aria-label', `Ver ficha de ${d.titulo} en ${d.zona} por WhatsApp`);
     cta.addEventListener('click', () => track('solicitar_ficha_propiedad', { propiedad: d.titulo, zona: d.zona, precio: d.precio }));
