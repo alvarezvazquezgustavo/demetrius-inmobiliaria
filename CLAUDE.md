@@ -71,7 +71,7 @@ Los errores de dedo, las comas y las mayúsculas **se conservan** ("cuidad", "as
 - Casos especiales ya resueltos:
   - `1.jpeg` era un PNG con extensión .jpeg. Se convirtió a JPEG real conservando el nombre.
   - `residenciasolares.jpeg` se generó a partir de `20260725_140707(1).jpeg`. Ese original sigue intacto en GitHub y no se borra.
-  - `edificioluviano.jpg` es un recorte provisional del folleto (555×408). Falta que el usuario envíe la foto original.
+  - `edificioluviano.jpg` es un recorte del folleto (555×408). El usuario no tiene la foto original, así que se queda esta.
 
 ## 4. Estructura de `llms.txt` (resumen para IA)
 
@@ -197,7 +197,9 @@ Hoy son 18 tarjetas: 13 disponibles y 5 vendidas. El JSON-LD (`OfferCatalog`) ti
   - **Los bots de entrenamiento también están PERMITIDOS** (GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, CCBot, Meta-ExternalAgent). Es decisión del usuario: "Mantener permitido".
   - Para todos se bloquean `/supabase/` y `/generador-og-1200x630.html`.
 - `sitemap.xml` usa image sitemap y actualiza `lastmod` en cada cambio de contenido.
-- OG y Twitter usan `og-preview.jpg` (1200×630). Se genera con `generador-og-1200x630.html`.
+- OG y Twitter usan `og-preview.jpg` (1200×630): foto de casa de noche, panel oscuro y el **logo nuevo**.
+  - El 2026-11-02 solo se cambió el logo; el resto del diseño y los textos se conservaron.
+  - `generador-og-1200x630.html` crea un diseño **distinto** (casa con alberca). No se usa salvo que el usuario lo pida.
 
 ## 9. Git y GitHub
 
@@ -231,13 +233,18 @@ Hoy son 18 tarjetas: 13 disponibles y 5 vendidas. El JSON-LD (`OfferCatalog`) ti
 - El SQL se prueba en PGlite antes de dárselo al usuario.
 - Encabezado: el menú hamburguesa se activa en ≤1259 px para evitar el desbordamiento entre 981 y 1370 px.
 
-## 11. Pendientes del usuario
+## 11. Decisiones del 2026-11-02
+
+- Edificio Luviano:
+  - Se queda la foto recortada del folleto.
+  - La nota "*Moneda de los importes y periodicidad de la renta por confirmar" **se queda así** por ahora.
+- Zoi Capital Norte: el usuario **confirmó la autorización** del propietario para publicarla.
+- `og-preview.jpg` ya tiene el logo nuevo.
+
+## 12. Pendientes del usuario
 
 - [ ] Comprar el dominio `inmobiliariademetrius.com`. Después hay que elegir hosting y activar la publicación.
-- [ ] Borrar en Supabase la reseña "Prueba de conexión".
-- [ ] Enviar la foto original del Edificio Luviano.
-- [ ] Confirmar la moneda y la periodicidad de la renta del Luviano.
-- [ ] Confirmar la autorización del propietario para publicar la casa de Zoi Capital Norte.
-- [ ] Regenerar `og-preview.jpg` con el logo nuevo.
-- [ ] Dar el ID de GA4 (`G-…`), la dirección completa de la oficina y el horario.
+- [ ] Cuando exista el dominio: crear la propiedad de Google Analytics 4 y dar el ID (`G-…`). Mientras siga el marcador `G-XXXXXXXXXX`, GA no se carga.
+- [ ] Dar la dirección completa de la oficina y el horario.
+- [ ] (Opcional) Borrar la reseña "Prueba de conexión" en Supabase. No es urgente: está sin aprobar, así que no aparece en la web.
 - [ ] (Opcional) Enviar capturas del catálogo de WhatsApp para compararlo con la web.
