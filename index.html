@@ -281,8 +281,33 @@
       "@type": "OfferCatalog",
       "@id": "https://inmobiliariademetrius.com/#catalogo-propiedades",
       "name": "Propiedades destacadas en venta",
-      "numberOfItems": 12,
+      "numberOfItems": 13,
       "itemListElement": [
+        {
+          "@type": "Offer",
+          "@id": "https://inmobiliariademetrius.com/#propiedad-zoi-capital-norte",
+          "name": "Casa en venta en coto Zoi Capital Norte — Río Blanco, Zapopan",
+          "category": "Casa en condominio",
+          "description": "Casa en condominio en Zoi Capital Norte, Río Blanco, Zapopan, Jalisco: 90 m² de terreno y 90 m² de construcción, 2 recámaras, 2.5 baños, 2 estacionamientos. Coto con casa club, alberca templada, asadores, áreas infantiles y vigilancia 24/7.",
+          "price": "3199000",
+          "priceCurrency": "MXN",
+          "businessFunction": "http://purl.org/goodrelations/v1#Sell",
+          "image": "https://inmobiliariademetrius.com/zoicapitalnorte.jpg",
+          "url": "https://inmobiliariademetrius.com/#catalogo",
+          "availableAtOrFrom": {
+            "@type": "Place",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Av. D 580",
+              "addressLocality": "Zapopan",
+              "addressRegion": "Jalisco",
+              "addressCountry": "MX"
+            }
+          },
+          "seller": {
+            "@id": "https://inmobiliariademetrius.com/#organizacion"
+          }
+        },
         {
           "@type": "Offer",
           "@id": "https://inmobiliariademetrius.com/#propiedad-1",
@@ -786,6 +811,23 @@
   <p class="catalog-status" id="catalogStatus" aria-live="polite"></p>
 
   <div class="prop-grid" id="propGrid">
+    <article class="prop-card" data-tipo="casa" data-municipio="zapopan" data-colonia="Río Blanco" data-precio="3199000" data-operacion="venta" data-coto="si" data-preventa="no">
+      <div class="prop-media">
+        <img class="prop-img" src="zoicapitalnorte.jpg" alt="Casa en coto en Venta en Zoi Capital Norte, Río Blanco, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+      </div>
+      <div class="prop-body">
+        <span class="prop-tag">Coto con Amenidades</span>
+        <div class="prop-zone">Zoi Capital Norte, Río Blanco, Zapopan</div>
+        <h3>Casa en Venta</h3>
+        <div class="prop-meta">
+          <span>90 m²</span><span>2 rec.</span><span>2.5 baños</span><span>2 estac.</span>
+        </div>
+        <div class="prop-foot">
+          <span class="prop-price">$3,199,000.00 M.N.</span>
+          <a class="prop-cta" href="https://wa.me/5213351070944" target="_blank" rel="noopener noreferrer">Ver ficha →</a>
+        </div>
+      </div>
+    </article>
     <article class="prop-card" data-tipo="casa" data-municipio="guadalajara" data-colonia="Lomas Independencia" data-precio="4750000" data-operacion="venta" data-coto="no" data-preventa="no">
       <div class="prop-media">
         <img class="prop-img" src="lomasindependenciapreguntan.jpeg" alt="Casa en Venta en Col. Lomas de Independencia, Guadalajara - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
@@ -876,7 +918,7 @@
       </div>
     </article>
 
-    <article class="prop-card" data-tipo="terreno" data-municipio="zapopan" data-colonia="Ciudad Bugambilias" data-precio="10500000" data-operacion="venta" data-coto="si" data-preventa="no">
+    <article class="prop-card tarjeta-oculta" data-tipo="terreno" data-municipio="zapopan" data-colonia="Ciudad Bugambilias" data-precio="10500000" data-operacion="venta" data-coto="si" data-preventa="no">
       <div class="prop-media">
         <img class="prop-img" src="1.jpeg" alt="Terreno en Venta con vista al bosque en Ciudad Bugambilias 2da Sección, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
@@ -1347,7 +1389,7 @@ FIN ZONAS -->
     <div id="map-zmg" role="region" aria-label="Mapa de propiedades en la Zona Metropolitana de Guadalajara"></div>
     <div class="map-legend">
       <span><span class="dot"></span>Propiedad publicadas — Actuales</span>
-      <span><b>10</b> propiedades activas en el mapa</span>
+      <span><b>11</b> propiedades activas en el mapa</span>
     </div>
   </div>
 </section>

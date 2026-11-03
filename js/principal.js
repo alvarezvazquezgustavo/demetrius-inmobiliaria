@@ -924,6 +924,7 @@
     { lat: 20.59056053032381, lng: -103.43716371664033, zona: "La Tijera · Zapopan", titulo: "Departamento En Venta", precio: "$3'300,000.00 M.N." },     // (listo)}
     { lat: 20.766653331806882, lng: -103.39456730008078, zona: "Los Almendros · Zapopan", titulo: "Casa En Venta", precio: "$6,980,000.00 M.N." },  // (listo)}
     { lat: 20.65738913571202, lng: -103.28536297097166, zona: "Col. Insurgentes · Guadalajara", titulo: "Bodega En Venta", precio: "$3,750,000.00 M.N." },    // (listo)
+    { lat: 20.785784, lng: -103.411437, zona: "Zoi Capital Norte · Río Blanco, Zapopan", titulo: "Casa En Venta", precio: "$3,199,000.00 M.N." },    // Av. D, Capital Norte (ubicación aproximada de la calle)
   ];
 
   let mapaIniciado = false;

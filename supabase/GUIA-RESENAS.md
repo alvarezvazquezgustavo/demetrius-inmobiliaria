@@ -35,11 +35,11 @@ Esto crea:
    - Si tu proyecto solo muestra *Legacy API keys*, copia la llave **anon public** (empieza con `eyJ…`).
 2. Copia la **Project URL**. La encuentras en **Project Settings → Data API** o en el botón **Connect**. Se ve así: `https://abcdefghijklmnop.supabase.co`.
 
-> ⚠️ **Nunca** copies la **Secret key** ni la **service_role** en `index.html` ni la subas a GitHub. Esas llaves saltan todas las reglas de seguridad.
+> ⚠️ **Nunca** copies la **Secret key** ni la **service_role** en `js/principal.js` ni la subas a GitHub. Esas llaves saltan todas las reglas de seguridad.
 
 ## 4. Conectar la página
 
-En `index.html`, busca `ENV_CONFIG` y llena estas dos líneas:
+En `js/principal.js`, busca `ENV_CONFIG` (al inicio del archivo) y llena estas dos líneas:
 
 ```js
 SUPABASE_URL: "https://abcdefghijklmnop.supabase.co",
