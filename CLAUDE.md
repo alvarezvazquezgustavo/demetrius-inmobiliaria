@@ -46,6 +46,35 @@ Casa en Venta, Residencial Casa Fuerte.jpg
 asa en Venta, Mirador del Bosque, Zapopan.jpg
 ```
 
+Fotos de la portada y de Yéucate (2026-11-04), también con su nombre original:
+
+```
+mesa-vista-013.jpg.webp            plano-lotes-1920w.png.webp     DJI_0375.JPG
+IMG-20261102-WA0007.jpg            IMG-20261102-WA0009.jpg        IMG-20261102-WA0010.jpg
+IMG-20261102-WA0012.jpg            IMG-20261102-WA0015.jpg        IMG-20261102-WA0016.jpg
+DJI_0373.MP4                       DJI_0373-poster.jpg            DJI_0388-pueblo.jpg
+DJI_0373-celular.MP4               DJI_0375-grande.jpg
+```
+
+- `DJI_0373.MP4` es el video original recortado a 14 s y sin audio, en 1080p (5 MB). `DJI_0373-celular.MP4` es la versión de 720p (2.7 MB). `DJI_0375-grande.jpg` es la foto aérea a 2560 px.
+- `DJI_0373-poster.jpg` y `DJI_0388-pueblo.jpg` son cuadros sacados de los videos. Llevan el nombre del video más una palabra.
+- `mesa-vista-013.jpg.webp` en realidad es un JPEG con extensión .webp. Se dejó así porque convertirlo a WebP lo hacía más pesado; los navegadores lo muestran bien.
+- Fuente de las fotos y videos de Yéucate: Google Drive, carpeta `Mercadotecnia/Videos Capcut/Terrenos en Venta Chiquilistlan`.
+
+Fotos del catálogo de WhatsApp (2026-11-04), 31 propiedades nuevas:
+
+- Fuente: `~/Downloads/Catalogo_Demetrius_Inmobiliaria/`. Ahí están las 40 fichas en `Catalogo_Web_Demetrius_Inmobiliaria.json` (también en .csv, .xlsx y .md) y las portadas en PNG de 960×960.
+- Se usó el nombre "exacto" del catálogo (el que no lleva número adelante), con estas correcciones:
+  - se quitaron las comillas;
+  - `.png` pasó a `.jpg`, porque se convirtieron a JPEG;
+  - se conservaron el emoji 🏡, las comas, los errores de dedo ("Chapalita In", "Tesoro,Tlaquepaque") y el `(2)`.
+- Las portadas son capturas de pantalla. A todas se les recortó la barrita blanca de avance de abajo (todo lo que está debajo de y = 932). Además:
+  - Con bandas a los lados: x 96–864 en Pre-Venta Casa Fuerte, La Estancia, Bosques del Centinela, Sendero de las Moras y Coto los Olmos. Zoí Sur se recortó de x 20 a 940.
+  - Con bandas arriba y abajo: y 120–840 en Coto Laureles, La Rioja, Bugambilias (amueblada) y Casa Fuerte `(2)`.
+  - `Casa en Venta, Residencial Casa Fuerte, Tlajomulco de Zuñiga.jpg` ($6,050,000) se recortó a y 220–850 para quitar el letrero escrito en la foto y el ícono de "silencio" del video. Ojo: es la foto de la ficha 6 del catálogo. El archivo de Descargas sin comillas que tiene el mismo nombre es otra casa (la ficha 7, ya vendida).
+- Se convirtieron a JPEG con PSNR ≥ 40.5 dB: pasaron de 40.8 MB a unos 8 MB en total.
+- Fichas del catálogo que ya estaban en la web y no se duplicaron: 1 (Terraza Constitución), 2 (Mirador del Bosque, vendida), 3 (es la "Parques Vallarta" de la web), 4 (Balanty), 7 y 9 (Casa Fuerte, vendidas), 12 (Bugambilias esquina, vendida) y 29 (es el terreno de Jocotepec). La ficha 21 es un duplicado de la 19.
+
 ### Fotos nuevas: el nombre se conserva "tal cual"
 
 Una foto nueva usa **el mismo nombre que tiene en Descargas**. Solo se permiten estas correcciones mínimas:
@@ -53,8 +82,9 @@ Una foto nueva usa **el mismo nombre que tiene en Descargas**. Solo se permiten 
 - Agregar la extensión (`.jpg`) si el archivo no la tiene.
 - Quitar espacios al final del nombre.
 - Quitar comillas dobles (`"`), porque Windows no las permite.
+- Si el original es PNG, se convierte a JPEG y la extensión cambia a `.jpg` (el resto del nombre queda igual).
 
-Los errores de dedo, las comas y las mayúsculas **se conservan** ("cuidad", "asa", "terrza", "balenty").
+Los errores de dedo, las comas, los emojis y las mayúsculas **se conservan** ("cuidad", "asa", "terrza", "balenty", "🏡").
 
 ### Dónde van y cómo se referencian
 
@@ -83,7 +113,7 @@ Sigue el estándar llmstxt.org. **Este orden se respeta:**
 4. `## Servicios principales`: enlaces a `#catalogo`, `#proceso`, `#vender`, `#construccion` y `#mapa`.
 5. `## Propiedades destacadas`: una línea por propiedad **disponible**:
    `- Nombre — Colonia/zona, Municipio, Jalisco — $X,XXX,XXX MXN — detalles breves.`
-   Orden: Edificio Luviano, Zoi Capital Norte y después el resto, en el mismo orden que el catálogo.
+   Orden: Edificio Luviano, Zoi Capital Norte, Yéucate (desarrollo, "precio por lote a consultar" y enlace a `yeucate.html`) y después el resto, en el mismo orden que el catálogo.
 6. `## Propiedades vendidas recientemente`:
    - Una frase introductoria.
    - Una línea por propiedad vendida, **sin precio**: `- Nombre — Municipio — detalles.`
@@ -120,14 +150,14 @@ Es la versión extendida:
 | `data-municipio` | en minúsculas; acepta varios separados por espacio (`"zapopan tlajomulco"`) |
 | `data-colonia` | texto libre (sirve para la búsqueda) |
 | `data-precio` | número sin formato (`3199000`) |
-| `data-precio-renta` | opcional; lo usa el filtro "Rentar" |
+| `data-precio-renta` | opcional; lo usa el filtro "Rentar". En las de solo renta, `data-precio` y `data-precio-renta` llevan la renta mensual y el precio se muestra con "/ mes" |
 | `data-operacion` | `venta`, `renta` o `venta renta` |
 | `data-coto` / `data-preventa` | `si` / `no` |
 | `data-vendida` | `si` solo en las vendidas |
 
 ### Clases
 
-- `tarjeta-oculta`: la tarjeta aparece solo después de "Ver más". Hay 7 visibles al inicio.
+- `tarjeta-oculta`: la tarjeta aparece solo después de "Ver más". Hay 7 visibles al inicio. Cada clic en "Ver más" muestra 9 más, en el orden del HTML. Cuando ya se ven todas, el botón dice "Ver menos propiedades" y vuelve a dejar 7.
 - `prop-destacada`: tarjeta a todo lo ancho, con tres opciones (`.opcion`) que usan `data-wa-msg` y `data-ubicacion`. Hoy solo la usa el Edificio Luviano.
 - `is-vendida` junto con `data-vendida="si"`: foto en gris suave y precio en gris. Además lleva:
   - `<span class="sello-vendida">Vendida</span>` dentro de `.prop-media`;
@@ -138,10 +168,10 @@ Es la versión extendida:
 1. Edificio Luviano (destacada).
 2. Zoi Capital Norte.
 3. 5 tarjetas visibles originales.
-4. Tarjetas ocultas disponibles.
+4. Tarjetas ocultas disponibles: primero las 6 originales y después las 31 del catálogo de WhatsApp, en el orden de ese catálogo (de Colomos Providencia a Paseos del Sol).
 5. **Vendidas al final**, todas ocultas.
 
-Hoy son 18 tarjetas: 13 disponibles y 5 vendidas. El JSON-LD (`OfferCatalog`) tiene `numberOfItems: 19`, porque el Luviano cuenta como dos ofertas (venta y renta). Las vendidas llevan `"availability": "https://schema.org/SoldOut"` y un `@id` de la forma `#vendida-N`.
+Hoy son 49 tarjetas: 44 disponibles y 5 vendidas. El JSON-LD (`OfferCatalog`) tiene `numberOfItems: 51`: Yéucate, el Luviano (que cuenta como dos ofertas, venta y renta), Zoi, `#propiedad-1` a `#propiedad-11`, las nuevas `#propiedad-13` a `#propiedad-43` y las 5 vendidas. Las vendidas llevan `"availability": "https://schema.org/SoldOut"` y un `@id` de la forma `#propiedad-12` o `#vendida-N`. Las de renta usan `LeaseOut` y un `UnitPriceSpecification` mensual (`unitCode: MON`).
 
 ### Lógica relacionada (`js/principal.js`)
 
@@ -152,8 +182,38 @@ Hoy son 18 tarjetas: 13 disponibles y 5 vendidas. El JSON-LD (`OfferCatalog`) ti
   - En las vendidas, el mensaje es "vi que vendieron… busco algo similar" y se envía el evento GA `solicitar_similar_vendida`.
   - La tarjeta destacada usa sus propios `data-wa-msg`.
 - Mapa:
-  - El arreglo `propiedades` tiene 12 marcadores (lat, lng, zona, título y precio). La leyenda del mapa dice 12.
-  - Para geocodificar se usa Nominatim. Si la dirección no es exacta, se marca como "ubicación aproximada".
+  - El arreglo `propiedades` tiene 39 marcadores (lat, lng, zona, título y precio). El número de la leyenda (`#mapaTotal`) lo calcula el script a partir del arreglo; el del HTML es solo de respaldo.
+  - Para geocodificar se usa Nominatim. Si la dirección no es exacta, se marca como "ubicación aproximada". Los 27 marcadores nuevos están en el centro de su colonia; cuando hay varias casas en la misma colonia, se separaron unos metros para que no se encimen.
+  - Sin marcador, porque no se encontró la colonia: Residencial Guadalupe (renta), La Rioja, Residencial San Miguel y La Esmeralda. Mirador del Tesoro se ubicó cerca de la estación del Tren Ligero "Santuario Mártires de Cristo Rey" (antes "Tesoro").
+
+## 5b. Encabezado, portada y desarrollo Yéucate (2026-11-04)
+
+- **Encabezado:**
+  - Se quitó la barra "Página de inicio" a petición del usuario.
+  - El `header` ahora es `position: fixed`. Es transparente hasta arriba y pasa al cristal oscuro (`.is-scrolled`) al bajar más de 10 px, con una transición de 0.3 s.
+  - La portada (`.hero`) deja 84 px arriba para el encabezado y ocupa 100vh.
+- **Bloque `.desarrollo` en el inicio** (después del catálogo): promociona Yéucate y enlaza a `yeucate.html`.
+  - `js/principal.js` calcula solo el porcentaje vendido, los lotes disponibles y la barra a partir de `js/yeucate-lotes.js`.
+  - Las cifras escritas en el HTML (47 % y 39) son solo un respaldo por si el script no carga; conviene mantenerlas parecidas.
+- **Subpágina `yeucate.html`** con `css/yeucate.css` y `js/yeucate.js` (independiente de `principal.js`):
+  - Video de portada con botón de pausa.
+  - Plano interactivo con 83 marcadores, filtros por superficie, interruptor "solo disponibles", ficha del lote y sugerencias de lotes parecidos.
+  - Galería con visor, compra con certeza, Chiquilistlán, mapa Leaflet de la entrada (20.08420, -103.85540) y preguntas frecuentes.
+- **Datos de los lotes (una sola fuente):** viven en `js/yeucate-lotes.js` (`window.YEUCATE`), que cargan el inicio y la subpágina.
+  - Cada lote es `[número, m², estatus, x %, y %]`. El estatus es `d` (disponible), `a` (apartado), `b` (bloqueado) o `v` (vendido).
+  - `actualizado` es el mes que se muestra en la nota de disponibilidad.
+  - La subpágina y el bloque del inicio calculan solos los contadores y el porcentaje.
+  - Las posiciones x/y son relativas a `plano-lotes-1920w.png.webp`.
+  - Estatus a noviembre de 2026: 39 disponibles, 2 apartados (19, 30), 3 bloqueados (5, 12, 13) y 39 vendidos. Coinciden con la maqueta "OCT 2026" del usuario.
+- **Si cambia un estatus, hay que actualizar a la vez:** `js/yeucate-lotes.js` (estatus y `actualizado`), la línea de Yéucate en `llms.txt` y `llms-full.txt`, y la fecha en `sitemap.xml`.
+- **Zoom del plano:** botones + / − con niveles de 100 %, 160 % y 220 %.
+  - Al acercar, el plano se recorre deslizando el dedo (o arrastrando con el mouse) y en celular los marcadores crecen de 14 a 24 px.
+  - Al elegir un lote en la lista, el plano se centra en él.
+- **Video de portada:** `DJI_0373.MP4` es la versión de 1080p para computadora (5 MB) y `DJI_0373-celular.MP4` la de 720p para pantallas de 980 px o menos (2.7 MB). Se elige con `<source media>`.
+- **Foto aérea grande:** `DJI_0375-grande.jpg` (2560 px) se sirve con `srcset` solo a pantallas grandes o de alta resolución. `DJI_0375.JPG` (1600 px) es la normal.
+- **Precios por lote:** no se publican; se piden por WhatsApp. El usuario tiene una lista de precios y planes de pago (12 a 72 meses) que no está en la web.
+- Los textos de la subpágina son originales; no se copiaron de yeucate.mx. Los mensajes de WhatsApp van al número de Demetrius, no al del desarrollador.
+- La subpágina **no carga Google Analytics ni el aviso de cookies**. Cuando se active GA, hay que decidir si también se agregan ahí.
 
 ## 6. Seguridad (OWASP)
 
@@ -221,6 +281,8 @@ Hoy son 18 tarjetas: 13 disponibles y 5 vendidas. El JSON-LD (`OfferCatalog`) ti
 | `07393d6` | Casa Zoi Capital Norte |
 | `4513146` | Edificio Luviano y reseñas con Supabase |
 | `451db5a` | Propiedades vendidas con etiqueta "Vendida" |
+| `25dc86e` | Notas del proyecto (`CLAUDE.md`) |
+| `1a789ba` | Logo nuevo en la imagen para redes |
 
 ## 10. Cómo se prueba
 
@@ -230,6 +292,11 @@ Hoy son 18 tarjetas: 13 disponibles y 5 vendidas. El JSON-LD (`OfferCatalog`) ti
   - 0 violaciones de CSP;
   - sin desbordamiento horizontal.
 - Servidor local que aplica `_headers`, para probar la CSP real.
+- **Prueba en el iPhone del usuario** (no hay Xcode ni simulador en esta Mac):
+  - Se levanta el servidor en la red Wi-Fi y se abre `http://MacBook-Pro-de-Gustavo.local:8792/yeucate.html`.
+  - Hay que usar el nombre `.local` y no la IP, porque `js/inicio.js` manda a HTTPS cualquier dirección que no sea local.
+  - El servidor de prueba del Wi-Fi tiene que quitar `upgrade-insecure-requests`, tanto de la etiqueta `<meta>` de las páginas como de la cabecera CSP, **solo al servir**. Si no, Safari pide el CSS, las fotos y los scripts por HTTPS y la página sale sin estilos (pasó el 2026-11-04). Los archivos del sitio conservan esa regla, porque en producción sí se necesita. El aviso de COOP que aparece en la consola al usar HTTP en `.local` es normal.
+  - Al terminar se apaga el servidor.
 - El SQL se prueba en PGlite antes de dárselo al usuario.
 - Encabezado: el menú hamburguesa se activa en ≤1259 px para evitar el desbordamiento entre 981 y 1370 px.
 
@@ -246,5 +313,15 @@ Hoy son 18 tarjetas: 13 disponibles y 5 vendidas. El JSON-LD (`OfferCatalog`) ti
 - [ ] Comprar el dominio `inmobiliariademetrius.com`. Después hay que elegir hosting y activar la publicación.
 - [ ] Cuando exista el dominio: crear la propiedad de Google Analytics 4 y dar el ID (`G-…`). Mientras siga el marcador `G-XXXXXXXXXX`, GA no se carga.
 - [ ] Dar la dirección completa de la oficina y el horario.
+- [ ] Confirmar la autorización del desarrollador de Yéucate para publicar su plano, sus datos y las fotos de la obra.
 - [ ] (Opcional) Borrar la reseña "Prueba de conexión" en Supabase. No es urgente: está sin aprobar, así que no aparece en la web.
-- [ ] (Opcional) Enviar capturas del catálogo de WhatsApp para compararlo con la web.
+- [x] ~~(Opcional) Enviar capturas del catálogo de WhatsApp para compararlo con la web.~~ Llegó como carpeta `Catalogo_Demetrius_Inmobiliaria` y se agregaron 31 propiedades (2026-11-04).
+- [ ] Confirmar si alguna de las 31 propiedades nuevas ya se vendió. El catálogo de WhatsApp todavía muestra casas que en la web están como vendidas (fichas 2, 7, 9 y 12).
+- [ ] Confirmar 4 precios en los que la ficha y su descripción no coinciden. En la web se usó el precio de la ficha:
+  - Virreyes: $16,500,000 en la ficha, $16,900,000 en la descripción.
+  - Prados Guadalupe: $6,290,000 / $6,700,000.
+  - Casa La Calma: $5,490,000 / $5,750,000.
+  - Mirador del Tesoro (la segunda): $3,300,000 / $3,620,000.
+- [ ] Terreno de Jocotepec: en la web dice $36,400,000, pero el catálogo de WhatsApp dice $27,000,000 a negociar. **No se cambió**; falta que el usuario confirme el precio.
+- [ ] Dar la colonia o una referencia para ubicar en el mapa Residencial Guadalupe, La Rioja, Residencial San Miguel y La Esmeralda.
+- [ ] (Opcional) Dar los datos de Sendero de las Moras ($4,050,000): el catálogo no trae recámaras, baños ni metros.

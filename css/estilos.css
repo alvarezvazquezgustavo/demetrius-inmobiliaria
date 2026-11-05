@@ -77,30 +77,26 @@
   .win span{background:var(--dorado);display:block;}
   .win.light span{background:var(--negro);}
 
-  /* ---------- WIREFRAME BANNER ---------- */
-  .wf-banner{
-    background:var(--negro);
-    color:var(--dorado-claro);
-    text-align:center;
-    font-size:.72rem;
-    letter-spacing:.15em;
-    text-transform:uppercase;
-    padding:8px;
-    font-weight:600;
-  }
-
 /* ---------- HEADER ---------- */
+/* Transparente sobre la portada; al bajar más de 10px pasa al cristal oscuro */
 header {
-  position: sticky; top: 0; z-index: 50;
-  /* Glassmorphism estilo Apple */
-  background: rgba(13, 13, 13, 0.82);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  background: rgba(13, 13, 13, 0);
+  backdrop-filter: saturate(100%) blur(0);
+  -webkit-backdrop-filter: saturate(100%) blur(0);
   display: flex; align-items: center; justify-content: space-between;
   gap: 20px;
   padding: 18px 48px;
-  border-bottom: 1px solid rgba(201,169,97,.25);
-  transition: padding .45s var(--ease-apple), box-shadow .45s var(--ease-apple);
+  border-bottom: 1px solid rgba(201,169,97,0);
+  transition: background-color .3s ease, border-color .3s ease, backdrop-filter .3s ease, -webkit-backdrop-filter .3s ease,
+              padding .45s var(--ease-apple), box-shadow .45s var(--ease-apple);
+}
+/* Glassmorphism estilo Apple */
+header.is-scrolled, html.nav-open header{
+  background: rgba(13, 13, 13, 0.82);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom-color: rgba(201,169,97,.25);
 }
 header.is-scrolled{
   padding-top:12px;padding-bottom:12px;
@@ -227,12 +223,14 @@ header.is-scrolled{
   /* ---------- HERO ---------- */
   .hero{
     position:relative;
-    padding:0;
-    min-height:92vh;
+    padding:84px 0 0; /* espacio del encabezado fijo */
+    min-height:100vh;
+    min-height:100svh;
     display:flex;align-items:center;
     background:
-      linear-gradient(180deg, rgba(13,13,13,.55) 0%, rgba(13,13,13,.35) 40%, rgba(13,13,13,.92) 100%),
-      url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=1800&auto=format&fit=crop') center/cover no-repeat;
+      linear-gradient(180deg, rgba(13,13,13,.66) 0%, rgba(13,13,13,.16) 24%, rgba(13,13,13,.28) 58%, rgba(13,13,13,.9) 100%),
+      linear-gradient(90deg, rgba(13,13,13,.6) 0%, rgba(13,13,13,.2) 55%, rgba(13,13,13,0) 100%),
+      url('../mesa-vista-013.jpg.webp') center/cover no-repeat var(--negro);
   }
   .hero-inner{
     max-width:640px;
@@ -1538,6 +1536,64 @@ header.is-scrolled{
     transition:opacity .5s var(--ease-apple), transform .5s var(--ease-apple);
   }
   .toast.show{opacity:1;transform:translate(-50%, 0);}
+
+  /* ---------- DESARROLLO DESTACADO (Yéucate) ---------- */
+  .desarrollo{
+    position:relative;isolation:isolate;overflow:hidden;
+    display:flex;align-items:center;min-height:640px;padding:0;
+    background:var(--negro);color:var(--hueso);
+  }
+  .desarrollo-media{position:absolute;inset:0;z-index:-2;overflow:hidden;}
+  .desarrollo-media img{
+    display:block;width:100%;height:100%;object-fit:cover;
+    transform:scale(1.02);transition:transform 1.8s var(--ease-apple);
+  }
+  .desarrollo::before{
+    content:"";position:absolute;inset:0;z-index:-1;
+    background:linear-gradient(90deg, rgba(13,13,13,.95) 0%, rgba(13,13,13,.84) 36%, rgba(13,13,13,.3) 72%, rgba(13,13,13,.08) 100%);
+  }
+  .desarrollo-inner{max-width:640px;padding:104px 48px;}
+  .desarrollo .eyebrow{color:var(--dorado-claro);}
+  .desarrollo .eyebrow::before{background:var(--dorado-claro);}
+  .desarrollo h2{font-size:clamp(2.1rem, 4vw, 3.1rem);line-height:1.08;font-weight:700;margin:18px 0 10px;}
+  .desarrollo-lema{font-family:'Playfair Display',serif;font-size:1.18rem;color:var(--dorado-claro);margin-bottom:16px;}
+  .desarrollo-desc{font-size:.95rem;line-height:1.75;color:#D8D3C9;font-weight:300;margin-bottom:28px;}
+  .desarrollo-datos{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:26px;}
+  .desarrollo-datos div{
+    flex:1 1 150px;padding:14px 16px;
+    border:1px solid rgba(201,169,97,.3);border-radius:var(--radius-ui);
+    background:rgba(13,13,13,.45);
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    transition:transform .45s var(--ease-apple), border-color .3s ease;
+  }
+  .desarrollo-datos b{display:block;font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:600;color:var(--hueso);white-space:nowrap;}
+  .desarrollo-datos span{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dorado-claro);font-weight:600;}
+  .desarrollo-avance{margin-bottom:30px;}
+  .desarrollo-avance-top{display:flex;justify-content:space-between;gap:12px;font-size:.78rem;color:#D8D3C9;margin-bottom:9px;}
+  .desarrollo-avance-top b{color:var(--dorado-claro);font-weight:700;}
+  .desarrollo-barra{height:6px;border-radius:999px;background:rgba(248,246,242,.14);overflow:hidden;}
+  .desarrollo-barra span{
+    display:block;width:47%;height:100%;border-radius:inherit;
+    background:linear-gradient(90deg,var(--dorado-oscuro),var(--dorado-claro));
+    transform-origin:left center;transition:transform 1.4s var(--ease-apple) .2s;
+  }
+  .js .desarrollo:not(.en-vista) .desarrollo-barra span{transform:scaleX(0);}
+  .desarrollo-acciones{display:flex;flex-wrap:wrap;gap:14px;}
+  .desarrollo-acciones .cta-btn, .desarrollo-acciones .btn-outline{margin:0;padding:15px 26px;max-width:none;}
+  @media (hover:hover){
+    .desarrollo:hover .desarrollo-media img{transform:scale(1.07);}
+    .desarrollo-datos div:hover{transform:translateY(-3px);border-color:rgba(201,169,97,.6);}
+  }
+  @media (max-width: 980px){
+    .desarrollo{display:block;min-height:0;}
+    .desarrollo::before{display:none;}
+    .desarrollo-media{position:relative;inset:auto;z-index:0;aspect-ratio:16/10;}
+    .desarrollo-media::after{
+      content:"";position:absolute;inset:0;
+      background:linear-gradient(180deg, rgba(13,13,13,0) 55%, var(--negro) 100%);
+    }
+    .desarrollo-inner{max-width:none;padding:28px 22px 60px;}
+  }
 
   /* ---------- CTA MÓVIL ---------- */
   .mobile-cta-bar{display:none;}

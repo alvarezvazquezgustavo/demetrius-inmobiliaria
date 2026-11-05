@@ -189,13 +189,16 @@
   /* =========================================================
      HEADER + MENÚ MÓVIL (único)
      ========================================================= */
+  // Transparente hasta arriba; cristal oscuro en cuanto se baja más de 10px
   const siteHeader = $('#siteHeader');
+  const actualizarHeader = () => siteHeader.classList.toggle('is-scrolled', window.scrollY > 10);
   let headerTicking = false;
   window.addEventListener('scroll', () => {
     if (headerTicking) return;
     headerTicking = true;
-    requestAnimationFrame(() => { siteHeader.classList.toggle('is-scrolled', window.scrollY > 40); headerTicking = false; });
+    requestAnimationFrame(() => { actualizarHeader(); headerTicking = false; });
   }, { passive: true });
+  actualizarHeader();
 
   const hamburger = $('#hamburgerMenu');
   const mobileNav = $('#mobileNav');
@@ -310,8 +313,12 @@
     colonia: '',
     min: 0,
     max: Infinity,
-    expandido: false
+    expandido: false,
+    extra: 0 // tarjetas ocultas que ya se mostraron con "Ver más"
   };
+  // "Ver más" muestra las tarjetas ocultas de 9 en 9 (3 filas en computadora)
+  const TARJETAS_POR_CLIC = 9;
+  const tarjetasOcultas = tarjetas.filter(card => card.classList.contains('tarjeta-oculta'));
 
   const normalizar = (t) => (t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
   const textoSelect = (sel) => sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : '';
@@ -360,8 +367,9 @@
   function renderCatalogo() {
     const filtrando = estadoCatalogo.tipo !== 'todas' || estadoCatalogo.busqueda;
     let visibles = 0;
+    estadoCatalogo.expandido = estadoCatalogo.extra >= tarjetasOcultas.length;
     tarjetas.forEach(card => {
-      const ocultaPorVerMas = !filtrando && !estadoCatalogo.expandido && card.classList.contains('tarjeta-oculta');
+      const ocultaPorVerMas = !filtrando && tarjetasOcultas.indexOf(card) >= estadoCatalogo.extra;
       const mostrar = coincide(card) && !ocultaPorVerMas;
       card.classList.toggle('is-hidden', !mostrar);
       card.classList.toggle('is-shown', mostrar);
@@ -398,9 +406,14 @@
 
   // Botón "Ver más propiedades" (se conserva el nombre de la función original)
   function mostrarMasPropiedades() {
-    estadoCatalogo.expandido = !estadoCatalogo.expandido;
+    if (estadoCatalogo.expandido) {
+      estadoCatalogo.extra = 0;
+      renderCatalogo();
+      if (propGrid.getBoundingClientRect().top < 0) irAResultados();
+      return;
+    }
+    estadoCatalogo.extra = Math.min(estadoCatalogo.extra + TARJETAS_POR_CLIC, tarjetasOcultas.length);
     renderCatalogo();
-    if (!estadoCatalogo.expandido && propGrid.getBoundingClientRect().top < 0) irAResultados();
   }
   btnVerMas.addEventListener('click', mostrarMasPropiedades);
 
@@ -891,7 +904,7 @@
      ANIMACIONES AL HACER SCROLL (IntersectionObserver)
      ========================================================= */
   if (!reduceMotion && 'IntersectionObserver' in window) {
-    const selectoresReveal = '.section-head, .prop-card, .why-item, .build-info, .build-form, .sell-info, .sell-form, .zone-card, .map-wrap, .proceso-paso, .proceso-docs, .proceso-cta, .testi-card, .resenas-resumen, .resenas-vacio, .resena-form, .faq-item, .cta-box';
+    const selectoresReveal = '.section-head, .prop-card, .desarrollo-inner, .why-item, .build-info, .build-form, .sell-info, .sell-form, .zone-card, .map-wrap, .proceso-paso, .proceso-docs, .proceso-cta, .testi-card, .resenas-resumen, .resenas-vacio, .resena-form, .faq-item, .cta-box';
     const elementosReveal = $$(selectoresReveal);
     elementosReveal.forEach(el => el.classList.add('reveal'));
 
@@ -919,6 +932,31 @@
     elementosReveal.forEach(el => observadorReveal.observe(el));
   }
 
+  // Barra de avance de ventas del desarrollo destacado: se llena al entrar en vista
+  const bloqueDesarrollo = $('.desarrollo');
+  // Cifras calculadas desde js/yeucate-lotes.js (si no carga, quedan las del HTML)
+  if (bloqueDesarrollo && window.YEUCATE) {
+    const lotesYeu = window.YEUCATE.lotes;
+    const vendidos = lotesYeu.filter(l => l[2] === 'v').length;
+    const disponibles = lotesYeu.filter(l => l[2] === 'd').length;
+    const porcentaje = Math.round(vendidos / lotesYeu.length * 100);
+    $('#yeuPorcentaje').textContent = `${porcentaje} %`;
+    $('#yeuDisponibles').textContent = `${disponibles} lotes disponibles`;
+    $('#yeuBarra').setAttribute('aria-label', `${porcentaje} % de los lotes vendidos`);
+    $('#yeuBarra span').style.width = `${porcentaje}%`;
+  }
+  if (bloqueDesarrollo) {
+    if (reduceMotion || !('IntersectionObserver' in window)) bloqueDesarrollo.classList.add('en-vista');
+    else {
+      const obsDesarrollo = new IntersectionObserver((entradas) => {
+        if (!entradas.some(en => en.isIntersecting)) return;
+        bloqueDesarrollo.classList.add('en-vista');
+        obsDesarrollo.disconnect();
+      }, { threshold: 0.35 });
+      obsDesarrollo.observe(bloqueDesarrollo);
+    }
+  }
+
   /* =========================================================
      MAPA ZMG (Leaflet) — se carga al acercarse a la sección
      ========================================================= */
@@ -937,6 +975,33 @@
     { lat: 20.65738913571202, lng: -103.28536297097166, zona: "Col. Insurgentes · Guadalajara", titulo: "Bodega En Venta", precio: "$3,750,000.00 M.N." },    // (listo)
     { lat: 20.785784, lng: -103.411437, zona: "Zoi Capital Norte · Río Blanco, Zapopan", titulo: "Casa En Venta", precio: "$3,199,000.00 M.N." },    // Av. D, Capital Norte (ubicación aproximada de la calle)
     { lat: 20.673519, lng: -103.371727, zona: "López Cotilla 1701 · Col. Americana, Guadalajara", titulo: "Edificio Luviano · Venta y Renta", precio: "Venta $80,000,000 · Renta completa $500,000" },    // C. Manuel López Cotilla 1701
+    { lat: 20.70266, lng: -103.38426, zona: "Colomos Providencia · Zapopan", titulo: "Casa En Venta / Renta", precio: "$46,900,000.00 M.N." },    // Colomos Providencia (ubicación aproximada de la colonia)
+    { lat: 20.5325, lng: -103.4863, zona: "Residencial Casa Fuerte · Tlajomulco de Zúñiga", titulo: "Casa En Venta", precio: "$6,050,000.00 M.N." },    // Casa Fuerte (ubicación aproximada de la colonia)
+    { lat: 20.56786, lng: -103.47626, zona: "Condominio Laureles, Santa Anita, Tlajomulco", titulo: "Casa En Venta", precio: "$10,800,000.00 M.N." },    // Santa Anita (ubicación aproximada de la colonia)
+    { lat: 20.5319, lng: -103.4898, zona: "Residencial Casa Fuerte · Tlajomulco de Zúñiga", titulo: "Casa En Pre-Venta", precio: "$5,600,000.00 M.N." },    // Casa Fuerte (ubicación aproximada de la colonia)
+    { lat: 20.63354, lng: -103.41665, zona: "Col. La Calma · Zapopan", titulo: "Departamento En Venta", precio: "$2,600,000.00 M.N." },    // La Calma (ubicación aproximada de la colonia)
+    { lat: 20.56254, lng: -103.34128, zona: "Parques Santa Cruz del Valle · Tlaquepaque", titulo: "Casa En Venta", precio: "$2,100,000.00 M.N." },    // Santa Cruz del Valle (ubicación aproximada de la colonia)
+    { lat: 20.68534, lng: -103.43298, zona: "Col. Lomas Universidad · Zapopan", titulo: "Departamento En Venta", precio: "$2,750,000.00 M.N." },    // Lomas Universidad (ubicación aproximada de la colonia)
+    { lat: 20.54575, lng: -103.48839, zona: "Zoí Sur Residencial · Tlajomulco de Zúñiga", titulo: "Casa En Venta", precio: "$4,450,000.00 M.N." },    // Santa Anita (ubicación aproximada de la colonia)
+    { lat: 20.67237, lng: -103.42994, zona: "Col. La Estancia · Zapopan", titulo: "Departamento En Venta", precio: "$3,250,000.00 M.N." },    // La Estancia (ubicación aproximada de la colonia)
+    { lat: 20.69219, lng: -103.4408, zona: "Residencial Parque Virreyes · Zapopan", titulo: "Casa En Venta", precio: "$16,500,000.00 M.N." },    // Virreyes Residencial (ubicación aproximada de la colonia)
+    { lat: 20.70305, lng: -103.40224, zona: "Colinas de San Javier · Zapopan", titulo: "Casa En Renta", precio: "$170,000.00 M.N. / mes" },    // Colinas de San Javier (ubicación aproximada de la colonia)
+    { lat: 20.75281, lng: -103.37968, zona: "Bosques del Centinela · Zapopan", titulo: "Terreno En Venta", precio: "$4,800,000.00 M.N." },    // Bosques Del Centinela (ubicación aproximada de la colonia)
+    { lat: 20.67318, lng: -103.42068, zona: "Prados Guadalupe · Zapopan", titulo: "Departamento En Venta", precio: "$6,290,000.00 M.N." },    // Prados de Guadalupe (ubicación aproximada de la colonia)
+    { lat: 20.7241, lng: -103.45002, zona: "Fracc. Valle Real · Zapopan", titulo: "Casa En Venta", precio: "$16,900,000.00 M.N." },    // Valle Real (ubicación aproximada de la colonia)
+    { lat: 20.6353, lng: -103.4152, zona: "Col. La Calma · Zapopan", titulo: "Casa En Venta", precio: "$5,490,000.00 M.N." },    // La Calma (ubicación aproximada de la colonia)
+    { lat: 20.61472, lng: -103.43027, zona: "Col. Agrícola · Zapopan", titulo: "Casa En Venta", precio: "$4,350,000.00 M.N." },    // Agrícola (ubicación aproximada de la colonia)
+    { lat: 20.65784, lng: -103.44501, zona: "Chapalita Inn · Zapopan", titulo: "Casa En Venta", precio: "$4,980,000.00 M.N." },    // Chapalita Inn (ubicación aproximada de la colonia)
+    { lat: 20.6156, lng: -103.4728, zona: "Ciudad Bugambilias 2da Sección · Zapopan", titulo: "Casa En Venta", precio: "$14,500,000.00 M.N." },    // Ciudad Bugambilias (ubicación aproximada de la colonia)
+    { lat: 20.7397, lng: -103.40727, zona: "Col. Arcos de Zapopan · Zapopan", titulo: "Departamento En Venta", precio: "$1,450,000.00 M.N." },    // Arcos de Zapopan (ubicación aproximada de la colonia)
+    { lat: 20.6145, lng: -103.3993, zona: "Col. Mirador del Tesoro · Tlaquepaque", titulo: "Casa En Venta", precio: "$3,650,000.00 M.N." },    // Mirador del Tesoro (ubicación aproximada de la colonia)
+    { lat: 20.6133, lng: -103.4006, zona: "Col. Mirador del Tesoro · Tlaquepaque", titulo: "Casa En Venta", precio: "$3,300,000.00 M.N." },    // Mirador del Tesoro (ubicación aproximada de la colonia)
+    { lat: 20.43291, lng: -103.33927, zona: "Residencial Tres Reyes · Cajititlán", titulo: "Casa En Venta", precio: "$2,850,000.00 M.N." },    // Cajititlán (ubicación aproximada de la colonia)
+    { lat: 20.6198, lng: -103.4735, zona: "Villa San Pablo, Cd. Bugambilias, Zapopan", titulo: "Casa En Venta", precio: "$8,499,000.00 M.N." },    // Ciudad Bugambilias (ubicación aproximada de la colonia)
+    { lat: 20.533, lng: -103.4827, zona: "Residencial Casa Fuerte · Tlajomulco de Zúñiga", titulo: "Casa En Venta", precio: "$5,500,000.00 M.N." },    // Casa Fuerte (ubicación aproximada de la colonia)
+    { lat: 20.55862, lng: -103.47983, zona: "Sendero de las Moras · Tlajomulco de Zúñiga", titulo: "Casa En Venta", precio: "$4,050,000.00 M.N." },    // Sendero de las Moras (ubicación aproximada de la colonia)
+    { lat: 20.5706, lng: -103.46414, zona: "Coto Los Olmos · Tlajomulco de Zúñiga", titulo: "Casa En Venta", precio: "$7,950,000.00 M.N." },    // Los Olmos (ubicación aproximada de la colonia)
+    { lat: 20.63844, lng: -103.43012, zona: "Col. Paseos del Sol · Zapopan", titulo: "Casa En Venta", precio: "$5,200,000.00 M.N." },    // Paseos del Sol (ubicación aproximada de la colonia)
   ];
 
   let mapaIniciado = false;
@@ -973,9 +1038,13 @@
       );
     });
 
-    // Encuadra los 10 marcadores (incluido Jocotepec)
+    // Encuadra todos los marcadores (incluidos Jocotepec y Cajititlán)
     map.fitBounds(L.latLngBounds(propiedades.map(p => [p.lat, p.lng])), { padding: [40, 40] });
   }
+
+  // Leyenda del mapa: el total sale del arreglo (el número del HTML es solo respaldo)
+  const totalMapa = document.getElementById('mapaTotal');
+  if (totalMapa) totalMapa.textContent = String(propiedades.length);
 
   const contenedorMapa = document.getElementById('map-zmg');
   if ('IntersectionObserver' in window) {

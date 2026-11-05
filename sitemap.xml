@@ -3,10 +3,12 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://inmobiliariademetrius.com/</loc>
-    <lastmod>2026-11-02</lastmod>
+    <lastmod>2026-11-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image><image:loc>https://inmobiliariademetrius.com/og-preview.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/mesa-vista-013.jpg.webp</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/DJI_0375.JPG</image:loc></image:image>
     <image:image><image:loc>https://inmobiliariademetrius.com/edificioluviano.jpg</image:loc></image:image>
     <image:image><image:loc>https://inmobiliariademetrius.com/zoicapitalnorte.jpg</image:loc></image:image>
     <image:image><image:loc>https://inmobiliariademetrius.com/lomasindependenciapreguntan.jpeg</image:loc></image:image>
@@ -20,10 +22,56 @@
     <image:image><image:loc>https://inmobiliariademetrius.com/parquesvallarta.jpeg</image:loc></image:image>
     <image:image><image:loc>https://inmobiliariademetrius.com/depa%20balenty.jpeg</image:loc></image:image>
     <image:image><image:loc>https://inmobiliariademetrius.com/losalmendros.jpeg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta-Renta%2C%20Colomos%20Providencia%2C%20Zapopan.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%2C%20Residencial%20Casa%20Fuerte%2C%20Tlajomulco%20de%20Zu%C3%B1iga.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%20Coto%20Laureles.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Pre-Venta%2C%20Residencial%20Casa%20Fuerte%2C%20Tlajomulco%20de%20Zu%C3%B1iga%20Jalisco%20%F0%9F%8F%A1.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Renta%2C%20Residencial%20Guadalupe%2C%20Zapopan%20%F0%9F%8F%A1.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Departamento%20en%20Venta%2C%20Col.%20La%20Calma%2C%20Zapopan%20%F0%9F%8F%A1.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%2C%20Parques%20Santa%20Cruz%20del%20Valle%2C%20Tlaquepaque.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Departamento%20en%20Venta%2C%20Lomas%20Universidad%2C%20Zapopan%20%F0%9F%8F%A1.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%2C%20Zo%C3%AD%20Sur%20Residencial%2C%20Tlajomulco%20de%20Zu%C3%B1iga.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Departamento%20en%20Venta%2C%20Col.%20La%20Estancia%2C%20Zapopan.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%2C%20Residencial%20Virreyes%2C%20Zapopan.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Renta%2C%20Colinas%20de%20San%20Javier%2C%20Zapopan.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Terreno%20Ejidal%20en%20Venta%2C%20Bosques%20del%20Centinela%2C%20Zapopan.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Departamento%20en%20Venta%2C%20Prados%20Guadalupe%2C%20Zapopan.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%2C%20Valle%20Real%2C%20Zapopan%2C%20Jalisco.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%2C%20Fraccionamiento%20La%20Rioja%2C%20Tlajomulco%20de%20Zu%C3%B1iga%2C%20Jalisco.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%2C%20La%20Calma%2C%20Zapopan%2C%20Jalisco.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%2C%20Col.%20Agr%C3%ADcola%2C%20Zapopan.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%2C%20Chapalita%20In%2C%20Zapopan%2C%20Jalisco.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%2C%20Ciudad%20Bugambilias%2C%20Zapopan%2C%20Jalisco.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Departamento%20en%20Venta%2C%20Arcos%20de%20Zapopan%2C%20Jalisco.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%2C%20Mirador%20del%20Tesoro%2CTlaquepaque%2C%20Jalisco.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%2C%20Col.%20Mirador%20del%20Tesoro%2C%20Tlaquepaque%2C%20Jalisco.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%2C%20Residencial%20Tres%20Reyes%2C%20Cajititlan%2C%20Jalisco.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%2C%20Residencial%20San%20Miguel%2C%20Tlajomulco%20de%20Zu%C3%B1iga.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%20Ciudad%20Bugambilias%2C%20Zapopan.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%2C%20Residencial%20Casa%20Fuerte%2C%20Tlajomulco%20de%20Zu%C3%B1iga%20%282%29.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%20Sendero%20de%20las%20Moras%2C%20Tlajomulco%20de%20zu%C3%B1iga.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%20Coto%20los%20Olmos%2C%20Tlajomulco%20de%20zu%C3%B1iga.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%20Paseos%20del%20Sol%2C%20Zapopan.jpg</image:loc></image:image>
     <image:image><image:loc>https://inmobiliariademetrius.com/residenciasolares.jpeg</image:loc></image:image>
     <image:image><image:loc>https://inmobiliariademetrius.com/casa%20en%20pre-venta.jpg</image:loc></image:image>
     <image:image><image:loc>https://inmobiliariademetrius.com/casa%20en%20venta%20cuidad%20bugambilias.jpg</image:loc></image:image>
     <image:image><image:loc>https://inmobiliariademetrius.com/Casa%20en%20Venta%2C%20Residencial%20Casa%20Fuerte.jpg</image:loc></image:image>
     <image:image><image:loc>https://inmobiliariademetrius.com/asa%20en%20Venta%2C%20Mirador%20del%20Bosque%2C%20Zapopan.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://inmobiliariademetrius.com/yeucate.html</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image><image:loc>https://inmobiliariademetrius.com/DJI_0375.JPG</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/plano-lotes-1920w.png.webp</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/IMG-20261102-WA0009.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/IMG-20261102-WA0016.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/IMG-20261102-WA0012.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/IMG-20261102-WA0010.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/IMG-20261102-WA0015.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/IMG-20261102-WA0007.jpg</image:loc></image:image>
+    <image:image><image:loc>https://inmobiliariademetrius.com/DJI_0388-pueblo.jpg</image:loc></image:image>
   </url>
 </urlset>
