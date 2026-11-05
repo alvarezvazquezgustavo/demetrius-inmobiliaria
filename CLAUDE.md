@@ -118,7 +118,7 @@ Sigue el estándar llmstxt.org. **Este orden se respeta:**
    - Una frase introductoria.
    - Una línea por propiedad vendida, **sin precio**: `- Nombre — Municipio — detalles.`
    - Cierra con `¿Buscas algo similar? Escríbenos por WhatsApp: https://wa.me/5213351070944`.
-   - Hoy contiene: Residencia Solares, Casa Fuerte (pre-venta), Bugambilias 2da Sección (esquina), Residencial Casa Fuerte y Mirador del Bosque.
+   - Hoy contiene: Residencia Solares, Casa Fuerte (pre-venta), Bugambilias 2da Sección (esquina), Residencial Casa Fuerte, Mirador del Bosque, el terreno de Jocotepec y las 31 propiedades del catálogo de WhatsApp (2026-11-05). Las dos de solo renta llevan "(rentada)".
 7. `## Preguntas frecuentes`: enlaces a `#preguntas-frecuentes` y `#testimonios`.
 8. `## Contacto y ubicación`
 9. `## Información legal`: Términos (NOM-247-SE-2021) y Aviso de Privacidad (LFPDPPP).
@@ -159,8 +159,9 @@ Es la versión extendida:
 
 - `tarjeta-oculta`: la tarjeta aparece solo después de "Ver más". Hay 7 visibles al inicio. Cada clic en "Ver más" muestra 9 más, en el orden del HTML. Cuando ya se ven todas, el botón dice "Ver menos propiedades" y vuelve a dejar 7.
 - `prop-destacada`: tarjeta a todo lo ancho, con tres opciones (`.opcion`) que usan `data-wa-msg` y `data-ubicacion`. Hoy solo la usa el Edificio Luviano.
-- `is-vendida` junto con `data-vendida="si"`: foto en gris suave y precio en gris. Además lleva:
-  - `<span class="sello-vendida">Vendida</span>` dentro de `.prop-media`;
+- `is-vendida` junto con `data-vendida="si"`: foto en gris oscuro (`grayscale(.9) brightness(.58)`) y precio en gris. Además lleva:
+  - `<span class="sello-vendida">Vendida</span>` dentro de `.prop-media`. Desde el 2026-11-05 es una **banda dorada en diagonal** (−14°) que cruza toda la foto, con bordes negros y la palabra en letras grandes; el usuario la pidió así para que se note de inmediato que ya se vendió.
+  - En las de solo renta (`data-operacion="renta"`) el sello dice `Rentada` y el mensaje de WhatsApp dice "vi que rentaron…".
   - el CTA `Quiero algo similar →`.
 
 ### Orden actual
@@ -168,10 +169,10 @@ Es la versión extendida:
 1. Edificio Luviano (destacada).
 2. Zoi Capital Norte.
 3. 5 tarjetas visibles originales.
-4. Tarjetas ocultas disponibles: primero las 6 originales y después las 31 del catálogo de WhatsApp, en el orden de ese catálogo (de Colomos Providencia a Paseos del Sol).
-5. **Vendidas al final**, todas ocultas.
+4. Tarjetas ocultas disponibles: las 5 originales que siguen a la venta.
+5. **Vendidas al final**, todas ocultas: las 5 de antes, el terreno de Jocotepec y las 31 del catálogo de WhatsApp, en el orden de ese catálogo (de Colomos Providencia a Paseos del Sol).
 
-Hoy son 49 tarjetas: 44 disponibles y 5 vendidas. El JSON-LD (`OfferCatalog`) tiene `numberOfItems: 51`: Yéucate, el Luviano (que cuenta como dos ofertas, venta y renta), Zoi, `#propiedad-1` a `#propiedad-11`, las nuevas `#propiedad-13` a `#propiedad-43` y las 5 vendidas. Las vendidas llevan `"availability": "https://schema.org/SoldOut"` y un `@id` de la forma `#propiedad-12` o `#vendida-N`. Las de renta usan `LeaseOut` y un `UnitPriceSpecification` mensual (`unitCode: MON`).
+Hoy son 49 tarjetas: 12 disponibles y 37 vendidas (35 "Vendida" y 2 "Rentada"). El JSON-LD (`OfferCatalog`) tiene `numberOfItems: 51`: Yéucate, el Luviano (que cuenta como dos ofertas, venta y renta), Zoi, `#propiedad-1` a `#propiedad-11`, `#propiedad-12` y `#vendida-1` a `#vendida-4`, y `#propiedad-13` a `#propiedad-43` (las del catálogo de WhatsApp). Hay 37 vendidas: llevan `"availability": "https://schema.org/SoldOut"` y "(vendida)" o "(rentada)" al final del `name`; entre ellas están `#propiedad-7` (Jocotepec) y de `#propiedad-13` a `#propiedad-43`. Las de renta usan `LeaseOut` y un `UnitPriceSpecification` mensual (`unitCode: MON`).
 
 ### Lógica relacionada (`js/principal.js`)
 
@@ -182,9 +183,8 @@ Hoy son 49 tarjetas: 44 disponibles y 5 vendidas. El JSON-LD (`OfferCatalog`) ti
   - En las vendidas, el mensaje es "vi que vendieron… busco algo similar" y se envía el evento GA `solicitar_similar_vendida`.
   - La tarjeta destacada usa sus propios `data-wa-msg`.
 - Mapa:
-  - El arreglo `propiedades` tiene 39 marcadores (lat, lng, zona, título y precio). El número de la leyenda (`#mapaTotal`) lo calcula el script a partir del arreglo; el del HTML es solo de respaldo.
-  - Para geocodificar se usa Nominatim. Si la dirección no es exacta, se marca como "ubicación aproximada". Los 27 marcadores nuevos están en el centro de su colonia; cuando hay varias casas en la misma colonia, se separaron unos metros para que no se encimen.
-  - Sin marcador, porque no se encontró la colonia: Residencial Guadalupe (renta), La Rioja, Residencial San Miguel y La Esmeralda. Mirador del Tesoro se ubicó cerca de la estación del Tren Ligero "Santuario Mártires de Cristo Rey" (antes "Tesoro").
+  - El arreglo `propiedades` tiene 11 marcadores (lat, lng, zona, título y precio), **solo de propiedades disponibles**: las vendidas no van en el mapa. El número de la leyenda (`#mapaTotal`) lo calcula el script a partir del arreglo; el del HTML es solo de respaldo.
+  - Para geocodificar se usa Nominatim. Si la dirección no es exacta, se marca como "ubicación aproximada".
 
 ## 5b. Encabezado, portada y desarrollo Yéucate (2026-11-04)
 
@@ -283,6 +283,7 @@ Hoy son 49 tarjetas: 44 disponibles y 5 vendidas. El JSON-LD (`OfferCatalog`) ti
 | `451db5a` | Propiedades vendidas con etiqueta "Vendida" |
 | `25dc86e` | Notas del proyecto (`CLAUDE.md`) |
 | `1a789ba` | Logo nuevo en la imagen para redes |
+| `a392209` | Portada nueva, desarrollo Yéucate y 31 propiedades del catálogo de WhatsApp |
 
 ## 10. Cómo se prueba
 
@@ -316,12 +317,4 @@ Hoy son 49 tarjetas: 44 disponibles y 5 vendidas. El JSON-LD (`OfferCatalog`) ti
 - [ ] Confirmar la autorización del desarrollador de Yéucate para publicar su plano, sus datos y las fotos de la obra.
 - [ ] (Opcional) Borrar la reseña "Prueba de conexión" en Supabase. No es urgente: está sin aprobar, así que no aparece en la web.
 - [x] ~~(Opcional) Enviar capturas del catálogo de WhatsApp para compararlo con la web.~~ Llegó como carpeta `Catalogo_Demetrius_Inmobiliaria` y se agregaron 31 propiedades (2026-11-04).
-- [ ] Confirmar si alguna de las 31 propiedades nuevas ya se vendió. El catálogo de WhatsApp todavía muestra casas que en la web están como vendidas (fichas 2, 7, 9 y 12).
-- [ ] Confirmar 4 precios en los que la ficha y su descripción no coinciden. En la web se usó el precio de la ficha:
-  - Virreyes: $16,500,000 en la ficha, $16,900,000 en la descripción.
-  - Prados Guadalupe: $6,290,000 / $6,700,000.
-  - Casa La Calma: $5,490,000 / $5,750,000.
-  - Mirador del Tesoro (la segunda): $3,300,000 / $3,620,000.
-- [ ] Terreno de Jocotepec: en la web dice $36,400,000, pero el catálogo de WhatsApp dice $27,000,000 a negociar. **No se cambió**; falta que el usuario confirme el precio.
-- [ ] Dar la colonia o una referencia para ubicar en el mapa Residencial Guadalupe, La Rioja, Residencial San Miguel y La Esmeralda.
-- [ ] (Opcional) Dar los datos de Sendero de las Moras ($4,050,000): el catálogo no trae recámaras, baños ni metros.
+- [x] ~~Confirmar si alguna de las 31 propiedades nuevas ya se vendió.~~ El 2026-11-05 el usuario confirmó, con capturas del catálogo de WhatsApp (de Colomos Providencia a Paseos del Sol), que **todas** se vendieron. Se pasaron a vendidas, junto con el terreno de Jocotepec (la ficha "Terreno a la Venta, Ajijic" de 10,413 m² aparece en esas capturas). Terraza Constitución, Bosques/Parques Vallarta y Balanty no venían en las capturas y siguen disponibles.
