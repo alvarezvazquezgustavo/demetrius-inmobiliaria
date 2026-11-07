@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<script src="../js/inicio.js"></script>
+<title>Panel del equipo | Demetrius Grupo Inmobiliario</title>
+<meta name="theme-color" content="#0D0D0D">
+<link rel="icon" href="../favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="192x192" href="../icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha384-c6Rcwz4e4CITMbu/NBmnNS8yN2sC3cUElMEMfP3vqqKFp7GOYaaBBCqmaWBjmkjb" crossorigin="anonymous" referrerpolicy="no-referrer">
+<link rel="stylesheet" href="../css/estilos.css">
+<link rel="stylesheet" href="../css/panel.css">
+</head>
+<body class="pn-body">
+<a class="skip-link" href="#pnMain">Saltar al contenido</a>
+
+<header class="pn-top">
+  <a class="pn-logo" href="./" aria-label="Panel del equipo — inicio">
+    <img src="../img/logo-demetrius.png" alt="Demetrius Grupo Inmobiliario" width="900" height="188">
+    <span>Panel</span>
+  </a>
+  <nav class="pn-nav" id="pnNav" aria-label="Secciones del panel" hidden>
+    <a href="#mis" data-vista="mis">Mis propiedades</a>
+    <a href="#nueva" data-vista="nueva">Cargar propiedad</a>
+    <a href="#validacion" data-vista="validacion" data-solo-admin hidden>Validación <span class="pn-contador" id="pnContador" hidden></span></a>
+    <a href="#todas" data-vista="todas" data-solo-admin hidden>Todas</a>
+    <a href="#equipo" data-vista="equipo" data-solo-admin hidden>Equipo</a>
+    <a href="../index.html">Ver la página</a>
+  </nav>
+  <div class="pn-usuario" id="pnUsuario" hidden>
+    <div class="pn-usuario-datos">
+      <span class="pn-usuario-nombre" id="pnNombre"></span>
+      <span class="pn-rol" id="pnRol"></span>
+    </div>
+    <button type="button" class="pn-btn pn-btn-fantasma" id="pnCambiarClave">Contraseña</button>
+    <button type="button" class="pn-btn pn-btn-borde" id="pnSalir">Cerrar sesión</button>
+  </div>
+</header>
+
+<main class="pn-main" id="pnMain" tabindex="-1">
+  <div class="pn-cargando" id="pnCargando">Cargando tu panel…</div>
+  <p class="pn-error" id="pnErrorGlobal" role="alert" hidden></p>
+
+  <!-- ============ MIS PROPIEDADES ============ -->
+  <section class="pn-vista" id="vista-mis" hidden aria-labelledby="misTitulo">
+    <div class="pn-vista-head">
+      <div>
+        <h1 id="misTitulo">Mis propiedades</h1>
+        <p>Puedes editar tus propiedades mientras estén en <b>borrador</b> o <b>rechazadas</b>. Cuando estén listas, envíalas a validación; el administrador las revisa antes de publicarlas.</p>
+      </div>
+      <a class="pn-btn pn-btn-primario" href="#nueva">+ Cargar propiedad</a>
+    </div>
+    <div class="pn-lista" id="listaMis" aria-live="polite"></div>
+    <div class="pn-vacio" id="vacioMis" hidden>
+      <h2>Aún no tienes propiedades</h2>
+      <p>Carga la primera: llena sus datos, agrega fotos y envíala a validación.</p>
+      <a class="pn-btn pn-btn-primario" href="#nueva">+ Cargar propiedad</a>
+    </div>
+  </section>
+
+  <!-- ============ FORMULARIO (cargar / editar) ============ -->
+  <section class="pn-vista" id="vista-formulario" hidden aria-labelledby="formTitulo">
+    <div class="pn-vista-head">
+      <div>
+        <a class="pn-volver" href="#mis" data-salir-form>← Mis propiedades</a>
+        <h1 id="formTitulo">Cargar propiedad</h1>
+        <p id="formSub">Llena los datos y agrega fotos. Puedes guardarla como borrador y enviarla a validación cuando esté lista. Los campos con <span class="pn-req">*</span> son obligatorios.</p>
+      </div>
+      <span class="pn-estado" id="formEstado" hidden></span>
+    </div>
+
+    <div class="pn-comentario" id="formComentario" hidden><b>Comentario del administrador</b><span id="formComentarioTexto"></span></div>
+
+    <form class="pn-form" id="formPropiedad" novalidate>
+      <p class="pn-error" id="formError" role="alert" tabindex="-1" hidden></p>
+
+      <fieldset class="pn-bloque">
+        <legend>Datos generales</legend>
+        <div class="pn-campo">
+          <label for="fTitulo">Título <span class="pn-req">*</span></label>
+          <input id="fTitulo" maxlength="120" placeholder="Ej. Casa en venta en coto con alberca" aria-describedby="fTituloAyuda fTituloError">
+          <p class="pn-ayuda" id="fTituloAyuda">De 5 a 120 caracteres. Es el texto grande de la tarjeta.</p>
+          <p class="pn-error-campo" id="fTituloError" hidden></p>
+        </div>
+        <div class="pn-fila">
+          <div class="pn-campo">
+            <label for="fTipo">Tipo <span class="pn-req">*</span></label>
+            <select id="fTipo" aria-describedby="fTipoError">
+              <option value="">Elige el tipo…</option>
+              <option value="casa">Casa</option>
+              <option value="departamento">Departamento</option>
+              <option value="terreno">Terreno</option>
+              <option value="bodega">Bodega</option>
+              <option value="local">Local comercial</option>
+              <option value="oficina">Oficina</option>
+              <option value="terraza">Terraza (salón de eventos)</option>
+              <option value="edificio">Edificio</option>
+            </select>
+            <p class="pn-error-campo" id="fTipoError" hidden></p>
+          </div>
+          <div class="pn-campo">
+            <label for="fOperacion">Operación <span class="pn-req">*</span></label>
+            <select id="fOperacion">
+              <option value="venta">Venta</option>
+              <option value="renta">Renta</option>
+              <option value="venta renta">Venta y renta</option>
+            </select>
+          </div>
+        </div>
+        <div class="pn-campo">
+          <label for="fEtiqueta">Etiqueta (opcional)</label>
+          <input id="fEtiqueta" maxlength="40" placeholder="Ej. Coto con amenidades" aria-describedby="fEtiquetaAyuda fEtiquetaError">
+          <p class="pn-ayuda" id="fEtiquetaAyuda">Es la cinta dorada de la tarjeta. Máximo 40 caracteres.</p>
+          <p class="pn-error-campo" id="fEtiquetaError" hidden></p>
+        </div>
+        <div class="pn-checks">
+          <label class="pn-check"><input type="checkbox" id="fCoto"> Está en coto residencial</label>
+          <label class="pn-check"><input type="checkbox" id="fPreventa"> Es preventa</label>
+        </div>
+      </fieldset>
+
+      <fieldset class="pn-bloque">
+        <legend>Precio</legend>
+        <div class="pn-fila">
+          <div class="pn-campo" id="campoPrecioVenta">
+            <label for="fPrecioVenta">Precio de venta en pesos <span class="pn-req">*</span></label>
+            <input id="fPrecioVenta" inputmode="numeric" autocomplete="off" placeholder="Ej. 3,500,000" aria-describedby="fPrecioVentaVista fPrecioVentaError">
+            <p class="pn-ayuda" id="fPrecioVentaVista">Así se verá: —</p>
+            <p class="pn-error-campo" id="fPrecioVentaError" hidden></p>
+          </div>
+          <div class="pn-campo" id="campoPrecioRenta" hidden>
+            <label for="fPrecioRenta">Renta mensual en pesos <span class="pn-req">*</span></label>
+            <input id="fPrecioRenta" inputmode="numeric" autocomplete="off" placeholder="Ej. 25,000" aria-describedby="fPrecioRentaVista fPrecioRentaError">
+            <p class="pn-ayuda" id="fPrecioRentaVista">Así se verá: —</p>
+            <p class="pn-error-campo" id="fPrecioRentaError" hidden></p>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="pn-bloque">
+        <legend>Ubicación</legend>
+        <div class="pn-fila">
+          <div class="pn-campo">
+            <label for="fMunicipio">Ciudad o municipio <span class="pn-req">*</span></label>
+            <select id="fMunicipio" aria-describedby="fMunicipioError">
+              <option value="">Elige el municipio…</option>
+              <option value="guadalajara">Guadalajara</option>
+              <option value="zapopan">Zapopan</option>
+              <option value="tlaquepaque">Tlaquepaque</option>
+              <option value="tonala">Tonalá</option>
+              <option value="elsalto">El Salto</option>
+              <option value="juanacatlan">Juanacatlán</option>
+              <option value="tlajomulco">Tlajomulco de Zúñiga</option>
+              <option value="chapala">Chapala</option>
+              <option value="jocotepec">Jocotepec</option>
+              <option value="mazamitla">Mazamitla</option>
+              <option value="tapalpa">Tapalpa</option>
+              <option value="vallarta">Puerto Vallarta</option>
+            </select>
+            <p class="pn-error-campo" id="fMunicipioError" hidden></p>
+          </div>
+          <div class="pn-campo">
+            <label for="fColonia">Colonia <span class="pn-req">*</span></label>
+            <input id="fColonia" maxlength="80" placeholder="Ej. Providencia" aria-describedby="fColoniaError">
+            <p class="pn-error-campo" id="fColoniaError" hidden></p>
+          </div>
+        </div>
+        <div class="pn-campo">
+          <span class="pn-label" id="fMapaEtiqueta">Ubicación en el mapa (opcional)</span>
+          <p class="pn-ayuda">Toca el mapa para marcar dónde está la propiedad. Si no la marcas, no aparece en el mapa de la página.</p>
+          <div class="pn-mapa" id="fMapa" role="region" aria-labelledby="fMapaEtiqueta"></div>
+          <div class="pn-mapa-pie">
+            <span id="fCoordenadas">Sin ubicación marcada</span>
+            <button type="button" class="pn-btn pn-btn-fantasma" id="fQuitarUbicacion" hidden>Quitar ubicación</button>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="pn-bloque">
+        <legend>Medidas y espacios</legend>
+        <div class="pn-fila pn-fila-5">
+          <div class="pn-campo">
+            <label for="fTerreno">Terreno (m²)</label>
+            <input id="fTerreno" inputmode="decimal" autocomplete="off" aria-describedby="fTerrenoError">
+            <p class="pn-error-campo" id="fTerrenoError" hidden></p>
+          </div>
+          <div class="pn-campo">
+            <label for="fConstruccion">Construcción (m²)</label>
+            <input id="fConstruccion" inputmode="decimal" autocomplete="off" aria-describedby="fConstruccionError">
+            <p class="pn-error-campo" id="fConstruccionError" hidden></p>
+          </div>
+          <div class="pn-campo">
+            <label for="fRecamaras">Recámaras</label>
+            <input id="fRecamaras" type="number" min="0" max="50" step="1" inputmode="numeric" aria-describedby="fRecamarasError">
+            <p class="pn-error-campo" id="fRecamarasError" hidden></p>
+          </div>
+          <div class="pn-campo">
+            <label for="fBanos">Baños</label>
+            <input id="fBanos" type="number" min="0" max="50" step="0.5" inputmode="decimal" aria-describedby="fBanosAyuda fBanosError">
+            <p class="pn-ayuda" id="fBanosAyuda">Medio baño = .5</p>
+            <p class="pn-error-campo" id="fBanosError" hidden></p>
+          </div>
+          <div class="pn-campo">
+            <label for="fEstacionamientos">Estacionamientos</label>
+            <input id="fEstacionamientos" type="number" min="0" max="200" step="1" inputmode="numeric" aria-describedby="fEstacionamientosError">
+            <p class="pn-error-campo" id="fEstacionamientosError" hidden></p>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="pn-bloque">
+        <legend>Descripción y amenidades</legend>
+        <div class="pn-campo">
+          <label for="fDescripcion">Descripción</label>
+          <textarea id="fDescripcion" rows="7" maxlength="4000" placeholder="Describe la propiedad: distribución, acabados, cercanía a servicios…" aria-describedby="fDescripcionContador"></textarea>
+          <p class="pn-ayuda"><span id="fDescripcionContador">0</span> de 4,000 caracteres</p>
+        </div>
+        <div class="pn-campo">
+          <span class="pn-label">Amenidades</span>
+          <div class="pn-amenidades" id="fAmenidades">
+            <label class="pn-check"><input type="checkbox" value="Alberca"> Alberca</label>
+            <label class="pn-check"><input type="checkbox" value="Jardín"> Jardín</label>
+            <label class="pn-check"><input type="checkbox" value="Roof garden"> Roof garden</label>
+            <label class="pn-check"><input type="checkbox" value="Terraza"> Terraza</label>
+            <label class="pn-check"><input type="checkbox" value="Asador"> Asador</label>
+            <label class="pn-check"><input type="checkbox" value="Gimnasio"> Gimnasio</label>
+            <label class="pn-check"><input type="checkbox" value="Casa club"> Casa club</label>
+            <label class="pn-check"><input type="checkbox" value="Área de juegos infantiles"> Área de juegos infantiles</label>
+            <label class="pn-check"><input type="checkbox" value="Seguridad 24/7"> Seguridad 24/7</label>
+            <label class="pn-check"><input type="checkbox" value="Acceso controlado"> Acceso controlado</label>
+            <label class="pn-check"><input type="checkbox" value="Elevador"> Elevador</label>
+            <label class="pn-check"><input type="checkbox" value="Cuarto de servicio"> Cuarto de servicio</label>
+            <label class="pn-check"><input type="checkbox" value="Estudio"> Estudio</label>
+            <label class="pn-check"><input type="checkbox" value="Bodega"> Bodega</label>
+            <label class="pn-check"><input type="checkbox" value="Cocina integral"> Cocina integral</label>
+            <label class="pn-check"><input type="checkbox" value="Aire acondicionado"> Aire acondicionado</label>
+            <label class="pn-check"><input type="checkbox" value="Amueblada"> Amueblada</label>
+            <label class="pn-check"><input type="checkbox" value="Acepta mascotas"> Acepta mascotas</label>
+            <label class="pn-check"><input type="checkbox" value="Paneles solares"> Paneles solares</label>
+            <label class="pn-check"><input type="checkbox" value="Cisterna"> Cisterna</label>
+          </div>
+          <label for="fAmenidadesOtras">Otras amenidades (sepáralas con comas)</label>
+          <input id="fAmenidadesOtras" maxlength="600" placeholder="Ej. Vista al lago, Cancha de pádel" aria-describedby="fAmenidadesOtrasError">
+          <p class="pn-error-campo" id="fAmenidadesOtrasError" hidden></p>
+        </div>
+      </fieldset>
+
+      <fieldset class="pn-bloque">
+        <legend>Fotos</legend>
+        <p class="pn-ayuda">Hasta 20 fotos JPG, PNG o WebP. La <b>primera es la portada</b>; usa las flechas para cambiar el orden. Las fotos se reducen automáticamente antes de subirse, así que puedes usar las de tu celular.</p>
+        <label class="pn-subir" id="fSubir">
+          <input type="file" id="fFotos" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" multiple aria-describedby="fFotosError">
+          <b>+ Agregar fotos</b>
+          <span>Toca aquí o arrastra las fotos a este recuadro</span>
+        </label>
+        <p class="pn-error-campo" id="fFotosError" hidden></p>
+        <ol class="pn-fotos" id="fFotosLista" aria-label="Fotos de la propiedad"></ol>
+      </fieldset>
+
+      <div class="pn-acciones-form">
+        <p class="pn-progreso" id="formProgreso" role="status" aria-live="polite"></p>
+        <a class="pn-btn pn-btn-fantasma" href="#mis" data-salir-form>Cancelar</a>
+        <button type="submit" class="pn-btn pn-btn-borde" id="btnGuardar" data-accion="guardar">Guardar borrador</button>
+        <button type="submit" class="pn-btn pn-btn-primario" id="btnEnviar" data-accion="enviar">Guardar y enviar a validación</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ============ VALIDACIÓN (admin) ============ -->
+  <section class="pn-vista" id="vista-validacion" hidden aria-labelledby="valTitulo">
+    <div class="pn-vista-head">
+      <div>
+        <h1 id="valTitulo">Por validar</h1>
+        <p>Revisa cada propiedad. Al <b>aprobarla</b> se publica en la página de inmediato; si la <b>rechazas</b>, escribe qué debe corregir el asesor.</p>
+      </div>
+    </div>
+    <div class="pn-lista" id="listaValidacion" aria-live="polite"></div>
+    <div class="pn-vacio" id="vacioValidacion" hidden>
+      <h2>No hay propiedades por validar</h2>
+      <p>Cuando un asesor envíe una propiedad, aparecerá aquí.</p>
+    </div>
+  </section>
+
+  <!-- ============ TODAS (admin) ============ -->
+  <section class="pn-vista" id="vista-todas" hidden aria-labelledby="todasTitulo">
+    <div class="pn-vista-head">
+      <div>
+        <h1 id="todasTitulo">Todas las propiedades</h1>
+        <p>Despublica una propiedad, márcala como vendida o rentada, o vuelve a publicarla.</p>
+      </div>
+    </div>
+    <div class="pn-filtros" id="filtrosTodas" role="group" aria-label="Filtrar por estado">
+      <button type="button" class="chip active" data-estado="" aria-pressed="true">Todas</button>
+      <button type="button" class="chip" data-estado="publicada" aria-pressed="false">Publicadas</button>
+      <button type="button" class="chip" data-estado="en_validacion" aria-pressed="false">En validación</button>
+      <button type="button" class="chip" data-estado="borrador" aria-pressed="false">Borradores</button>
+      <button type="button" class="chip" data-estado="rechazada" aria-pressed="false">Rechazadas</button>
+      <button type="button" class="chip" data-estado="vendida,rentada" aria-pressed="false">Vendidas y rentadas</button>
+    </div>
+    <div class="pn-lista" id="listaTodas" aria-live="polite"></div>
+    <div class="pn-vacio" id="vacioTodas" hidden>
+      <h2>No hay propiedades con este estado</h2>
+    </div>
+  </section>
+
+  <!-- ============ EQUIPO (admin) ============ -->
+  <section class="pn-vista" id="vista-equipo" hidden aria-labelledby="equipoTitulo">
+    <div class="pn-vista-head">
+      <div>
+        <h1 id="equipoTitulo">Equipo</h1>
+        <p>Las cuentas se crean en Supabase (Authentication → Users → Add user) y entran <b>desactivadas</b>. Aquí las activas, les pones nombre y eliges su rol.</p>
+      </div>
+    </div>
+    <div class="pn-equipo" id="listaEquipo" aria-live="polite"></div>
+  </section>
+</main>
+
+<div class="pn-toast" id="pnToast" role="status" aria-live="polite" hidden></div>
+
+<!-- Confirmaciones -->
+<dialog class="pn-dialogo" id="dlgConfirmar" aria-labelledby="dlgConfirmarTitulo">
+  <form method="dialog" id="dlgConfirmarForm" novalidate>
+    <h2 id="dlgConfirmarTitulo">¿Confirmas?</h2>
+    <p id="dlgConfirmarTexto"></p>
+    <div class="pn-campo" id="dlgConfirmarCampo" hidden>
+      <label for="dlgConfirmarComentario" id="dlgConfirmarEtiqueta">Comentario</label>
+      <textarea id="dlgConfirmarComentario" rows="4" maxlength="1000" aria-describedby="dlgConfirmarError"></textarea>
+      <p class="pn-error-campo" id="dlgConfirmarError" hidden></p>
+    </div>
+    <div class="pn-dialogo-acciones">
+      <button type="button" class="pn-btn pn-btn-fantasma" id="dlgConfirmarCancelar">Cancelar</button>
+      <button type="submit" class="pn-btn pn-btn-primario" id="dlgConfirmarAceptar">Confirmar</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Cambiar contraseña -->
+<dialog class="pn-dialogo" id="dlgClave" aria-labelledby="dlgClaveTitulo">
+  <form id="dlgClaveForm" novalidate>
+    <h2 id="dlgClaveTitulo">Cambiar mi contraseña</h2>
+    <p>Usa al menos 8 caracteres. Te recomendamos combinar letras y números.</p>
+    <input type="email" id="dlgClaveUsuario" autocomplete="username" hidden readonly>
+    <div class="pn-campo">
+      <label for="dlgClaveNueva">Nueva contraseña</label>
+      <input id="dlgClaveNueva" type="password" autocomplete="new-password" minlength="8" maxlength="72">
+    </div>
+    <div class="pn-campo">
+      <label for="dlgClaveRepetir">Repite la nueva contraseña</label>
+      <input id="dlgClaveRepetir" type="password" autocomplete="new-password" minlength="8" maxlength="72">
+    </div>
+    <p class="pn-error" id="dlgClaveError" role="alert" hidden></p>
+    <div class="pn-dialogo-acciones">
+      <button type="button" class="pn-btn pn-btn-fantasma" id="dlgClaveCancelar">Cancelar</button>
+      <button type="submit" class="pn-btn pn-btn-primario" id="dlgClaveGuardar">Guardar contraseña</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha384-NElt3Op+9NBMCYaef5HxeJmU4Xeard/Lku8ek6hoPTvYkQPh3zLIrJP7KiRocsxO" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="../js/config.js"></script>
+<script src="../js/vendor/supabase-2.118.0.js"></script>
+<script src="../js/propiedades-publicas.js"></script>
+<script src="../js/panel-comun.js"></script>
+<script src="../js/panel.js"></script>
+</body>
+</html>

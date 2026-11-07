@@ -19,10 +19,10 @@
     MAP_TILES_URL: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     EASYBROKER_PROXY_URL: "", // p. ej. "/.netlify/functions/easybroker" (la llave va en .env)
     MAPS_PUBLIC_KEY: "",      // solo si en el futuro usas un proveedor de mapas con llave pública restringida por dominio
-    // Reseñas (Supabase). La URL y la llave PUBLICABLE son públicas por diseño: la seguridad la dan
-    // las reglas RLS de supabase/resenas.sql. NUNCA pongas aquí la llave secreta / service_role.
-    SUPABASE_URL: "https://tnzewcoqimldxwmvwbxi.supabase.co",
-    SUPABASE_ANON_KEY: "sb_publishable_KFbJFxQLzn-IxVetjEOhlg_5WMnvA53", // llave publicable: pública por diseño, protegida por RLS
+    // Reseñas y propiedades (Supabase). La URL y la llave PUBLICABLE viven en js/config.js (un solo lugar);
+    // son públicas por diseño y las protegen las reglas RLS de supabase/. NUNCA pongas aquí la llave secreta / service_role.
+    SUPABASE_URL: (window.DEMETRIUS_CONFIG || {}).SUPABASE_URL || "",
+    SUPABASE_ANON_KEY: (window.DEMETRIUS_CONFIG || {}).SUPABASE_ANON_KEY || "",
     RESENAS_POR_PAGINA: 6
   });
 
@@ -298,7 +298,8 @@
      CATÁLOGO: filtros, buscador, "Ver más" y fichas por WhatsApp
      ========================================================= */
   const propGrid = $('#propGrid');
-  const tarjetas = $$('.prop-card', propGrid);
+  // "let": las propiedades del panel (Supabase) se agregan después de cargar la página
+  let tarjetas = $$('.prop-card', propGrid);
   const btnVerMas = $('#btn-ver-mas');
   const catalogStatus = $('#catalogStatus');
   const catalogEmpty = $('#catalogEmpty');
@@ -313,12 +314,22 @@
     colonia: '',
     min: 0,
     max: Infinity,
+    recamaras: 0, // mínimo de recámaras (0 = cualquiera)
     expandido: false,
     extra: 0 // tarjetas ocultas que ya se mostraron con "Ver más"
   };
   // "Ver más" muestra las tarjetas ocultas de 9 en 9 (3 filas en computadora)
   const TARJETAS_POR_CLIC = 9;
-  const tarjetasOcultas = tarjetas.filter(card => card.classList.contains('tarjeta-oculta'));
+  let tarjetasOcultas = tarjetas.filter(card => card.classList.contains('tarjeta-oculta'));
+  const VISIBLES_INICIALES = tarjetas.length - tarjetasOcultas.length; // hoy, 7
+
+  // Recámaras de las tarjetas escritas a mano: se leen de "3 rec." (sin cambiar el HTML) para el filtro de recámaras
+  // (cada dato por separado: "Seguridad 24/7" + "3 rec." no debe leerse como 73)
+  tarjetas.forEach(card => {
+    if (card.dataset.recamaras) return;
+    const dato = $$('.prop-meta span', card).map(s => s.textContent.match(/^\s*(\d+)\s*rec/i)).find(Boolean);
+    if (dato) card.dataset.recamaras = dato[1];
+  });
 
   const normalizar = (t) => (t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
   const textoSelect = (sel) => sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : '';
@@ -349,7 +360,9 @@
     if (estadoCatalogo.colonia && normalizar(d.colonia) !== normalizar(estadoCatalogo.colonia)) return false;
     // En búsquedas de renta se compara contra el precio de renta (data-precio-renta) si la propiedad lo tiene
     const precio = Number((estadoCatalogo.operacion === 'Rentar' && d.precioRenta) ? d.precioRenta : (d.precio || 0));
-    return precio >= estadoCatalogo.min && precio <= estadoCatalogo.max;
+    if (precio < estadoCatalogo.min || precio > estadoCatalogo.max) return false;
+    // Recámaras: "3 o más" deja fuera las que no dicen cuántas tienen (terrenos, bodegas…)
+    return !estadoCatalogo.recamaras || Number(d.recamaras || 0) >= estadoCatalogo.recamaras;
   }
 
   function resumenBusqueda() {
@@ -359,6 +372,7 @@
       partes.push(`Municipio: ${textoSelect(municipioSelect)}`);
       if (estadoCatalogo.colonia) partes.push(`Colonia: ${estadoCatalogo.colonia}`);
       partes.push(`Presupuesto: ${textoSelect($('#presupuestoSelect'))}`);
+      if (estadoCatalogo.recamaras) partes.push(`Recámaras: ${textoSelect($('#recamarasSelect'))}`);
     }
     if (estadoCatalogo.tipo !== 'todas') partes.push(`Tipo: ${nombresFiltro[estadoCatalogo.tipo]}`);
     return partes;
@@ -441,7 +455,8 @@
       municipio: municipioSelect.value,
       colonia: coloniaSelect.value,
       min: Number(min) || 0,
-      max: max ? Number(max) : Infinity
+      max: max ? Number(max) : Infinity,
+      recamaras: Number(($('#recamarasSelect') || {}).value) || 0
     });
     renderCatalogo();
     irAResultados();
@@ -450,7 +465,8 @@
       operacion,
       municipio: textoSelect(municipioSelect),
       colonia: estadoCatalogo.colonia || 'Todas',
-      presupuesto: textoSelect($('#presupuestoSelect'))
+      presupuesto: textoSelect($('#presupuestoSelect')),
+      recamaras: estadoCatalogo.recamaras || 'Cualquiera'
     });
   });
 
@@ -459,10 +475,16 @@
   });
 
   // "Ver ficha →" abre WhatsApp con la propiedad, zona y precio exactos
-  tarjetas.forEach(card => {
+  // (en las propiedades cargadas desde el panel abre su ficha: propiedad.html?id=…)
+  function prepararCta(card) {
     const cta = $('.prop-cta', card);
     if (!cta) return; // las tarjetas destacadas traen sus propios botones (data-wa-msg)
     const d = datosTarjeta(card);
+    if (card.dataset.origen === 'panel' && card.dataset.vendida !== 'si') {
+      cta.setAttribute('aria-label', `Ver ficha de ${d.titulo} en ${d.zona}`);
+      cta.addEventListener('click', () => track('ver_ficha_propiedad', { propiedad: d.titulo, zona: d.zona, precio: d.precio }));
+      return;
+    }
     if (card.dataset.vendida === 'si') {
       // Las de solo renta se marcan como "Rentada"; el resto como "Vendida"
       const rentada = card.dataset.operacion === 'renta';
@@ -474,9 +496,59 @@
     cta.href = waLink(`Hola Demetrius Grupo Inmobiliario, me interesa ver la ficha de: ${d.titulo} en ${d.zona} (${d.precio})`);
     cta.setAttribute('aria-label', `Ver ficha de ${d.titulo} en ${d.zona} por WhatsApp`);
     cta.addEventListener('click', () => track('solicitar_ficha_propiedad', { propiedad: d.titulo, zona: d.zona, precio: d.precio }));
-  });
+  }
+  tarjetas.forEach(prepararCta);
 
   renderCatalogo();
+
+  /* ---------------------------------------------------------
+     Propiedades del panel del equipo (Supabase): solo las publicadas
+     (y las vendidas/rentadas). Las disponibles van después del Edificio
+     Luviano; las vendidas, antes de las vendidas escritas a mano.
+     Si no hay conexión, el catálogo escrito a mano sigue igual.
+     --------------------------------------------------------- */
+  // Colonias nuevas de las propiedades del panel → se agregan al buscador
+  function agregarColonias(lista) {
+    let cambio = false;
+    lista.forEach(p => {
+      const data = colonias[p.municipio];
+      if (!data || !p.colonia) return;
+      const existe = [...data.populares, ...data.resto].some(c => normalizar(c) === normalizar(p.colonia));
+      if (!existe) { data.resto.push(p.colonia); cambio = true; }
+    });
+    if (cambio && municipioSelect.value !== 'todos') {
+      const elegida = coloniaSelect.value;
+      actualizarColonias();
+      coloniaSelect.value = elegida;
+    }
+  }
+
+  // Vuelve a calcular qué tarjetas quedan ocultas detrás de "Ver más" (las primeras 7 se ven)
+  function recalcularTarjetas() {
+    tarjetas = $$('.prop-card', propGrid);
+    tarjetas.forEach((card, i) => card.classList.toggle('tarjeta-oculta', i >= VISIBLES_INICIALES));
+    tarjetasOcultas = tarjetas.filter(card => card.classList.contains('tarjeta-oculta'));
+    estadoCatalogo.extra = Math.min(estadoCatalogo.extra, tarjetasOcultas.length);
+  }
+
+  const panelPropiedades = window.DemetriusPropiedades;
+  if (panelPropiedades && panelPropiedades.configurado) {
+    panelPropiedades.listar().then(lista => {
+      if (!lista.length) return;
+      const disponibles = lista.filter(p => p.estado === 'publicada');
+      const vendidas = lista.filter(p => p.estado !== 'publicada');
+      const destacada = $('.prop-destacada', propGrid);
+      const anclaDisponibles = destacada ? destacada.nextElementSibling : propGrid.firstElementChild;
+      const anclaVendidas = $('.prop-card.is-vendida', propGrid); // null = al final
+      disponibles.forEach(p => propGrid.insertBefore(panelPropiedades.crearTarjeta(p, el), anclaDisponibles));
+      vendidas.forEach(p => propGrid.insertBefore(panelPropiedades.crearTarjeta(p, el), anclaVendidas));
+      $$('.prop-card[data-origen="panel"]', propGrid).forEach(prepararCta);
+      agregarColonias(lista);
+      recalcularTarjetas();
+      renderCatalogo();
+      agregarAlMapa(disponibles);
+    }).catch(() => { /* sin conexión: se queda el catálogo escrito a mano */ });
+  }
 
   // Esqueleto: marca como cargadas las fotos que ya estaban en caché
   $$('.prop-media').forEach(media => {
@@ -979,21 +1051,42 @@
   ];
 
   let mapaIniciado = false;
+  let mapa = null;
+  let goldIcon = null;
+
+  // Un marcador por propiedad. Las del panel (con "url") llevan a su ficha; las demás, a WhatsApp.
+  function agregarMarcador(p) {
+    const mensaje = `Hola Demetrius Grupo Inmobiliario, me interesa la propiedad del mapa: ${p.titulo} en ${p.zona.replace(/\s*·\s*/g, ', ').replace(/\.$/, '')} (${p.precio})`;
+    const cta = p.url
+      ? el('a', { clase: 'popup-cta', href: p.url, 'data-ubicacion': 'mapa' }, 'Ver ficha →')
+      : el('a', { clase: 'popup-cta', href: waLink(mensaje), target: '_blank', rel: 'noopener noreferrer', 'data-ubicacion': 'mapa' }, 'Solicitar información →');
+    L.marker([p.lat, p.lng], { icon: goldIcon, title: `${p.titulo} · ${p.zona}`, alt: `${p.titulo} · ${p.zona}` }).addTo(mapa).bindPopup(
+      el('div', {},
+        el('div', { clase: 'popup-zone' }, p.zona),
+        el('div', { clase: 'popup-title' }, p.titulo),
+        el('div', { clase: 'popup-price' }, p.precio),
+        cta)
+    );
+  }
+
+  // Encuadra todos los marcadores
+  const encuadrarMapa = () => mapa.fitBounds(L.latLngBounds(propiedades.map(p => [p.lat, p.lng])), { padding: [40, 40] });
+
   function iniciarMapa() {
     if (mapaIniciado) return;
     mapaIniciado = true;
     if (typeof L === 'undefined') return; // Leaflet no cargó (sin conexión): el resto del sitio sigue funcionando
 
     // Mapa de la Zona Metropolitana de Guadalajara
-    const map = L.map('map-zmg', { scrollWheelZoom: false }).setView([20.66, -103.38], 10);
+    mapa = L.map('map-zmg', { scrollWheelZoom: false }).setView([20.66, -103.38], 10);
 
     L.tileLayer(ENV_CONFIG.MAP_TILES_URL, {
       attribution: '&copy; OpenStreetMap contributors',
       maxZoom: 18
-    }).addTo(map);
+    }).addTo(mapa);
 
     // Icono dorado personalizado (marca Demetrius); la forma del pin vive en css/estilos.css (.demetrius-marker)
-    const goldIcon = L.divIcon({
+    goldIcon = L.divIcon({
       className: 'demetrius-marker',
       html: '',
       iconSize: [16, 16],
@@ -1001,24 +1094,31 @@
       popupAnchor: [0, -16]
     });
 
-    propiedades.forEach(p => {
-      const mensaje = `Hola Demetrius Grupo Inmobiliario, me interesa la propiedad del mapa: ${p.titulo} en ${p.zona.replace(/\s*·\s*/g, ', ').replace(/\.$/, '')} (${p.precio})`;
-      L.marker([p.lat, p.lng], { icon: goldIcon, title: `${p.titulo} · ${p.zona}`, alt: `${p.titulo} · ${p.zona}` }).addTo(map).bindPopup(
-        el('div', {},
-          el('div', { clase: 'popup-zone' }, p.zona),
-          el('div', { clase: 'popup-title' }, p.titulo),
-          el('div', { clase: 'popup-price' }, p.precio),
-          el('a', { clase: 'popup-cta', href: waLink(mensaje), target: '_blank', rel: 'noopener noreferrer', 'data-ubicacion': 'mapa' }, 'Solicitar información →'))
-      );
-    });
-
-    // Encuadra todos los marcadores
-    map.fitBounds(L.latLngBounds(propiedades.map(p => [p.lat, p.lng])), { padding: [40, 40] });
+    propiedades.forEach(agregarMarcador);
+    encuadrarMapa();
   }
 
   // Leyenda del mapa: el total sale del arreglo (el número del HTML es solo respaldo)
   const totalMapa = document.getElementById('mapaTotal');
-  if (totalMapa) totalMapa.textContent = String(propiedades.length);
+  const actualizarTotalMapa = () => { if (totalMapa) totalMapa.textContent = String(propiedades.length); };
+  actualizarTotalMapa();
+
+  // Propiedades publicadas desde el panel que tienen ubicación marcada
+  function agregarAlMapa(lista) {
+    const nuevas = lista
+      .filter(p => Number.isFinite(p.lat) && Number.isFinite(p.lng))
+      .map(p => ({
+        lat: p.lat, lng: p.lng,
+        zona: `${p.colonia} · ${panelPropiedades.nombreMunicipio(p.municipio)}`,
+        titulo: p.titulo,
+        precio: panelPropiedades.textoPrecio(p),
+        url: panelPropiedades.urlFicha(p.id)
+      }));
+    if (!nuevas.length) return;
+    propiedades.push(...nuevas);
+    actualizarTotalMapa();
+    if (mapa) { nuevas.forEach(agregarMarcador); encuadrarMapa(); }
+  }
 
   const contenedorMapa = document.getElementById('map-zmg');
   if ('IntersectionObserver' in window) {

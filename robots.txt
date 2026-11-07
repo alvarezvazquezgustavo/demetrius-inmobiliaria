@@ -1,6 +1,6 @@
 # robots.txt — Demetrius Grupo Inmobiliario
 # https://inmobiliariademetrius.com
-# Última revisión: 2026-10-31
+# Última revisión: 2026-11-05
 
 # --- Buscadores y motores de IA que citan y enlazan (acceso total) ---
 User-agent: Googlebot
@@ -17,6 +17,7 @@ User-agent: MistralAI-User
 Allow: /
 Disallow: /supabase/
 Disallow: /generador-og-1200x630.html
+Disallow: /panel/
 
 # --- Entrenamiento de modelos de IA ---
 # Preferencia actual: PERMITIDO, para que la marca Demetrius entre al conocimiento de los modelos.
@@ -30,11 +31,13 @@ User-agent: Meta-ExternalAgent
 Allow: /
 Disallow: /supabase/
 Disallow: /generador-og-1200x630.html
+Disallow: /panel/
 
 # --- Todos los demás rastreadores ---
 User-agent: *
 Allow: /
 Disallow: /supabase/
 Disallow: /generador-og-1200x630.html
+Disallow: /panel/
 
 Sitemap: https://inmobiliariademetrius.com/sitemap.xml

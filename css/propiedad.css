@@ -1,0 +1,188 @@
+/* Demetrius Grupo Inmobiliario — ficha de propiedad (propiedad.html)
+   Usa los colores y tipografías de css/estilos.css (:root); aquí solo se acomoda la ficha. */
+
+/* ---------- Franja superior (oscura, como la portada) ---------- */
+.ficha-top{
+  position:relative;isolation:isolate;
+  background:var(--negro);color:var(--hueso);
+  padding:140px max(48px, calc((100% - 1240px) / 2)) 56px;
+}
+.ficha-top::before{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:radial-gradient(120% 140% at 85% 0%, rgba(201,169,97,.16), rgba(13,13,13,0) 60%);
+}
+.ficha-migas{display:flex;flex-wrap:wrap;gap:10px;font-size:.72rem;letter-spacing:.08em;color:#D8D3C9;margin-bottom:22px;}
+.ficha-migas a{border-bottom:1px solid rgba(228,205,143,.5);}
+.ficha-migas [aria-current]{max-width:46ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ficha-top .eyebrow{color:var(--dorado-claro);}
+.ficha-top .eyebrow::before{background:var(--dorado-claro);}
+.ficha-top h1{font-size:clamp(2rem, 4.6vw, 3.4rem);line-height:1.08;font-weight:700;margin:16px 0 12px;max-width:22ch;}
+.ficha-zona{font-size:1rem;color:#E6E1D8;font-weight:300;letter-spacing:.02em;}
+.ficha-precio-top{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:600;color:var(--dorado-claro);margin-top:14px;}
+.ficha-precio-top:empty, .ficha-zona:empty{display:none;}
+
+/* ---------- Cuerpo ---------- */
+.ficha{max-width:1240px;margin:0 auto;padding:56px 48px 96px;}
+.ficha-grid{
+  display:grid;
+  grid-template-columns:minmax(0, 1.55fr) minmax(300px, 1fr);
+  grid-template-areas:"galeria info" "detalle info";
+  gap:40px 48px;align-items:start;
+}
+.ficha-galeria{grid-area:galeria;min-width:0;}
+.ficha-info{grid-area:info;position:sticky;top:104px;}
+.ficha-detalle{grid-area:detalle;min-width:0;}
+
+/* ---------- Galería ---------- */
+.galeria-principal{
+  position:relative;overflow:hidden;
+  aspect-ratio:16 / 10;border-radius:var(--radius-card);
+  background:var(--negro-suave);box-shadow:var(--shadow-soft);
+}
+.galeria-foto{display:block;width:100%;height:100%;border:0;padding:0;background:none;cursor:zoom-in;}
+.galeria-foto img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .35s var(--ease-apple);}
+.galeria-foto img.is-cambiando{opacity:.35;}
+.galeria-principal.is-vendida .galeria-foto img{filter:grayscale(.9) brightness(.58);}
+.galeria-flecha{
+  position:absolute;top:50%;z-index:4;transform:translateY(-50%);
+  width:46px;height:46px;border-radius:50%;cursor:pointer;
+  border:1px solid rgba(248,246,242,.4);
+  background:rgba(13,13,13,.45);color:var(--hueso);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  font-size:1.7rem;line-height:1;display:grid;place-items:center;padding-bottom:3px;
+  transition:background-color .25s var(--ease-apple), transform .25s var(--ease-apple);
+}
+.galeria-flecha:hover{background:rgba(13,13,13,.7);}
+.galeria-prev{left:14px;}
+.galeria-next{right:14px;}
+.galeria-contador{
+  position:absolute;right:14px;bottom:14px;z-index:4;
+  background:rgba(13,13,13,.6);color:var(--hueso);
+  font-size:.7rem;letter-spacing:.08em;font-weight:600;
+  padding:6px 11px;border-radius:999px;
+}
+.galeria-contador:empty{display:none;}
+.galeria-miniaturas{
+  display:flex;gap:10px;margin-top:12px;
+  overflow-x:auto;padding:2px 2px 6px;scroll-snap-type:x proximity;
+}
+.galeria-miniaturas button{
+  flex:0 0 auto;width:96px;height:66px;padding:0;cursor:pointer;
+  border:2px solid transparent;border-radius:8px;overflow:hidden;background:var(--negro-suave);
+  opacity:.72;transition:opacity .2s, border-color .2s;scroll-snap-align:start;
+}
+.galeria-miniaturas button img{width:100%;height:100%;object-fit:cover;display:block;}
+.galeria-miniaturas button:hover{opacity:1;}
+.galeria-miniaturas button[aria-current="true"]{border-color:var(--dorado);opacity:1;}
+.galeria-sin-fotos{display:grid;place-items:center;height:100%;color:#B9B3A6;font-size:.85rem;letter-spacing:.06em;}
+
+/* ---------- Precio, datos y contacto ---------- */
+.ficha-info{
+  background:#fff;border-radius:var(--radius-card);box-shadow:var(--shadow-soft);
+  padding:28px;border:1px solid rgba(201,169,97,.18);
+}
+.ficha-precio{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;color:var(--negro);line-height:1.15;}
+.ficha-precio-sec{font-size:.86rem;color:var(--grafito-suave);margin-top:6px;}
+.ficha-precio-sec b{color:var(--negro);font-weight:600;}
+.ficha-info.is-vendida .ficha-precio{color:var(--grafito-suave);}
+.ficha-estado-venta{
+  display:inline-block;margin-bottom:10px;
+  background:var(--negro);color:var(--dorado-claro);
+  font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  padding:6px 10px;border-radius:6px;
+}
+.ficha-datos{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px 18px;
+  margin:22px 0 24px;padding:20px 0;
+  border-top:1px solid rgba(58,58,58,.1);border-bottom:1px solid rgba(58,58,58,.1);
+}
+.ficha-datos dt{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dorado-oscuro);font-weight:700;margin-bottom:4px;}
+.ficha-datos dd{font-family:'Playfair Display',serif;font-size:1.08rem;color:var(--negro);font-weight:600;}
+.ficha-ctas{display:flex;flex-direction:column;gap:10px;}
+.ficha-ctas .cta-btn, .ficha-ctas .btn-outline{width:100%;padding:15px 20px;}
+.ficha-info .btn-outline{color:var(--dorado-oscuro);border-color:var(--dorado);}
+.ficha-legal{font-size:.7rem;line-height:1.6;color:var(--grafito-suave);margin-top:16px;}
+
+/* ---------- Descripción, amenidades y mapa ---------- */
+.ficha-bloque{padding:0;}  /* anula el relleno general de "section" de estilos.css */
+.ficha-bloque + .ficha-bloque{margin-top:44px;}
+.ficha-bloque h2{font-size:1.55rem;color:var(--negro);margin-bottom:14px;font-weight:600;}
+.ficha-descripcion{font-size:.95rem;line-height:1.8;color:var(--grafito);white-space:pre-line;max-width:70ch;}
+.ficha-amenidades{list-style:none;display:flex;flex-wrap:wrap;gap:10px;}
+.ficha-amenidades li{
+  background:#fff;border:1px solid rgba(201,169,97,.35);color:var(--negro);
+  border-radius:999px;padding:8px 14px;font-size:.78rem;font-weight:500;
+}
+.ficha-amenidades li::before{content:"✓";color:var(--dorado-oscuro);font-weight:700;margin-right:7px;}
+.ficha-mapa{height:340px;border-radius:var(--radius-card);overflow:hidden;box-shadow:var(--shadow-soft);background:#E8E4DC;}
+.ficha-nota{font-size:.74rem;color:var(--grafito-suave);margin-top:10px;}
+.ficha-volver{
+  display:inline-block;margin-top:56px;
+  font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;
+  color:var(--dorado-oscuro);border-bottom:1px solid rgba(138,110,47,.4);padding-bottom:4px;
+}
+
+/* ---------- Cargando / no encontrada ---------- */
+.ficha-cargando{display:grid;grid-template-columns:minmax(0, 1.55fr) minmax(300px, 1fr);gap:48px;}
+.ficha-cargando-foto, .ficha-cargando-texto span{
+  border-radius:var(--radius-card);
+  background:linear-gradient(90deg, #ECE7DE 0%, #F6F2EA 50%, #ECE7DE 100%);
+  background-size:200% 100%;animation:ficha-brillo 1.4s ease-in-out infinite;
+}
+.ficha-cargando-foto{aspect-ratio:16 / 10;}
+.ficha-cargando-texto{display:flex;flex-direction:column;gap:14px;}
+.ficha-cargando-texto span{height:22px;border-radius:6px;}
+.ficha-cargando-texto span:first-child{height:40px;width:70%;}
+.ficha-cargando-texto span:last-child{height:120px;}
+@keyframes ficha-brillo{0%{background-position:100% 0;}100%{background-position:-100% 0;}}
+.ficha-aviso{
+  max-width:620px;margin:0 auto;text-align:center;
+  background:#fff;border-radius:var(--radius-card);box-shadow:var(--shadow-soft);padding:44px 32px;
+}
+.ficha-aviso h2{font-size:1.7rem;color:var(--negro);margin-bottom:12px;}
+.ficha-aviso p{font-size:.92rem;line-height:1.7;color:var(--grafito-suave);}
+.ficha-aviso-acciones{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:26px;}
+.ficha-aviso-acciones .cta-btn, .ficha-aviso-acciones .btn-outline{padding:14px 22px;}
+.ficha-aviso .btn-outline{color:var(--dorado-oscuro);}
+
+/* ---------- Visor en pantalla completa ---------- */
+.visor{
+  width:100vw;height:100vh;height:100dvh;max-width:none;max-height:none;
+  margin:0;padding:0;border:0;background:rgba(13,13,13,.97);
+}
+.visor[open]{display:grid;place-items:center;}
+.visor::backdrop{background:rgba(13,13,13,.9);}
+.visor img{max-width:calc(100vw - 140px);max-height:calc(100dvh - 120px);object-fit:contain;border-radius:6px;}
+.visor .galeria-flecha{position:fixed;}
+.visor .galeria-contador{position:fixed;left:50%;right:auto;bottom:24px;transform:translateX(-50%);}
+.visor-cerrar{
+  position:fixed;top:18px;right:18px;z-index:5;
+  width:46px;height:46px;border-radius:50%;cursor:pointer;
+  border:1px solid rgba(248,246,242,.4);background:rgba(13,13,13,.6);color:var(--hueso);font-size:1.1rem;
+}
+
+@media (hover: hover){
+  .galeria-flecha:hover{transform:translateY(-50%) scale(1.06);}
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 980px){
+  .ficha-top{padding:110px 22px 36px;}
+  .ficha{padding:28px 22px 72px;}
+  .ficha-grid{grid-template-columns:1fr;grid-template-areas:"galeria" "info" "detalle";gap:28px;}
+  .ficha-info{position:static;padding:22px;}
+  .ficha-cargando{grid-template-columns:1fr;gap:20px;}
+  .galeria-principal{aspect-ratio:4 / 3;}
+  .galeria-flecha{width:40px;height:40px;font-size:1.5rem;}
+  .galeria-miniaturas button{width:78px;height:56px;}
+  .visor img{max-width:100vw;max-height:calc(100dvh - 140px);border-radius:0;}
+  .ficha-mapa{height:280px;}
+}
+@media (max-width: 420px){
+  .ficha-datos{grid-template-columns:1fr 1fr;gap:14px;}
+  .ficha-precio{font-size:1.6rem;}
+}
+@media (prefers-reduced-motion: reduce){
+  .ficha-cargando-foto, .ficha-cargando-texto span{animation:none;}
+  .galeria-foto img{transition:none;}
+}

@@ -19,6 +19,7 @@ Este archivo reúne las decisiones tomadas y las convenciones que hay que respet
 | Redes | Facebook `share/1Hd4mDmCfW`, Instagram `@residencial_demetrius`, TikTok `@demetrius.inmobiliaria` |
 
 Todos estos datos viven en `ENV_CONFIG`, al inicio de `js/principal.js`. Cámbialos ahí, no en cada sección.
+**Excepción (2026-11-05):** la dirección y la llave publicable de Supabase viven **solo** en `js/config.js` (`window.DEMETRIUS_CONFIG`); `ENV_CONFIG` las lee de ahí. Ese archivo también lo usan la ficha (`propiedad.html`) y el panel (`/panel/`). El número de WhatsApp está repetido en `config.js` y en `js/yeucate.js`: si cambia, hay que cambiarlo en los tres lugares.
 
 ## 2. Reglas que no se rompen
 
@@ -139,6 +140,7 @@ Es la versión extendida:
 
 - **Nueva y disponible:** agrégala a "Propiedades destacadas".
 - **Vendida:** quítala de "Propiedades destacadas" y pásala a "Propiedades vendidas recientemente", **sin precio**.
+- **Ojo:** esto aplica a las propiedades escritas a mano en `index.html`. Las que se cargan desde el panel (Supabase) **no** aparecen solas en `llms.txt`, `llms-full.txt`, el JSON-LD ni `sitemap.xml`; si el usuario quiere que salgan ahí, se agregan a mano (o más adelante se genera con un script).
 
 ## 5. Catálogo (`index.html`, `#catalogo`)
 
@@ -154,6 +156,8 @@ Es la versión extendida:
 | `data-operacion` | `venta`, `renta` o `venta renta` |
 | `data-coto` / `data-preventa` | `si` / `no` |
 | `data-vendida` | `si` solo en las vendidas |
+| `data-recamaras` | lo usa el filtro "Recámaras". En las escritas a mano **no está en el HTML**: `principal.js` lo lee de su `<span>` "N rec." (cada `span` por separado, para que "Seguridad 24/7" + "3 rec." no se lea como 73) |
+| `data-origen` / `data-id` | solo en las tarjetas que vienen del panel: `panel` y el id de Supabase |
 
 ### Clases
 
@@ -172,7 +176,9 @@ Es la versión extendida:
 4. Tarjetas ocultas disponibles: las 5 originales que siguen a la venta.
 5. **Vendidas al final**, todas ocultas: las 5 de antes, el terreno de Jocotepec y las 31 del catálogo de WhatsApp, en el orden de ese catálogo (de Colomos Providencia a Paseos del Sol).
 
-Hoy son 49 tarjetas: 12 disponibles y 37 vendidas (35 "Vendida" y 2 "Rentada"). El JSON-LD (`OfferCatalog`) tiene `numberOfItems: 51`: Yéucate, el Luviano (que cuenta como dos ofertas, venta y renta), Zoi, `#propiedad-1` a `#propiedad-11`, `#propiedad-12` y `#vendida-1` a `#vendida-4`, y `#propiedad-13` a `#propiedad-43` (las del catálogo de WhatsApp). Hay 37 vendidas: llevan `"availability": "https://schema.org/SoldOut"` y "(vendida)" o "(rentada)" al final del `name`; entre ellas están `#propiedad-7` (Jocotepec) y de `#propiedad-13` a `#propiedad-43`. Las de renta usan `LeaseOut` y un `UnitPriceSpecification` mensual (`unitCode: MON`).
+**Tarjetas del panel (2026-11-05):** se insertan al cargar la página. Las publicadas van justo **después del Edificio Luviano**, y las vendidas o rentadas, **antes de la primera vendida escrita a mano**. Después se vuelve a calcular qué queda oculto: siempre se ven las primeras 7 (`VISIBLES_INICIALES`). Si Supabase no responde, el catálogo escrito a mano se queda igual.
+
+Hoy son 49 tarjetas escritas a mano: 12 disponibles y 37 vendidas (35 "Vendida" y 2 "Rentada"). El JSON-LD (`OfferCatalog`) tiene `numberOfItems: 51`: Yéucate, el Luviano (que cuenta como dos ofertas, venta y renta), Zoi, `#propiedad-1` a `#propiedad-11`, `#propiedad-12` y `#vendida-1` a `#vendida-4`, y `#propiedad-13` a `#propiedad-43` (las del catálogo de WhatsApp). Hay 37 vendidas: llevan `"availability": "https://schema.org/SoldOut"` y "(vendida)" o "(rentada)" al final del `name`; entre ellas están `#propiedad-7` (Jocotepec) y de `#propiedad-13` a `#propiedad-43`. Las de renta usan `LeaseOut` y un `UnitPriceSpecification` mensual (`unitCode: MON`).
 
 ### Lógica relacionada (`js/principal.js`)
 
@@ -182,7 +188,11 @@ Hoy son 49 tarjetas: 12 disponibles y 37 vendidas (35 "Vendida" y 2 "Rentada"). 
 - Los CTA arman el mensaje de WhatsApp a partir de la tarjeta:
   - En las vendidas, el mensaje es "vi que vendieron… busco algo similar" y se envía el evento GA `solicitar_similar_vendida`.
   - La tarjeta destacada usa sus propios `data-wa-msg`.
+- Buscador del Hero: desde el 2026-11-05 tiene un quinto campo, **Recámaras** (`#recamarasSelect`: 1, 2, 3 o 4 o más), en un renglón a todo lo ancho (`.search-field--ancho`). La portada creció 68 px por ese renglón. Las tarjetas que no dicen recámaras (terrenos, bodegas…) no salen cuando se elige un mínimo.
+- Las colonias de las propiedades del panel que no estén en la lista `colonias` se agregan solas al selector de colonia.
+- En las tarjetas del panel, "Ver ficha →" abre `propiedad.html?id=…` (evento GA `ver_ficha_propiedad`); en las vendidas del panel abre WhatsApp "Quiero algo similar", igual que las demás.
 - Mapa:
+  - Las propiedades del panel con ubicación marcada se agregan como marcadores (su popup dice "Ver ficha →") y la leyenda se recalcula.
   - El arreglo `propiedades` tiene 11 marcadores (lat, lng, zona, título y precio), **solo de propiedades disponibles**: las vendidas no van en el mapa. El número de la leyenda (`#mapaTotal`) lo calcula el script a partir del arreglo; el del HTML es solo de respaldo.
   - Para geocodificar se usa Nominatim. Si la dirección no es exacta, se marca como "ubicación aproximada".
 
@@ -195,6 +205,7 @@ Hoy son 49 tarjetas: 12 disponibles y 37 vendidas (35 "Vendida" y 2 "Rentada"). 
 - **Bloque `.desarrollo` en el inicio** (después del catálogo): promociona Yéucate y enlaza a `yeucate.html`.
   - `js/principal.js` calcula solo el porcentaje vendido, los lotes disponibles y la barra a partir de `js/yeucate-lotes.js`.
   - Las cifras escritas en el HTML (47 % y 39) son solo un respaldo por si el script no carga; conviene mantenerlas parecidas.
+  - **Capas (2026-11-07):** foto `z-index:0`, degradado (`::before`) `1` y texto (`.desarrollo-inner`) `position:relative; z-index:2`. Antes eran `-2` y `-1`, y en Safari de la otra Mac del usuario el texto desaparecía y solo quedaban los recuadros de cifras (no se pudo repetir en esta Mac; el usuario confirmó en su Safari que con el cambio quedó arreglado). La portada de `yeucate.html` se cambió igual (video, cifras, botón de pausa y flecha). **No volver a usar z-index negativos** en secciones con foto o video de fondo.
 - **Subpágina `yeucate.html`** con `css/yeucate.css` y `js/yeucate.js` (independiente de `principal.js`):
   - Video de portada con botón de pausa.
   - Plano interactivo con 83 marcadores, filtros por superficie, interruptor "solo disponibles", ficha del lote y sugerencias de lotes parecidos.
@@ -224,6 +235,9 @@ Hoy son 49 tarjetas: 12 disponibles y 37 vendidas (35 "Vendida" y 2 "Rentada"). 
   - `js/inicio.js` va en el `<head>`.
   - `js/principal.js` va al final del `<body>`.
 - Leaflet 1.9.4 se carga desde cdnjs con SRI (`sha384`). Si cambia la versión, hay que actualizar el hash y la CSP.
+- `supabase-js` **2.118.0** está copiada dentro del sitio (`js/vendor/supabase-2.118.0.js`, con su licencia MIT), así que la CSP de scripts no cambió. Se descargó del registro oficial de npm verificando su firma (sha512) y no usa `eval`. Para actualizarla: elegir una versión publicada hace más de 2 semanas, descargarla igual, cambiar el nombre del archivo y las dos etiquetas `<script>` de `panel/`.
+- La CSP permite además `blob:` (vista previa de las fotos antes de subirlas) y `https://*.supabase.co` en `img-src` (fotos de las propiedades del panel).
+- `/panel/` lleva `noindex, nofollow` (meta, `X-Robots-Tag` en `_headers` y `.htaccess`), `Cache-Control: no-store` y `Disallow: /panel/` en `robots.txt`.
 - Otras cabeceras: HSTS de 2 años con preload, `X-Frame-Options DENY`, `frame-ancestors 'none'`, COOP `same-origin-allow-popups`, Permissions-Policy restrictiva y `X-XSS-Protection 0`.
 - `netlify.toml` solo maneja redirecciones. GitHub Pages **no puede** enviar cabeceras.
 - Archivos internos bloqueados con 404: `supabase/`, `.env*`, `_headers`, `netlify.toml`, `CLAUDE.md`.
@@ -231,8 +245,8 @@ Hoy son 49 tarjetas: 12 disponibles y 37 vendidas (35 "Vendida" y 2 "Rentada"). 
 
 ## 7. Reseñas (Supabase)
 
-- Proyecto: `https://tnzewcoqimldxwmvwbxi.supabase.co`, conectado por REST, sin librería.
-- En el código **solo va la llave publicable** (`sb_publishable_…`), en `ENV_CONFIG.SUPABASE_ANON_KEY`. Es pública por diseño y la protege RLS.
+- Proyecto: `https://tnzewcoqimldxwmvwbxi.supabase.co`. La parte pública (reseñas, catálogo y ficha) se conecta por REST, sin librería; solo el panel usa `supabase-js`.
+- En el código **solo va la llave publicable** (`sb_publishable_…`), en `js/config.js`. Es pública por diseño y la protege RLS.
   - Se envía en la cabecera `apikey`.
   - `Authorization` solo se agrega para llaves `eyJ…`.
 - **Nunca** van en el código ni en GitHub la *Secret key*, la *service_role* ni la contraseña de la base de datos. Tampoco se le piden al usuario.
@@ -244,6 +258,50 @@ Hoy son 49 tarjetas: 12 disponibles y 37 vendidas (35 "Vendida" y 2 "Rentada"). 
   - un trigger anti-spam (10 por minuto);
   - la vista `resenas_resumen` con `security_invoker`.
 - Moderación: el usuario aprueba (`aprobada = true`) o responde desde el Table Editor. La guía está en `supabase/GUIA-RESENAS.md`.
+
+## 7b. Panel del equipo y propiedades (2026-11-05)
+
+El usuario pidió un acceso privado para el equipo: los asesores cargan propiedades y el administrador las valida. Solo las validadas se ven en la página. Mismo proyecto de Supabase que las reseñas.
+
+- **Archivos:**
+  - `supabase/propiedades.sql`: todo el SQL, idempotente.
+  - `supabase/GUIA-PANEL.md`: guía para el usuario, paso a paso y sin tecnicismos.
+  - `panel/login.html` y `panel/index.html`, con `css/panel.css`, `js/panel-comun.js`, `js/panel-login.js` y `js/panel.js`. Todas sus clases empiezan con `pn-`.
+  - `propiedad.html` (la ficha), con `css/propiedad.css` y `js/propiedad.js`. Su encabezado, menú y pie se copiaron de `yeucate.html`.
+  - `js/propiedades-publicas.js` (`window.DemetriusPropiedades`): lee las publicadas por REST y arma las tarjetas con la misma estructura que las de `index.html`. Lo usan el inicio, la ficha y el panel.
+- **Tablas:**
+  - `perfiles` (id = `auth.users.id`, correo, nombre, rol `asesor`/`admin`, `activo`). Un trigger en `auth.users` crea el perfil **desactivado**.
+  - `propiedades` (estado, `comentario_admin`, datos, `amenidades text[]`, `fotos text[]` con la portada primero, `lat`/`lng` opcionales y fechas).
+  - Las fotos van en el bucket público `propiedades`, en la ruta `<id de la propiedad>/<uuid>.jpg`, con un máximo de 5 MB y 20 por propiedad.
+- **Estados:** `borrador → en_validacion → publicada`, o `rechazada` (con comentario obligatorio), y además `vendida` / `rentada`, que pone el admin. "Despublicar" la regresa a `borrador`.
+- **RLS** (se probó en PGlite con 67 casos; la prueba vive en el scratchpad y se vuelve a escribir si hace falta):
+  - El público solo lee `publicada`, `vendida` y `rentada`, y solo las columnas con `grant` (nunca el asesor ni los comentarios).
+  - El asesor crea propiedades a su nombre, siempre como borrador. Solo edita las suyas en `borrador` o `rechazada`, y solo puede dejarlas así o mandarlas a `en_validacion`. Solo borra sus borradores.
+  - El admin hace todo, menos borrar.
+  - Las cuentas desactivadas no pueden crear ni editar.
+  - El trigger `propiedades_antes_de_guardar` impide que un asesor toque `comentario_admin`, las fechas o el asesor; exige al menos una foto para enviar o publicar, y que cada foto esté en la carpeta de su propiedad.
+  - Storage: se suben o quitan fotos solo en las propiedades editables propias, o en cualquiera si es admin.
+- **Panel:**
+  - Vistas por hash: `#mis`, `#nueva`, `#editar/<id>` y, solo para el admin, `#validacion`, `#todas` y `#equipo`.
+  - Las fotos se reducen en el navegador a 1600 px en JPEG (calidad 0.82). HEIC solo funciona desde el iPhone; en la computadora sale un aviso claro.
+  - Lo que carga el admin se publica directo con "Guardar y publicar".
+  - El admin tiene "Editar" en **todas** las propiedades, también en las publicadas, vendidas y en validación. Al editar una publicada sale el aviso "los cambios se publican en cuanto los guardes".
+  - En celular (≤760 px) los menús del panel bajan a un segundo renglón, para que "Todas" y "Equipo" no queden escondidos.
+  - **Acceso desde la página** (pedido por el usuario el 2026-11-05), igual en `index.html`, `propiedad.html` y `yeucate.html`, y todo lleva a `panel/login.html`:
+    - Ícono de persona (`.acceso-equipo`) al final de `.social-icons`, con `title` "Iniciar sesión".
+    - Enlace "Iniciar sesión" al final del menú hamburguesa.
+    - "Acceso del equipo" en la columna Navegación del pie.
+    - Para que quepa el ícono, `.desktop-nav` bajó de 36 a 30 px de separación y el menú hamburguesa ahora empieza en **≤1309 px** (antes 1259). A ≤380 px el ícono se oculta con los otros (la regla `nth-child(n+3)` de siempre); ahí queda el enlace del menú.
+    - El panel tiene "Ver la página" al final de sus menús.
+  - Las 49 propiedades escritas a mano **no aparecen en el panel**; para editarlas ahí habría que pasarlas a Supabase.
+  - Si una cuenta no está activa, se cierra la sesión y aparece un aviso en el acceso.
+- **Sin registro público:** el usuario crea las cuentas en Supabase (Authentication → Users) y debe apagar "Allow new users to sign up". El primer admin se hace con un `update` que viene en la guía; los demás se activan desde **Equipo**.
+- **El panel solo funciona con la página publicada**: hoy no hay dominio.
+- **El SQL ya se ejecutó en el Supabase real** (2026-11-05, «Success. No rows returned»). Se verificó, solo leyendo y sin sesión:
+  - el público lee `propiedades` (`[]`);
+  - se niegan `select=*`, `comentario_admin`, `perfiles` y crear una propiedad;
+  - el bucket `propiedades` existe;
+  - las reseñas siguen bien.
 
 ## 8. SEO, GEO e IA
 
@@ -284,6 +342,7 @@ Hoy son 49 tarjetas: 12 disponibles y 37 vendidas (35 "Vendida" y 2 "Rentada"). 
 | `25dc86e` | Notas del proyecto (`CLAUDE.md`) |
 | `1a789ba` | Logo nuevo en la imagen para redes |
 | `a392209` | Portada nueva, desarrollo Yéucate y 31 propiedades del catálogo de WhatsApp |
+| `7280231` | Las 31 del catálogo y el terreno de Jocotepec pasan a vendidas; sello "Vendida" en banda diagonal |
 
 ## 10. Cómo se prueba
 
@@ -293,13 +352,26 @@ Hoy son 49 tarjetas: 12 disponibles y 37 vendidas (35 "Vendida" y 2 "Rentada"). 
   - 0 violaciones de CSP;
   - sin desbordamiento horizontal.
 - Servidor local que aplica `_headers`, para probar la CSP real.
-- **Prueba en el iPhone del usuario** (no hay Xcode ni simulador en esta Mac):
+- **Simulador de iOS** (instalado el 2026-11-05: Xcode 26.5 y el simulador de iOS 26.5, con iPhone 17, 17 Pro, 17 Pro Max y Air):
+  - El simulador llega a la Mac por `127.0.0.1`. Se abre la página con `xcrun simctl openurl <iPhone> http://127.0.0.1:<puerto>/` y se toma la captura con `xcrun simctl io <iPhone> screenshot`.
+  - Para que el panel de Claude pueda usar el iPhone simulado, el usuario tiene que dar el permiso ("Let Claude use it") en el panel; Claude no puede aceptarlo por él.
+  - La Mac es Intel (i7, 16 GB): el primer arranque tardó unos 10 minutos y Safari tarda en cargar si hay otros procesos pesados. Al terminar se apagan el servidor y el simulador.
+- **Prueba en el iPhone del usuario**:
   - Se levanta el servidor en la red Wi-Fi y se abre `http://MacBook-Pro-de-Gustavo.local:8792/yeucate.html`.
   - Hay que usar el nombre `.local` y no la IP, porque `js/inicio.js` manda a HTTPS cualquier dirección que no sea local.
   - El servidor de prueba del Wi-Fi tiene que quitar `upgrade-insecure-requests`, tanto de la etiqueta `<meta>` de las páginas como de la cabecera CSP, **solo al servir**. Si no, Safari pide el CSS, las fotos y los scripts por HTTPS y la página sale sin estilos (pasó el 2026-11-04). Los archivos del sitio conservan esa regla, porque en producción sí se necesita. El aviso de COOP que aparece en la consola al usar HTTP en `.local` es normal.
   - Al terminar se apaga el servidor.
-- El SQL se prueba en PGlite antes de dárselo al usuario.
-- Encabezado: el menú hamburguesa se activa en ≤1259 px para evitar el desbordamiento entre 981 y 1370 px.
+- El SQL se prueba en PGlite antes de dárselo al usuario. Se simulan `auth.users`, `auth.uid()`, los roles `anon` y `authenticated` y `storage.objects` con `storage.foldername()`, y se ejecuta dos veces para comprobar que es idempotente.
+- **Panel y catálogo con Supabase simulado.** No se prueba contra el Supabase real, porque ahí no hay cuentas de prueba y no se mandan cambios.
+  - Un servidor local en memoria imita auth, REST (PostgREST) y Storage.
+  - El servidor de prueba del sitio, con `MOCK_SUPABASE=http://127.0.0.1:<puerto>`, sirve un `js/config.js` de prueba y agrega ese origen a la CSP **solo al servir**.
+  - Con el modo `sim` escucha en 127.0.0.1 y quita `upgrade-insecure-requests`, igual que `lan`.
+  - Se prueban con Chrome sin interfaz los flujos del asesor y del admin, en 1280 y 390 px.
+  - Simulador de iOS (2026-11-05): sin el permiso del panel solo se puede abrir enlaces (`simctl openurl`) y tomar capturas.
+    - Para entrar al panel se usa una página auxiliar del servidor de prueba (`/__prueba/entrar.html?como=asesor|admin&ir=%23vista`), que vive en el scratchpad y no en el sitio.
+    - Cada enlace abre una pestaña nueva y Safari se vuelve lento: hay que esperar de 25 a 60 s por captura, y si se traba, cerrar Safari con `simctl terminate`.
+    - El servidor simulado debe responder **fuera** de su candado; si no, una foto que Safari lee lento bloquea las demás peticiones.
+- Encabezado: el menú hamburguesa se activa en ≤1309 px (antes 1259; cambió el 2026-11-05 al agregar el ícono de "Iniciar sesión"). Se midió en 11 anchos, de 360 a 1920 px, en las tres páginas: nada se encima ni desborda.
 
 ## 11. Decisiones del 2026-11-02
 
@@ -312,6 +384,12 @@ Hoy son 49 tarjetas: 12 disponibles y 37 vendidas (35 "Vendida" y 2 "Rentada"). 
 ## 12. Pendientes del usuario
 
 - [ ] Comprar el dominio `inmobiliariademetrius.com`. Después hay que elegir hosting y activar la publicación.
+- [ ] Activar el panel del equipo (`supabase/GUIA-PANEL.md`):
+  - ~~ejecutar `supabase/propiedades.sql`~~ (hecho el 2026-11-05);
+  - apagar "Allow new users to sign up";
+  - ~~crear su cuenta y hacerla admin~~ (2026-11-05: hay 2 administradores activos, Gerardo Yair Ocaña y Gustavo Álvarez; sus correos no se anotan aquí porque el repositorio es público);
+  - dar de alta a los asesores cuando el usuario los tenga.
+  El panel se usa hasta que la página esté publicada.
 - [ ] Cuando exista el dominio: crear la propiedad de Google Analytics 4 y dar el ID (`G-…`). Mientras siga el marcador `G-XXXXXXXXXX`, GA no se carga.
 - [ ] Dar la dirección completa de la oficina y el horario.
 - [ ] Confirmar la autorización del desarrollador de Yéucate para publicar su plano, sus datos y las fotos de la obra.

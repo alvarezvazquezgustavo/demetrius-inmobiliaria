@@ -105,7 +105,7 @@ header.is-scrolled{
 
 /* Menú de escritorio */
 .desktop-nav {
-  display: flex; gap: 36px; align-items: center;
+  display: flex; gap: 30px; align-items: center; /* 30px (antes 36) para que quepa el ícono de "Iniciar sesión" */
 }
 .desktop-nav a {
   color: var(--hueso);
@@ -303,6 +303,9 @@ header.is-scrolled{
   }
   .search-fields .search-field:nth-child(2n){border-right:none;}
   .search-fields .search-field:nth-last-child(-n+2){border-bottom:none;}
+  /* Quinto campo (Recámaras): ocupa todo el renglón, debajo de los otros cuatro */
+  .search-fields .search-field--ancho{grid-column:1 / -1;border-right:none;}
+  .search-fields .search-field:nth-child(4):not(:last-child){border-bottom:1px solid rgba(58,58,58,.12);}
   .search-field label{
     display:block;
     font-size:.62rem;
@@ -1552,16 +1555,18 @@ header.is-scrolled{
     display:flex;align-items:center;min-height:640px;padding:0;
     background:var(--negro);color:var(--hueso);
   }
-  .desarrollo-media{position:absolute;inset:0;z-index:-2;overflow:hidden;}
+  /* Capas en orden positivo (foto 0, degradado 1, texto 2): con z-index negativos, Safari
+     a veces dibujaba el texto debajo de la foto y solo se veían los recuadros de cifras. */
+  .desarrollo-media{position:absolute;inset:0;z-index:0;overflow:hidden;}
   .desarrollo-media img{
     display:block;width:100%;height:100%;object-fit:cover;
     transform:scale(1.02);transition:transform 1.8s var(--ease-apple);
   }
   .desarrollo::before{
-    content:"";position:absolute;inset:0;z-index:-1;
+    content:"";position:absolute;inset:0;z-index:1;
     background:linear-gradient(90deg, rgba(13,13,13,.95) 0%, rgba(13,13,13,.84) 36%, rgba(13,13,13,.3) 72%, rgba(13,13,13,.08) 100%);
   }
-  .desarrollo-inner{max-width:640px;padding:104px 48px;}
+  .desarrollo-inner{position:relative;z-index:2;max-width:640px;padding:104px 48px;}
   .desarrollo .eyebrow{color:var(--dorado-claro);}
   .desarrollo .eyebrow::before{background:var(--dorado-claro);}
   .desarrollo h2{font-size:clamp(2.1rem, 4vw, 3.1rem);line-height:1.08;font-weight:700;margin:18px 0 10px;}
@@ -1613,7 +1618,8 @@ header.is-scrolled{
     header{padding-left:32px;padding-right:32px;}
     .desktop-nav{gap:16px;}
   }
-  @media (max-width: 1259px){
+  /* Antes 1259px: desde el 2026-11-05 el ícono de "Iniciar sesión" ocupa 48px más */
+  @media (max-width: 1309px){
     .desktop-nav{display:none;}
     .hamburger{display:flex;}
   }

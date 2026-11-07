@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<script src="../js/inicio.js"></script>
+<title>Acceso del equipo | Demetrius Grupo Inmobiliario</title>
+<meta name="theme-color" content="#0D0D0D">
+<link rel="icon" href="../favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="192x192" href="../icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/estilos.css">
+<link rel="stylesheet" href="../css/panel.css">
+</head>
+<body class="pn-login-body">
+<main class="pn-login">
+  <div class="pn-login-caja">
+    <a class="pn-login-logo" href="../index.html" aria-label="Demetrius Grupo Inmobiliario — volver a la página">
+      <img src="../img/logo-demetrius.png" alt="Demetrius Grupo Inmobiliario" width="900" height="188">
+    </a>
+    <div class="pn-login-card">
+      <span class="eyebrow">Panel interno</span>
+      <h1>Acceso del equipo</h1>
+      <p class="pn-login-sub">Entra con el correo y la contraseña que te dio el administrador.</p>
+
+      <p class="pn-aviso" id="loginAviso" role="status" hidden></p>
+
+      <form id="formLogin" novalidate>
+        <div class="pn-campo">
+          <label for="loginCorreo">Correo</label>
+          <input id="loginCorreo" name="correo" type="email" autocomplete="username" inputmode="email" maxlength="254" required aria-describedby="loginCorreoError">
+          <p class="pn-error-campo" id="loginCorreoError" hidden></p>
+        </div>
+        <div class="pn-campo">
+          <label for="loginClave">Contraseña</label>
+          <div class="pn-clave">
+            <input id="loginClave" name="clave" type="password" autocomplete="current-password" maxlength="72" required aria-describedby="loginClaveError">
+            <button type="button" class="pn-ver-clave" id="loginVerClave" aria-controls="loginClave" aria-pressed="false">Mostrar</button>
+          </div>
+          <p class="pn-error-campo" id="loginClaveError" hidden></p>
+        </div>
+
+        <p class="pn-error" id="loginError" role="alert" hidden></p>
+
+        <button class="pn-btn pn-btn-primario pn-btn-ancho" type="submit" id="loginBtn">Entrar</button>
+      </form>
+
+      <p class="pn-login-ayuda">¿Olvidaste tu contraseña? Pídele al administrador que te asigne una nueva.</p>
+    </div>
+    <a class="pn-volver" href="../index.html">← Volver a la página</a>
+  </div>
+</main>
+
+<script src="../js/config.js"></script>
+<script src="../js/vendor/supabase-2.118.0.js"></script>
+<script src="../js/propiedades-publicas.js"></script>
+<script src="../js/panel-comun.js"></script>
+<script src="../js/panel-login.js"></script>
+</body>
+</html>
