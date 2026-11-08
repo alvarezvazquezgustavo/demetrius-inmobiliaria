@@ -165,6 +165,30 @@ Evita borrar su usuario en Supabase.
   - **Despublicar**: deja de verse y regresa a borrador.
 - **Cargar propiedad**: lo que carga el administrador se publica directo con **Guardar y publicar**.
 
+### 7.1 Pasar al panel las propiedades que ya estaban en la página (una sola vez)
+
+Las 48 propiedades que estaban escritas en la página (11 disponibles, 35 vendidas y 2 rentadas) se pueden editar desde el panel. Para activarlo:
+
+1. Abre **SQL Editor** → **New query**, pega **todo** `supabase/propiedades.sql` (la versión nueva) y da clic en **Run**. Debe decir **«Success. No rows returned»**.
+2. Otra **New query**: pega **todo** `supabase/catalogo-inicial.sql` y da clic en **Run**. Debe decir **«Success. No rows returned»**.
+3. Revisa en el panel, en **Todas**: deben aparecer las 48, con su foto, como **«Sin asesor asignado»**.
+
+Qué cambia:
+
+- La página se ve igual: cada tarjeta conserva su título, etiqueta, zona, datos y foto.
+- Desde **Todas** puedes editarlas, marcarlas como vendidas o rentadas, volver a publicarlas o despublicarlas, y la página se actualiza sola.
+- Si Supabase no respondiera, la página sigue mostrando las tarjetas de siempre.
+- El **Edificio Luviano** se queda como estaba (su tarjeta especial de tres opciones no cabe en el formato del panel). Para cambiarlo, pídelo.
+- Las fotos de estas propiedades siguen guardadas en la página. Puedes quitarlas de una propiedad o agregarle fotos nuevas desde el panel, pero el archivo original no se borra.
+- Se puede volver a ejecutar `catalogo-inicial.sql` sin miedo: no toca las que ya editaste.
+
+**Dos campos solo para el administrador** (en **Editar**):
+
+- **Texto de la zona en la tarjeta**: la línea de la zona tal cual (por ejemplo «Zoi Capital Norte, Río Blanco, Zapopan»). Si lo dejas vacío, la tarjeta muestra la colonia y el municipio.
+- **Datos cortos de la tarjeta**: uno por renglón, máximo 6 (por ejemplo «90 m²», «2 rec.», «Roof garden»). Si lo dejas vacío, la tarjeta los arma sola con los m², las recámaras, los baños y los estacionamientos. **Ojo:** si cambias las recámaras o los m² y este campo tiene texto, la tarjeta sigue mostrando lo de este campo; actualízalo también o déjalo vacío.
+
+> El resumen para buscadores e inteligencia artificial (`llms.txt`, `sitemap.xml` y los datos estructurados de la página) no se actualiza solo con lo que cambies en el panel. Cuando vendan o cambien algo importante, avísame para actualizarlo.
+
 ## 8. Documentos del equipo (archivos privados)
 
 En el menú del panel está **Documentos**. Ahí el equipo comparte la documentación de las propiedades (escrituras, identificaciones, predial, planos…). Es privado: el público nunca lo ve.

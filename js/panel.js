@@ -341,8 +341,12 @@
       if (p.fotos && p.fotos.length) {
         const r1 = await sb.from('propiedades').update({ fotos: [] }).eq('id', p.id).select('id');
         if (r1.error) throw r1.error;
-        const r2 = await sb.storage.from(BUCKET).remove(p.fotos);
-        if (r2.error) throw r2.error;
+        // Las fotos "sitio/…" viven en la página: nunca se borran desde el panel
+        const subidas = p.fotos.filter(r => !P.esFotoDelSitio(r));
+        if (subidas.length) {
+          const r2 = await sb.storage.from(BUCKET).remove(subidas);
+          if (r2.error) throw r2.error;
+        }
       }
       const { data, error } = await sb.from('propiedades').delete().eq('id', p.id).select('id');
       if (error) throw error;
@@ -541,7 +545,8 @@
     coto: $('#fCoto'), preventa: $('#fPreventa'), precioVenta: $('#fPrecioVenta'), precioRenta: $('#fPrecioRenta'),
     municipio: $('#fMunicipio'), colonia: $('#fColonia'), terreno: $('#fTerreno'), construccion: $('#fConstruccion'),
     recamaras: $('#fRecamaras'), banos: $('#fBanos'), estacionamientos: $('#fEstacionamientos'),
-    descripcion: $('#fDescripcion'), otras: $('#fAmenidadesOtras'), fotos: $('#fFotos')
+    descripcion: $('#fDescripcion'), otras: $('#fAmenidadesOtras'), fotos: $('#fFotos'),
+    zonaTexto: $('#fZonaTexto'), datosTarjeta: $('#fDatosTarjeta')   // solo administrador
   };
   const SUB_ORIGINAL = $('#formSub').cloneNode(true); // conserva el asterisco rojo
   let estadoForm = null;   // { id, propiedad, fotos:[{tipo, ruta?, blob?, url}], quitadas:[], lat, lng }
@@ -656,6 +661,8 @@
         if (ch.checked) marcadas.add(ch.value.toLowerCase());
       });
       c.otras.value = (p.amenidades || []).filter(a => !marcadas.has(a.toLowerCase())).join(', ');
+      c.zonaTexto.value = p.zona_texto || '';
+      c.datosTarjeta.value = (p.datos_tarjeta || []).join('\n');
     }
 
     // Botones según quién edita y en qué estado está
@@ -781,6 +788,18 @@
 
     if (enviar && !estadoForm.fotos.length) error(c.fotos, 'Agrega al menos una foto antes de enviarla.');
 
+    // Textos opcionales de la tarjeta (solo los ve y los guarda el administrador)
+    const textosTarjeta = {};
+    if (esAdmin) {
+      const zonaTexto = limpiar(c.zonaTexto.value, 120);
+      if (zonaTexto && zonaTexto.length < 2) error(c.zonaTexto, 'Escribe al menos 2 caracteres o déjalo vacío.');
+      const renglones = String(c.datosTarjeta.value).split(/\r?\n/).map(t => limpiar(t, 200)).filter(Boolean);
+      if (renglones.length > 6) error(c.datosTarjeta, `Puedes poner máximo 6 renglones (tienes ${renglones.length}).`);
+      else if (renglones.some(t => t.length > 40)) error(c.datosTarjeta, 'Cada renglón puede tener máximo 40 caracteres.');
+      textosTarjeta.zona_texto = zonaTexto || null;
+      textosTarjeta.datos_tarjeta = renglones;
+    }
+
     return {
       errores,
       datos: {
@@ -790,7 +809,8 @@
         terreno_m2: terreno, construccion_m2: construccion, recamaras, banos, estacionamientos,
         descripcion: descripcion || null, amenidades,
         coto: c.coto.checked, preventa: c.preventa.checked,
-        lat: estadoForm.lat, lng: estadoForm.lng
+        lat: estadoForm.lat, lng: estadoForm.lng,
+        ...textosTarjeta
       }
     };
   }
@@ -1007,6 +1027,8 @@
       if (!fin || !fin.length) throw { code: 'PGRST116' };
 
       // Las fotos que quitaste se borran al final (si falla, solo quedan archivos sin usar)
+      // (las fotos "sitio/…" viven en la página: solo se quitan de la ficha, el archivo no se borra)
+      estadoForm.quitadas = estadoForm.quitadas.filter(r => !P.esFotoDelSitio(r));
       if (estadoForm.quitadas.length) {
         const { error } = await sb.storage.from(BUCKET).remove(estadoForm.quitadas);
         if (!error) estadoForm.quitadas = [];
@@ -1016,7 +1038,8 @@
       toast(enviar
         ? (esAdmin ? 'Listo: la propiedad ya se ve en la página.' : 'Listo: la propiedad se envió a validación.')
         : 'Cambios guardados.');
-      const ajena = estadoForm.propiedad && estadoForm.propiedad.asesor_id && estadoForm.propiedad.asesor_id !== yo.id;
+      // Ajena: de otro asesor o sin asesor (p. ej. las del catálogo inicial) → el admin vuelve a «Todas»
+      const ajena = estadoForm.propiedad && estadoForm.propiedad.asesor_id !== yo.id;
       location.hash = esAdmin && ajena ? '#todas' : '#mis';
     } catch (err) {
       pintarFotos();

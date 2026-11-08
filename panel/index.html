@@ -174,6 +174,12 @@
             <p class="pn-error-campo" id="fColoniaError" hidden></p>
           </div>
         </div>
+        <div class="pn-campo" data-solo-admin hidden>
+          <label for="fZonaTexto">Texto de la zona en la tarjeta (opcional)</label>
+          <input id="fZonaTexto" maxlength="120" placeholder="Ej. Zoi Capital Norte, Río Blanco, Zapopan" aria-describedby="fZonaTextoAyuda fZonaTextoError">
+          <p class="pn-ayuda" id="fZonaTextoAyuda">Si lo dejas vacío, la tarjeta muestra la colonia y el municipio.</p>
+          <p class="pn-error-campo" id="fZonaTextoError" hidden></p>
+        </div>
         <div class="pn-campo">
           <span class="pn-label" id="fMapaEtiqueta">Ubicación en el mapa (opcional)</span>
           <p class="pn-ayuda">Toca el mapa para marcar dónde está la propiedad. Si no la marcas, no aparece en el mapa de la página.</p>
@@ -214,6 +220,12 @@
             <input id="fEstacionamientos" type="number" min="0" max="200" step="1" inputmode="numeric" aria-describedby="fEstacionamientosError">
             <p class="pn-error-campo" id="fEstacionamientosError" hidden></p>
           </div>
+        </div>
+        <div class="pn-campo" data-solo-admin hidden>
+          <label for="fDatosTarjeta">Datos cortos de la tarjeta (opcional)</label>
+          <textarea id="fDatosTarjeta" class="pn-textarea-corta" rows="3" maxlength="300" placeholder="Uno por renglón. Ej.:&#10;90 m²&#10;2 rec.&#10;Roof garden" aria-describedby="fDatosTarjetaAyuda fDatosTarjetaError"></textarea>
+          <p class="pn-ayuda" id="fDatosTarjetaAyuda">Máximo 6 renglones de hasta 40 caracteres. Si lo dejas vacío, la tarjeta los arma sola con los m², las recámaras, los baños y los estacionamientos.</p>
+          <p class="pn-error-campo" id="fDatosTarjetaError" hidden></p>
         </div>
       </fieldset>
 

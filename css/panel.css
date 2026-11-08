@@ -203,6 +203,7 @@
   transition:border-color .2s, box-shadow .2s, background-color .2s;
 }
 .pn-campo textarea, .pn-dialogo textarea{resize:vertical;line-height:1.6;min-height:120px;}
+.pn-campo textarea.pn-textarea-corta{min-height:96px;}
 .pn-campo input:focus, .pn-campo select:focus, .pn-campo textarea:focus, .pn-dialogo textarea:focus, .pn-dialogo input:focus{
   outline:none;border-color:var(--dorado);box-shadow:var(--ring-dorado);background:#fff;
 }

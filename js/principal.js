@@ -534,9 +534,29 @@
   const panelPropiedades = window.DemetriusPropiedades;
   if (panelPropiedades && panelPropiedades.configurado) {
     panelPropiedades.listar().then(lista => {
-      if (!lista.length) return;
-      const disponibles = lista.filter(p => p.estado === 'publicada');
-      const vendidas = lista.filter(p => p.estado !== 'publicada');
+      const porId = new Map(lista.map(p => [p.id, p]));
+      // 1) Tarjetas escritas a mano que ya viven en el panel (llevan data-id): se cambian por su versión
+      //    del panel en el mismo lugar. Si en el panel cambió de disponible a vendida (o al revés), se
+      //    mueve con las de su grupo; si ya no es pública, se quita.
+      // (solo si el catálogo ya se pasó al panel: si Supabase no tiene ninguna, no se toca nada)
+      const escritas = $$('.prop-card[data-id]:not([data-origen="panel"])', propGrid);
+      const yaEnPanel = escritas.some(card => porId.has(card.dataset.id));
+      const migradas = new Set();
+      (yaEnPanel ? escritas : []).forEach(card => {
+        const id = card.dataset.id;
+        migradas.add(id);
+        const p = porId.get(id);
+        if (p && (p.estado !== 'publicada') === (card.dataset.vendida === 'si')) {
+          card.replaceWith(panelPropiedades.crearTarjeta(p, el));
+          porId.delete(id);
+        } else {
+          card.remove();
+        }
+      });
+      // 2) Las demás del panel: las disponibles después del Edificio Luviano; las vendidas, antes de las vendidas
+      const resto = [...porId.values()];
+      const disponibles = resto.filter(p => p.estado === 'publicada');
+      const vendidas = resto.filter(p => p.estado !== 'publicada');
       const destacada = $('.prop-destacada', propGrid);
       const anclaDisponibles = destacada ? destacada.nextElementSibling : propGrid.firstElementChild;
       const anclaVendidas = $('.prop-card.is-vendida', propGrid); // null = al final
@@ -546,7 +566,7 @@
       agregarColonias(lista);
       recalcularTarjetas();
       renderCatalogo();
-      agregarAlMapa(disponibles);
+      actualizarMapaDesdePanel(lista.filter(p => p.estado === 'publicada'), migradas);
     }).catch(() => { /* sin conexión: se queda el catálogo escrito a mano */ });
   }
 
@@ -1034,19 +1054,20 @@
   /* =========================================================
      MAPA ZMG (Leaflet) — se carga al acercarse a la sección
      ========================================================= */
-  // Propiedades de ejemplo distribuidas en toda la ZMG
-  // (en producción, este arreglo se llena dinámicamente desde el panel de administración)
+  // Propiedades disponibles con ubicación (respaldo escrito a mano).
+  // Las que tienen "id" ya viven en el panel (supabase/catalogo-inicial.sql): cuando carga Supabase,
+  // su marcador se cambia por el del panel (o se quita si ya no está disponible).
   const propiedades = [
-    { lat: 20.617445778259928, lng: -103.47095443086424, zona: "Ciudad Bugambilias · Zapopan, Jalisco", titulo: "Casa En Venta", precio: "$12,000,000.00 M.N" },   // (listo)
-    { lat: 20.717159221118813, lng: -103.3255021, zona: "Lomas Independencia · Guadalajara, Jalisco", titulo: "Departamento En Venta", precio: "$2,990,000.00 M.N." },   // (listo)}
-    { lat: 20.618699824026095, lng: -103.46896374241076, zona: "Ciudad Bugambilias 2da secc. · Zapopan, Jalisco", titulo: "Terraza En Venta", precio: "$10,500,000.00 M.N." },  // (listo)}
-    { lat: 20.722392121213318, lng: -103.4764693423289, zona: "Parques Vallarta · Zapopan", titulo: "Casa En Venta", precio: "$9,900,000.00 M.N." },     // (listo)
-    { lat: 20.717072912690632, lng: -103.32776600006594, zona: "Col. Lomas De Independencia · Guadalajara", titulo: "Casa En Venta", precio: "$4,750,000.00 M.N." }, // (listo)}
-    { lat: 20.728365480919404, lng: -103.37751172883554, zona: "Col. Constitucion · Zapopan", titulo: "Casa En Venta", precio: "$2,800,000.00 M.N." },       // (listo)}
-    { lat: 20.59056053032381, lng: -103.43716371664033, zona: "La Tijera · Zapopan", titulo: "Departamento En Venta", precio: "$3'300,000.00 M.N." },     // (listo)}
-    { lat: 20.766653331806882, lng: -103.39456730008078, zona: "Los Almendros · Zapopan", titulo: "Casa En Venta", precio: "$6,980,000.00 M.N." },  // (listo)}
-    { lat: 20.65738913571202, lng: -103.28536297097166, zona: "Col. Insurgentes · Guadalajara", titulo: "Bodega En Venta", precio: "$3,750,000.00 M.N." },    // (listo)
-    { lat: 20.785784, lng: -103.411437, zona: "Zoi Capital Norte · Río Blanco, Zapopan", titulo: "Casa En Venta", precio: "$3,199,000.00 M.N." },    // Av. D, Capital Norte (ubicación aproximada de la calle)
+    { id: "2cfec632-5b9d-56be-ba0b-b72e83334f2f", lat: 20.617445778259928, lng: -103.47095443086424, zona: "Ciudad Bugambilias · Zapopan, Jalisco", titulo: "Casa En Venta", precio: "$12,000,000.00 M.N" },   // (listo)
+    { id: "6a8bb67b-90eb-5178-91ad-fc782c728576", lat: 20.717159221118813, lng: -103.3255021, zona: "Lomas Independencia · Guadalajara, Jalisco", titulo: "Departamento En Venta", precio: "$2,990,000.00 M.N." },   // (listo)}
+    { id: "60190f0d-b192-5e48-9db5-a4256cffde62", lat: 20.618699824026095, lng: -103.46896374241076, zona: "Ciudad Bugambilias 2da secc. · Zapopan, Jalisco", titulo: "Terraza En Venta", precio: "$10,500,000.00 M.N." },  // (listo)}
+    { id: "d55094dd-23c3-551c-95d3-609300e8624f", lat: 20.722392121213318, lng: -103.4764693423289, zona: "Parques Vallarta · Zapopan", titulo: "Casa En Venta", precio: "$9,900,000.00 M.N." },     // (listo)
+    { id: "60d2f40c-208e-5119-9c2e-16380f72d777", lat: 20.717072912690632, lng: -103.32776600006594, zona: "Col. Lomas De Independencia · Guadalajara", titulo: "Casa En Venta", precio: "$4,750,000.00 M.N." }, // (listo)}
+    { id: "58a9d805-edb7-55df-b370-299fac90006a", lat: 20.728365480919404, lng: -103.37751172883554, zona: "Col. Constitucion · Zapopan", titulo: "Casa En Venta", precio: "$2,800,000.00 M.N." },       // (listo)}
+    { id: "331740e9-b451-531e-ba38-50b1a1412de1", lat: 20.59056053032381, lng: -103.43716371664033, zona: "La Tijera · Zapopan", titulo: "Departamento En Venta", precio: "$3'300,000.00 M.N." },     // (listo)}
+    { id: "6e125a49-1da8-57fc-ba0b-f466acff0836", lat: 20.766653331806882, lng: -103.39456730008078, zona: "Los Almendros · Zapopan", titulo: "Casa En Venta", precio: "$6,980,000.00 M.N." },  // (listo)}
+    { id: "d1f557f9-d6ea-5205-a628-b2ffe26818be", lat: 20.65738913571202, lng: -103.28536297097166, zona: "Col. Insurgentes · Guadalajara", titulo: "Bodega En Venta", precio: "$3,750,000.00 M.N." },    // (listo)
+    { id: "1856b3dc-adb9-52bd-8921-ab5bc0bcf201", lat: 20.785784, lng: -103.411437, zona: "Zoi Capital Norte · Río Blanco, Zapopan", titulo: "Casa En Venta", precio: "$3,199,000.00 M.N." },    // Av. D, Capital Norte (ubicación aproximada de la calle)
     { lat: 20.673519, lng: -103.371727, zona: "López Cotilla 1701 · Col. Americana, Guadalajara", titulo: "Edificio Luviano · Venta y Renta", precio: "Venta $80,000,000 · Renta completa $500,000" },    // C. Manuel López Cotilla 1701
   ];
 
@@ -1060,7 +1081,7 @@
     const cta = p.url
       ? el('a', { clase: 'popup-cta', href: p.url, 'data-ubicacion': 'mapa' }, 'Ver ficha →')
       : el('a', { clase: 'popup-cta', href: waLink(mensaje), target: '_blank', rel: 'noopener noreferrer', 'data-ubicacion': 'mapa' }, 'Solicitar información →');
-    L.marker([p.lat, p.lng], { icon: goldIcon, title: `${p.titulo} · ${p.zona}`, alt: `${p.titulo} · ${p.zona}` }).addTo(mapa).bindPopup(
+    p.marcador = L.marker([p.lat, p.lng], { icon: goldIcon, title: `${p.titulo} · ${p.zona}`, alt: `${p.titulo} · ${p.zona}` }).addTo(mapa).bindPopup(
       el('div', {},
         el('div', { clase: 'popup-zone' }, p.zona),
         el('div', { clase: 'popup-title' }, p.titulo),
@@ -1070,7 +1091,7 @@
   }
 
   // Encuadra todos los marcadores
-  const encuadrarMapa = () => mapa.fitBounds(L.latLngBounds(propiedades.map(p => [p.lat, p.lng])), { padding: [40, 40] });
+  const encuadrarMapa = () => { if (propiedades.length) mapa.fitBounds(L.latLngBounds(propiedades.map(p => [p.lat, p.lng])), { padding: [40, 40] }); };
 
   function iniciarMapa() {
     if (mapaIniciado) return;
@@ -1103,18 +1124,25 @@
   const actualizarTotalMapa = () => { if (totalMapa) totalMapa.textContent = String(propiedades.length); };
   actualizarTotalMapa();
 
-  // Propiedades publicadas desde el panel que tienen ubicación marcada
-  function agregarAlMapa(lista) {
+  // Mapa con las propiedades del panel: quita los marcadores escritos a mano de las que ya viven en el panel
+  // y agrega las publicadas que tienen ubicación marcada (con el texto de su tarjeta y "Ver ficha →")
+  function actualizarMapaDesdePanel(lista, migradas) {
+    for (let i = propiedades.length - 1; i >= 0; i--) {
+      const m = propiedades[i];
+      if (m.id && migradas.has(m.id)) {
+        if (m.marcador) m.marcador.remove();
+        propiedades.splice(i, 1);
+      }
+    }
     const nuevas = lista
       .filter(p => Number.isFinite(p.lat) && Number.isFinite(p.lng))
       .map(p => ({
         lat: p.lat, lng: p.lng,
-        zona: `${p.colonia} · ${panelPropiedades.nombreMunicipio(p.municipio)}`,
+        zona: panelPropiedades.textoZona(p),
         titulo: p.titulo,
         precio: panelPropiedades.textoPrecio(p),
         url: panelPropiedades.urlFicha(p.id)
       }));
-    if (!nuevas.length) return;
     propiedades.push(...nuevas);
     actualizarTotalMapa();
     if (mapa) { nuevas.forEach(agregarMarcador); encuadrarMapa(); }

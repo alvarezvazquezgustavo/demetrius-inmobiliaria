@@ -134,7 +134,9 @@ as $$
      );
 $$;
 
--- Rutas de fotos válidas: "<id de la propiedad>/<nombre>.jpg" (máximo 20)
+-- Rutas de fotos válidas (máximo 20):
+--   "<id de la propiedad>/<nombre>.jpg"  → foto subida desde el panel (Storage)
+--   "sitio/<nombre del archivo>"         → foto que vive en la página (catálogo escrito a mano, 2026-11-08)
 create or replace function public.fotos_validas(fotos text[])
 returns boolean
 language sql
@@ -145,7 +147,8 @@ as $$
      and not exists (
        select 1 from unnest(fotos) as t(ruta)
        where ruta is null
-          or ruta !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/[A-Za-z0-9_-]{1,64}\.(jpg|jpeg|png|webp)$'
+          or (ruta !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/[A-Za-z0-9_-]{1,64}\.(jpg|jpeg|png|webp)$'
+              and ruta !~* '^sitio/[^/\\?#%"<>]{1,150}\.(jpe?g|png|webp)$')
      );
 $$;
 
@@ -216,6 +219,18 @@ create table if not exists public.propiedades (
   constraint propiedades_fotos_validas      check (public.fotos_validas(fotos))
 );
 
+-- Textos opcionales de la tarjeta (2026-11-08). Si están vacíos, la tarjeta los arma sola.
+--   zona_texto     la línea de la zona tal cual (p. ej. "Zoi Capital Norte, Río Blanco, Zapopan")
+--   datos_tarjeta  los datos cortos tal cual (p. ej. "90 m²", "2 rec.", "Roof Garden"), máximo 6
+alter table public.propiedades add column if not exists zona_texto text;
+alter table public.propiedades add column if not exists datos_tarjeta text[] not null default '{}';
+alter table public.propiedades drop constraint if exists propiedades_zona_texto_largo;
+alter table public.propiedades add constraint propiedades_zona_texto_largo
+  check (zona_texto is null or char_length(zona_texto) between 2 and 120);
+alter table public.propiedades drop constraint if exists propiedades_datos_tarjeta_validos;
+alter table public.propiedades add constraint propiedades_datos_tarjeta_validos
+  check (public.lista_texto_valida(datos_tarjeta, 40, 6));
+
 create index if not exists propiedades_publicas_idx on public.propiedades (publicada_en desc)
   where estado in ('publicada', 'vendida', 'rentada');
 create index if not exists propiedades_asesor_idx on public.propiedades (asesor_id, actualizada desc);
@@ -237,10 +252,22 @@ begin
   new.descripcion := nullif(btrim(new.descripcion), '');
   new.amenidades  := coalesce((select array_agg(btrim(a) order by n) from unnest(new.amenidades) with ordinality as t(a, n)
                                where btrim(a) <> ''), '{}');
+  new.zona_texto    := nullif(btrim(new.zona_texto), '');
+  new.datos_tarjeta := coalesce((select array_agg(btrim(a) order by n) from unnest(new.datos_tarjeta) with ordinality as t(a, n)
+                                 where btrim(a) <> ''), '{}');
   new.actualizada := now();
 
-  -- Cada foto debe estar en la carpeta de ESTA propiedad
-  if exists (select 1 from unnest(new.fotos) as t(ruta) where split_part(ruta, '/', 1) <> new.id::text) then
+  -- Cada foto debe estar en la carpeta de ESTA propiedad (las "sitio/…" son fotos de la página)
+  if exists (select 1 from unnest(new.fotos) as t(ruta)
+             where split_part(ruta, '/', 1) <> new.id::text and ruta not like 'sitio/%') then
+    raise exception 'Hay fotos que no pertenecen a esta propiedad.';
+  end if;
+  -- Solo el administrador puede ligar fotos de la página; el asesor solo conserva las que ya tenía
+  if not privilegiado and exists (
+    select 1 from unnest(new.fotos) as t(ruta)
+    where ruta like 'sitio/%'
+      and (tg_op = 'INSERT' or not (ruta = any (old.fotos)))
+  ) then
     raise exception 'Hay fotos que no pertenecen a esta propiedad.';
   end if;
 
@@ -393,16 +420,16 @@ revoke all on public.propiedades from anon, authenticated;
 -- El público solo puede leer estas columnas (nunca el asesor ni los comentarios internos)
 grant select (id, estado, titulo, tipo, operacion, precio_venta, precio_renta, municipio, colonia, etiqueta,
               terreno_m2, construccion_m2, recamaras, banos, estacionamientos, descripcion, amenidades,
-              coto, preventa, lat, lng, fotos, publicada_en)
+              coto, preventa, lat, lng, fotos, publicada_en, zona_texto, datos_tarjeta)
   on public.propiedades to anon;
 grant select, delete on public.propiedades to authenticated;
 grant insert (titulo, tipo, operacion, precio_venta, precio_renta, municipio, colonia, etiqueta,
               terreno_m2, construccion_m2, recamaras, banos, estacionamientos, descripcion, amenidades,
-              coto, preventa, lat, lng, fotos)
+              coto, preventa, lat, lng, fotos, zona_texto, datos_tarjeta)
   on public.propiedades to authenticated;
 grant update (estado, comentario_admin, titulo, tipo, operacion, precio_venta, precio_renta, municipio, colonia,
               etiqueta, terreno_m2, construccion_m2, recamaras, banos, estacionamientos, descripcion, amenidades,
-              coto, preventa, lat, lng, fotos)
+              coto, preventa, lat, lng, fotos, zona_texto, datos_tarjeta)
   on public.propiedades to authenticated;
 
 

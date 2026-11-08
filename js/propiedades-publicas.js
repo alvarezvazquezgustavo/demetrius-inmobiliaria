@@ -11,7 +11,13 @@
 
   // Columnas que el público tiene permitido leer (ver los "grant select" de supabase/propiedades.sql)
   const CAMPOS = 'id,estado,titulo,tipo,operacion,precio_venta,precio_renta,municipio,colonia,etiqueta,terreno_m2,' +
-    'construccion_m2,recamaras,banos,estacionamientos,descripcion,amenidades,coto,preventa,lat,lng,fotos,publicada_en';
+    'construccion_m2,recamaras,banos,estacionamientos,descripcion,amenidades,coto,preventa,lat,lng,fotos,publicada_en,' +
+    'zona_texto,datos_tarjeta';
+  // Raíz de la página (este archivo vive en /js/): ahí están las fotos del catálogo escrito a mano ("sitio/<archivo>")
+  const raizSitio = (() => {
+    try { return new URL('../', (document.currentScript && document.currentScript.src) || location.href).href; }
+    catch (e) { return '/'; }
+  })();
   const ESTADOS_PUBLICOS = 'publicada,vendida,rentada';
 
   const MUNICIPIOS = Object.freeze({
@@ -51,14 +57,19 @@
   }
 
   // ---------- Formatos (mismos que las tarjetas escritas a mano) ----------
-  const urlFoto = (ruta) => `${base}/storage/v1/object/public/${encodeURIComponent(bucket)}/${String(ruta).split('/').map(encodeURIComponent).join('/')}`;
+  // "sitio/<archivo>": foto que vive en la página (mismo nombre de siempre); lo demás: foto subida desde el panel
+  const urlFoto = (ruta) => (String(ruta).startsWith('sitio/')
+    ? raizSitio + encodeURIComponent(String(ruta).slice(6))
+    : `${base}/storage/v1/object/public/${encodeURIComponent(bucket)}/${String(ruta).split('/').map(encodeURIComponent).join('/')}`);
+  const esFotoDelSitio = (ruta) => String(ruta).startsWith('sitio/');
   const urlFicha = (id) => `propiedad.html?id=${encodeURIComponent(id)}`;
   const numero = (n, dec = 2) => Number(n).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: dec });
   const dinero = (n) => `$${Number(n).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} M.N.`;
   const esVendida = (p) => p.estado === 'vendida' || p.estado === 'rentada';
   const textoSello = (p) => (p.estado === 'rentada' ? 'Rentada' : 'Vendida');
   const nombreMunicipio = (m) => MUNICIPIOS[m] || m || '';
-  const textoZona = (p) => [p.colonia, nombreMunicipio(p.municipio)].filter(Boolean).join(', ');
+  // La zona tal cual si el administrador la escribió (zona_texto); si no, colonia y municipio
+  const textoZona = (p) => p.zona_texto || [p.colonia, nombreMunicipio(p.municipio)].filter(Boolean).join(', ');
 
   // Precio principal: el de venta; en las de solo renta, la renta mensual con "/ mes"
   function textoPrecio(p) {
@@ -72,7 +83,9 @@
     return p.operacion === 'venta renta' ? 'Venta · Renta' : (OPERACIONES[p.operacion] || '');
   }
   // Datos cortos de la tarjeta: "90 m²", "3 rec.", "2.5 baños", "2 estac."
+  // (si el administrador los escribió en "datos_tarjeta", se usan tal cual)
   function datosCortos(p) {
+    if (Array.isArray(p.datos_tarjeta) && p.datos_tarjeta.length) return p.datos_tarjeta.slice(0, 6);
     const m2 = p.construccion_m2 || p.terreno_m2;
     const banos = p.banos != null ? Number(p.banos) : null;
     return [
@@ -139,7 +152,7 @@
 
   window.DemetriusPropiedades = Object.freeze({
     configurado, listar, obtener, esUuid,
-    urlFoto, urlFicha, dinero, numero, textoPrecio, textoZona, textoEtiqueta, textoSello, esVendida,
+    urlFoto, urlFicha, esFotoDelSitio, dinero, numero, textoPrecio, textoZona, textoEtiqueta, textoSello, esVendida,
     datosCortos, caracteristicas, crearTarjeta, nombreMunicipio,
     MUNICIPIOS, TIPOS, OPERACIONES
   });

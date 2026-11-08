@@ -178,6 +178,15 @@ Es la versión extendida:
 
 **Tarjetas del panel (2026-11-05):** se insertan al cargar la página. Las publicadas van justo **después del Edificio Luviano**, y las vendidas o rentadas, **antes de la primera vendida escrita a mano**. Después se vuelve a calcular qué queda oculto: siempre se ven las primeras 7 (`VISIBLES_INICIALES`). Si Supabase no responde, el catálogo escrito a mano se queda igual.
 
+**Catálogo escrito a mano en el panel (2026-11-08, paso 17 pedido por el usuario):** las 48 tarjetas (todas menos el Edificio Luviano) ya viven también en Supabase con `supabase/catalogo-inicial.sql` (ids fijos, `uuid5` de la foto; `on conflict do nothing`).
+- Cada tarjeta de `index.html` lleva `data-id` con su id del panel; los 10 marcadores del mapa con ubicación llevan el mismo `id` en el arreglo `propiedades` de `principal.js`.
+- Al cargar Supabase, `principal.js` cambia cada tarjeta escrita a mano por su versión del panel **en el mismo lugar**. Si en el panel pasó de disponible a vendida (o al revés), se mueve a su grupo; si ya no es pública, se quita. Sus marcadores del mapa se cambian por los del panel (con «Ver ficha →»).
+- **Seguro:** solo lo hace si Supabase tiene al menos una de esas tarjetas; si no (SQL sin ejecutar, lista vacía o sin conexión), no toca nada. Las tarjetas escritas a mano siguen en el HTML para buscadores y como respaldo.
+- Para que se vean idénticas se agregaron `zona_texto` y `datos_tarjeta` (ver §7b). Se comparó tarjeta por tarjeta: 47 de 48 quedan iguales; la de Torre Balanty muestra «$3,300,000.00 M.N.» en lugar de «$3'300,000.00 M.N.» (el formato del panel). El texto alternativo de las fotos y los textos del mapa ahora salen de los datos del panel.
+- Fotos: `fotos = ['sitio/<archivo>']` (la foto sigue en la raíz con su nombre original). `urlFoto` la resuelve contra la raíz de la página. Nunca se borra desde el panel.
+- Ajustes de datos: Torre Balanty tenía municipios «zapopan tlajomulco» → quedó `zapopan`; Colomos Providencia decía venta y renta sin renta mensual → quedó `venta`; los m² sueltos de casas se guardaron como construcción (los de terrenos, como terreno); los datos que no son m², recámaras, baños o estacionamientos quedaron como amenidades. El marcador de «Bugambilias $12 M» se asignó a la de `CASA BUGA GRANDE.jpeg` (había dos casas de $12 M; conviene que el usuario lo confirme).
+- `llms.txt`, `llms-full.txt`, el JSON-LD y `sitemap.xml` **no** se actualizan solos con lo que se cambie en el panel.
+
 Hoy son 49 tarjetas escritas a mano: 12 disponibles y 37 vendidas (35 "Vendida" y 2 "Rentada"). El JSON-LD (`OfferCatalog`) tiene `numberOfItems: 51`: Yéucate, el Luviano (que cuenta como dos ofertas, venta y renta), Zoi, `#propiedad-1` a `#propiedad-11`, `#propiedad-12` y `#vendida-1` a `#vendida-4`, y `#propiedad-13` a `#propiedad-43` (las del catálogo de WhatsApp). Hay 37 vendidas: llevan `"availability": "https://schema.org/SoldOut"` y "(vendida)" o "(rentada)" al final del `name`; entre ellas están `#propiedad-7` (Jocotepec) y de `#propiedad-13` a `#propiedad-43`. Las de renta usan `LeaseOut` y un `UnitPriceSpecification` mensual (`unitCode: MON`).
 
 ### Lógica relacionada (`js/principal.js`)
@@ -293,7 +302,9 @@ El usuario pidió un acceso privado para el equipo: los asesores cargan propieda
     - "Acceso del equipo" en la columna Navegación del pie.
     - Para que quepa el ícono, `.desktop-nav` bajó de 36 a 30 px de separación y el menú hamburguesa ahora empieza en **≤1309 px** (antes 1259). A ≤380 px el ícono se oculta con los otros (la regla `nth-child(n+3)` de siempre); ahí queda el enlace del menú.
     - El panel tiene "Ver la página" al final de sus menús.
-  - Las 49 propiedades escritas a mano **no aparecen en el panel**; para editarlas ahí habría que pasarlas a Supabase.
+  - Las propiedades escritas a mano se pasaron al panel el 2026-11-08 (ver §5): salen como «Sin asesor asignado» y solo el admin las edita. Al guardar una sin asesor, el admin regresa a «Todas».
+  - **Campos `zona_texto` y `datos_tarjeta`** (2026-11-08, en `propiedades.sql` con `add column if not exists`): textos opcionales de la tarjeta. En el formulario solo los ve el admin («Texto de la zona en la tarjeta» y «Datos cortos de la tarjeta», uno por renglón, máx. 6 × 40). Si están vacíos, la tarjeta se arma sola. El público los puede leer (grant).
+  - **Fotos `sitio/…`:** `fotos_validas` acepta `sitio/<archivo>` (sin `/`, con extensión de imagen). El trigger solo deja que el admin las agregue; el asesor solo conserva las que ya tenía. El panel nunca las manda a borrar de Storage.
   - Si una cuenta no está activa, se cierra la sesión y aparece un aviso en el acceso.
 - **Sin registro público:** el usuario crea las cuentas en Supabase (Authentication → Users) y debe apagar "Allow new users to sign up". El primer admin se hace con un `update` que viene en la guía; los demás se activan desde **Equipo**.
 - **El panel solo funciona con la página publicada**: hoy no hay dominio.
@@ -363,6 +374,7 @@ Apartado privado del panel (`#documentos`) para compartir la documentación deli
 | `a392209` | Portada nueva, desarrollo Yéucate y 31 propiedades del catálogo de WhatsApp |
 | `7280231` | Las 31 del catálogo y el terreno de Jocotepec pasan a vendidas; sello "Vendida" en banda diagonal |
 | `f15b23b` | Panel del equipo con Supabase, ficha de propiedades, filtro de recámaras, acceso "Iniciar sesión" y capas del bloque Yéucate para Safari |
+| `3ab298f` | Documentos privados del panel (dos pasos, aprobación, bitácora), Aviso de Privacidad y guía en PDF |
 
 ## 10. Cómo se prueba
 
@@ -406,19 +418,22 @@ Apartado privado del panel (`#documentos`) para compartir la documentación deli
 
 ## 12. Pendientes del usuario
 
-- [ ] Comprar el dominio `inmobiliariademetrius.com`. Después hay que elegir hosting y activar la publicación.
+- [ ] Comprar el dominio `inmobiliariademetrius.com`: el usuario dijo que lo compra a fin de noviembre de 2026. Recomendado: comprarlo y publicar en **Netlify** (la página ya está preparada para Netlify: `netlify.toml` con redirecciones y bloqueos 404, y `_headers`; en Cloudflare Pages harían falta un `_redirects` y revisar los bloqueos).
+- [ ] Ejecutar en Supabase la versión nueva de `supabase/propiedades.sql` y después `supabase/catalogo-inicial.sql` (guía, punto 7.1).
+- [x] ~~**Site URL** de Supabase = `https://inmobiliariademetrius.com`~~ (2026-11-08, captura del usuario). - [ ] Crear la propiedad de **GA4** y dar el `G-…`. **Search Console** espera al dominio (pide verificarlo).
 - [ ] Activar el panel del equipo (`supabase/GUIA-PANEL.md`):
   - ~~ejecutar `supabase/propiedades.sql`~~ (hecho el 2026-11-05);
-  - apagar "Allow new users to sign up";
+  - ~~apagar "Allow new users to sign up"~~ (el usuario confirmó el 2026-11-08 que quedó apagado);
   - ~~crear su cuenta y hacerla admin~~ (2026-11-05: hay 2 administradores activos, Gerardo Yair Ocaña y Gustavo Álvarez; sus correos no se anotan aquí porque el repositorio es público);
   - dar de alta a los asesores cuando el usuario los tenga.
   El panel se usa hasta que la página esté publicada.
 - [ ] Activar **Documentos** (`supabase/GUIA-PANEL.md`, punto 8): ejecutar `supabase/documentos.sql` en el Supabase real y revisar que TOTP esté prendido.
-- [ ] Decidir si pasan al **plan Pro** de Supabase ($25 USD/mes) para archivos de 150 MB. Hoy, con el plan gratis, el máximo es 50 MB por archivo y 1 GB en total. Al pagar: punto 8.4 de la guía (sin cambios de código).
+- [ ] (2026-11-08: por ahora NO pasan al plan Pro) Decidir si pasan al **plan Pro** de Supabase ($25 USD/mes) para archivos de 150 MB. Hoy, con el plan gratis, el máximo es 50 MB por archivo y 1 GB en total. Al pagar: punto 8.4 de la guía (sin cambios de código).
 - [ ] (Recomendado) Que un abogado revise lo que se agregó al Aviso de Privacidad el 2026-11-07.
 - [ ] Cuando exista el dominio: crear la propiedad de Google Analytics 4 y dar el ID (`G-…`). Mientras siga el marcador `G-XXXXXXXXXX`, GA no se carga.
-- [ ] Dar la dirección completa de la oficina y el horario.
-- [ ] Confirmar la autorización del desarrollador de Yéucate para publicar su plano, sus datos y las fotos de la obra.
+- [ ] Dar la dirección completa de la oficina y el horario. 2026-11-08: el usuario mandó una captura de su ficha de negocio: «Abierto las 24 horas» de lunes a sábado (el domingo no se veía) y sin dirección. Falta confirmar el domingo y la dirección.
+- [ ] Aclarar el correo: esa misma ficha dice `inmobiliariademetrius@gmail.com` (con la "a"), pero la página usa `inmobiliriademetrius@gmail.com` (sin la "a", regla de §1: no corregir). Preguntar cuál es el bueno antes de tocar nada.
+- [x] ~~Confirmar la autorización del desarrollador de Yéucate para publicar su plano, sus datos y las fotos de la obra.~~ El usuario confirmó el 2026-11-08 que ya tiene el permiso.
 - [ ] (Opcional) Borrar la reseña "Prueba de conexión" en Supabase. No es urgente: está sin aprobar, así que no aparece en la web.
 - [x] ~~(Opcional) Enviar capturas del catálogo de WhatsApp para compararlo con la web.~~ Llegó como carpeta `Catalogo_Demetrius_Inmobiliaria` y se agregaron 31 propiedades (2026-11-04).
 - [x] ~~Confirmar si alguna de las 31 propiedades nuevas ya se vendió.~~ El 2026-11-05 el usuario confirmó, con capturas del catálogo de WhatsApp (de Colomos Providencia a Paseos del Sol), que **todas** se vendieron. Se pasaron a vendidas, junto con el terreno de Jocotepec (la ficha "Terreno a la Venta, Ajijic" de 10,413 m² aparece en esas capturas). Terraza Constitución, Bosques/Parques Vallarta y Balanty no venían en las capturas y siguen disponibles.
