@@ -2,7 +2,7 @@
   /* =========================================================
      CONFIGURACIÓN CENTRAL
      ========================================================= */
-  const GA_MEASUREMENT_ID = "G-XXXXXXXXXX"; // ← Reemplaza con tu ID real de Google Analytics 4
+  const GA_MEASUREMENT_ID = "G-HENM9J0QYE"; // Google Analytics 4 · flujo «Página web Demetrius» (2026-11-08). Solo carga si la persona acepta las cookies.
 
   // Solo valores PÚBLICOS. Las llaves privadas (EasyBroker, etc.) viven en .env y se
   // usan desde una función serverless; nunca se escriben en este archivo.
@@ -13,7 +13,7 @@
     WHATSAPP_NUMBER: "5213351070944",
     PHONE_E164: "+523351070944",
     PHONE_DISPLAY: "(33) 5107-0944",
-    CONTACT_EMAIL: "inmobiliriademetrius@gmail.com",
+    CONTACT_EMAIL: "inmobiliariademetrius@gmail.com",
     GA_MEASUREMENT_ID: GA_MEASUREMENT_ID,
     COOKIE_CONSENT_KEY: "demetrius_cookie_consent",
     MAP_TILES_URL: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",

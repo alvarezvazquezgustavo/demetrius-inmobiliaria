@@ -14,7 +14,8 @@ Este archivo reúne las decisiones tomadas y las convenciones que hay que respet
 | Marca | Demetrius Grupo Inmobiliario (también Inmobiliaria Demetrius) |
 | Responsable legal | Gerardo Yair Ocaña Vázquez |
 | Teléfono / WhatsApp | +52 33 5107 0944 · `https://wa.me/5213351070944` |
-| Correo | `inmobiliriademetrius@gmail.com` (así se escribe, sin la "a": no corregir) |
+| Correo | `inmobiliariademetrius@gmail.com`. Antes la página decía `inmobiliriademetrius@gmail.com` (sin la "a"); el 2026-11-08 el usuario pidió usar el de su ficha de negocio y se cambió en todo el sitio (8 archivos) |
+| Horario | Abierto las 24 horas, los 7 días (confirmado el 2026-11-08). Está en el JSON-LD (`openingHoursSpecification`), en el pie de las tres páginas y en `llms.txt`/`llms-full.txt` |
 | Dominio previsto | `https://inmobiliariademetrius.com`, **todavía no comprado** |
 | Redes | Facebook `share/1Hd4mDmCfW`, Instagram `@residencial_demetrius`, TikTok `@demetrius.inmobiliaria` |
 
@@ -375,6 +376,7 @@ Apartado privado del panel (`#documentos`) para compartir la documentación deli
 | `7280231` | Las 31 del catálogo y el terreno de Jocotepec pasan a vendidas; sello "Vendida" en banda diagonal |
 | `f15b23b` | Panel del equipo con Supabase, ficha de propiedades, filtro de recámaras, acceso "Iniciar sesión" y capas del bloque Yéucate para Safari |
 | `3ab298f` | Documentos privados del panel (dos pasos, aprobación, bitácora), Aviso de Privacidad y guía en PDF |
+| `e79d50c` | Las 48 propiedades escritas a mano pasan al panel sin cambiar cómo se ven (`catalogo-inicial.sql`) |
 
 ## 10. Cómo se prueba
 
@@ -420,7 +422,7 @@ Apartado privado del panel (`#documentos`) para compartir la documentación deli
 
 - [ ] Comprar el dominio `inmobiliariademetrius.com`: el usuario dijo que lo compra a fin de noviembre de 2026. Recomendado: comprarlo y publicar en **Netlify** (la página ya está preparada para Netlify: `netlify.toml` con redirecciones y bloqueos 404, y `_headers`; en Cloudflare Pages harían falta un `_redirects` y revisar los bloqueos).
 - [ ] Ejecutar en Supabase la versión nueva de `supabase/propiedades.sql` y después `supabase/catalogo-inicial.sql` (guía, punto 7.1).
-- [x] ~~**Site URL** de Supabase = `https://inmobiliariademetrius.com`~~ (2026-11-08, captura del usuario). - [ ] Crear la propiedad de **GA4** y dar el `G-…`. **Search Console** espera al dominio (pide verificarlo).
+- [x] ~~**Site URL** de Supabase = `https://inmobiliariademetrius.com`~~ (2026-11-08, captura del usuario). - [x] GA4 listo (ver abajo). Nota: el 2026-11-08 el usuario primero mandó un código de **Google Tag Manager** (`GTM-W5LBNN49`): **no se usa**. La página carga GA4 directo (`gtag/js`, solo con consentimiento); `gtm.js` no está permitido en la CSP y GTM permitiría meter scripts desde fuera. Se le pidió el ID de medición de GA4 (analytics.google.com → Administrar → Flujos de datos). **Search Console** espera al dominio (pide verificarlo).
 - [ ] Activar el panel del equipo (`supabase/GUIA-PANEL.md`):
   - ~~ejecutar `supabase/propiedades.sql`~~ (hecho el 2026-11-05);
   - ~~apagar "Allow new users to sign up"~~ (el usuario confirmó el 2026-11-08 que quedó apagado);
@@ -430,9 +432,10 @@ Apartado privado del panel (`#documentos`) para compartir la documentación deli
 - [ ] Activar **Documentos** (`supabase/GUIA-PANEL.md`, punto 8): ejecutar `supabase/documentos.sql` en el Supabase real y revisar que TOTP esté prendido.
 - [ ] (2026-11-08: por ahora NO pasan al plan Pro) Decidir si pasan al **plan Pro** de Supabase ($25 USD/mes) para archivos de 150 MB. Hoy, con el plan gratis, el máximo es 50 MB por archivo y 1 GB en total. Al pagar: punto 8.4 de la guía (sin cambios de código).
 - [ ] (Recomendado) Que un abogado revise lo que se agregó al Aviso de Privacidad el 2026-11-07.
-- [ ] Cuando exista el dominio: crear la propiedad de Google Analytics 4 y dar el ID (`G-…`). Mientras siga el marcador `G-XXXXXXXXXX`, GA no se carga.
-- [ ] Dar la dirección completa de la oficina y el horario. 2026-11-08: el usuario mandó una captura de su ficha de negocio: «Abierto las 24 horas» de lunes a sábado (el domingo no se veía) y sin dirección. Falta confirmar el domingo y la dirección.
-- [ ] Aclarar el correo: esa misma ficha dice `inmobiliariademetrius@gmail.com` (con la "a"), pero la página usa `inmobiliriademetrius@gmail.com` (sin la "a", regla de §1: no corregir). Preguntar cuál es el bueno antes de tocar nada.
+- [x] ~~Crear la propiedad de Google Analytics 4 y dar el ID~~: `G-HENM9J0QYE` (2026-11-08), en `GA_MEASUREMENT_ID` al inicio de `js/principal.js`. Solo carga si la persona acepta las cookies; GA mostrará «recogida de datos no activada» hasta que la página esté publicada.
+- [ ] Decidir si `yeucate.html` y `propiedad.html` también cargan Analytics (hoy solo el inicio lo carga; esas páginas no tienen aviso de cookies).
+- [ ] Dar la dirección completa de la oficina. (El horario ya está: 24 horas, los 7 días, 2026-11-08.)
+- [x] ~~Aclarar el correo~~: el 2026-11-08 el usuario eligió `inmobiliariademetrius@gmail.com` (el de su ficha).
 - [x] ~~Confirmar la autorización del desarrollador de Yéucate para publicar su plano, sus datos y las fotos de la obra.~~ El usuario confirmó el 2026-11-08 que ya tiene el permiso.
 - [ ] (Opcional) Borrar la reseña "Prueba de conexión" en Supabase. No es urgente: está sin aprobar, así que no aparece en la web.
 - [x] ~~(Opcional) Enviar capturas del catálogo de WhatsApp para compararlo con la web.~~ Llegó como carpeta `Catalogo_Demetrius_Inmobiliaria` y se agregaron 31 propiedades (2026-11-04).
