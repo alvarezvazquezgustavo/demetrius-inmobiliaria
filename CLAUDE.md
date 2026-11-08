@@ -265,7 +265,7 @@ El usuario pidió un acceso privado para el equipo: los asesores cargan propieda
 
 - **Archivos:**
   - `supabase/propiedades.sql`: todo el SQL, idempotente.
-  - `supabase/GUIA-PANEL.md`: guía para el usuario, paso a paso y sin tecnicismos.
+  - `supabase/GUIA-PANEL.md`: guía para el usuario, paso a paso y sin tecnicismos. `supabase/GUIA-PANEL.pdf` es la misma guía en PDF (2026-11-07, pedido del usuario): se armó del .md con `marked` → HTML con el estilo de la marca → Chrome sin interfaz (`--print-to-pdf`, tamaño carta, portada con índice). **Si cambia la guía, hay que volver a generar el PDF.**
   - `panel/login.html` y `panel/index.html`, con `css/panel.css`, `js/panel-comun.js`, `js/panel-login.js` y `js/panel.js`. Todas sus clases empiezan con `pn-`.
   - `propiedad.html` (la ficha), con `css/propiedad.css` y `js/propiedad.js`. Su encabezado, menú y pie se copiaron de `yeucate.html`.
   - `js/propiedades-publicas.js` (`window.DemetriusPropiedades`): lee las publicadas por REST y arma las tarjetas con la misma estructura que las de `index.html`. Lo usan el inicio, la ficha y el panel.
@@ -302,6 +302,25 @@ El usuario pidió un acceso privado para el equipo: los asesores cargan propieda
   - se niegan `select=*`, `comentario_admin`, `perfiles` y crear una propiedad;
   - el bucket `propiedades` existe;
   - las reseñas siguen bien.
+
+## 7c. Documentos del equipo (2026-11-07)
+
+Apartado privado del panel (`#documentos`) para compartir la documentación delicada de las propiedades (escrituras, INE, predial, planos; escaneos de 80+ páginas). Lo pidió el usuario "de extrema seguridad". Respuestas del usuario: verificación en dos pasos obligatoria para todos; bitácora que solo ven los admins y sin avisar al asesor; lo aprobado lo ve todo el equipo activo; cada documento se liga a una propiedad del panel o a un expediente con nombre libre; nadie borra un aprobado (el admin solo archiva); PDF, JPG y PNG.
+
+- **Archivos:** `supabase/documentos.sql` (idempotente; requiere `propiedades.sql`), `js/panel-documentos.js`, secciones `vista-verificacion`, `vista-documentos` y `vista-bitacora` en `panel/index.html`, estilos `pn-doc-*`, `pn-verif-*`, `pn-tabla` en `css/panel.css`. La guía está en `supabase/GUIA-PANEL.md`, punto 8.
+- **Tablas cerradas:** `documentos`, `documentos_bitacora` y `documentos_config` tienen RLS sin políticas y sin grants: nadie las lee ni escribe directo. Todo pasa por funciones `security definer`: `documentos_listar` (anota la «entrada», máximo una vez cada 10 min), `documento_crear`, `documento_confirmar`, `documento_revisar`, `documento_archivar`, `documento_abrir`, `documento_borrar_preparar`, `documento_borrar`, `documentos_bitacora_listar` y `documentos_pendientes` (solo el número, para el menú; no pide los dos pasos).
+- **Todo exige** `usuario_activo()` y `auth.jwt()->>'aal' = 'aal2'` (`documentos_acceso()`), también en Storage.
+- **Estados:** `subiendo → en_revision → aprobado / rechazado (comentario obligatorio) → archivado`. Lo que sube un admin queda aprobado al confirmar. El asesor ve los aprobados y sus propios pendientes, rechazados y subidas incompletas; el admin ve todo.
+- **Storage:** bucket **privado** `documentos`, ruta `<id>/<uuid>.<pdf|jpg|png>`. Políticas: subir solo a un documento propio en `subiendo`; leer (crear el enlace firmado, 60 s) solo con un registro `abrir`/`descargar` de la bitácora de hace menos de 2 minutos (así cada apertura queda anotada sí o sí); quitar solo con el permiso temporal de `documento_borrar_preparar` (10 min). No hay política de update: no se puede sobrescribir.
+- **Borrar:** quien lo subió, mientras está en `subiendo`/`en_revision`/`rechazado`; el admin, los `rechazado` y `subiendo`. Un aprobado nunca. Se quita primero el archivo con la API de Storage (Supabase no deja borrar `storage.objects` por SQL) y después el registro.
+- **Subida:** en partes de 6 MB con el protocolo TUS, directo a `https://<proyecto>.storage.supabase.co` (`URL_STORAGE` en `panel-comun.js`; en pruebas, `SUPABASE_STORAGE_URL` en `config.js`). Reintenta si se cae la conexión y se puede cancelar; si falla, borra el registro a medias. El tipo se revisa por el contenido (`%PDF-`, JPEG, PNG), no por el nombre.
+- **Límites:** `documentos_config` (`max_mb` 50 y `espacio_gb` 1, plan gratis). Un trigger copia `max_mb` al bucket. Al pasar a Pro: `update public.documentos_config set max_mb = 300, espacio_gb = 100;` y subir el límite global de Storage a 300 MB en el dashboard. `documento_crear` niega si el archivo no cabe en el espacio (cuenta fotos + documentos).
+- **Verificación en dos pasos:** TOTP de Supabase (`mfa.enroll`/`challengeAndVerify`). El QR llega como SVG y se muestra desde un `blob:` (la CSP ya permitía `blob:` en `img-src`). En celular aparece «Abrir en mi app de autenticación» (`otpauth://`). Para reiniciarla a alguien: `delete from auth.mfa_factors where user_id = …` (está en la guía).
+- **Bitácora:** guarda persona, acción, documento, detalle, IP (`cf-connecting-ip`/`x-real-ip`/`x-forwarded-for`) y navegador. Vista `#bitacora` solo admin, con filtros; en celular la tabla se vuelve tarjetas.
+- **Cierre por inactividad:** el panel cierra la sesión tras 30 minutos sin actividad (`motivo=inactividad` en el login). Subir un archivo cuenta como actividad.
+- **Menú del panel:** con «Documentos», el menú completo del admin necesita ~1560 px; en ≤1560 px baja a su propio renglón y puede ocupar dos (antes el corte era 1320).
+- **Aviso de Privacidad** (2026-11-07, a petición del usuario): se agregó en la sección 2 el punto «Documentación de la operación» y en la sección 5 un párrafo de que se resguarda en Supabase (servidores posiblemente fuera de México, espacio privado, dos pasos y registro de consultas). La fecha del aviso pasó a 7 de noviembre de 2026. Conviene que lo revise un abogado.
+- **Probado:** SQL en PGlite con 110 casos (ejecutado dos veces). Panel completo contra un Supabase simulado (ver §10) en 1440, 1280, 1024, 800 y 390 px, y en el motor de Safari (WKWebView).
 
 ## 8. SEO, GEO e IA
 
@@ -343,6 +362,7 @@ El usuario pidió un acceso privado para el equipo: los asesores cargan propieda
 | `1a789ba` | Logo nuevo en la imagen para redes |
 | `a392209` | Portada nueva, desarrollo Yéucate y 31 propiedades del catálogo de WhatsApp |
 | `7280231` | Las 31 del catálogo y el terreno de Jocotepec pasan a vendidas; sello "Vendida" en banda diagonal |
+| `f15b23b` | Panel del equipo con Supabase, ficha de propiedades, filtro de recámaras, acceso "Iniciar sesión" y capas del bloque Yéucate para Safari |
 
 ## 10. Cómo se prueba
 
@@ -367,6 +387,9 @@ El usuario pidió un acceso privado para el equipo: los asesores cargan propieda
   - El servidor de prueba del sitio, con `MOCK_SUPABASE=http://127.0.0.1:<puerto>`, sirve un `js/config.js` de prueba y agrega ese origen a la CSP **solo al servir**.
   - Con el modo `sim` escucha en 127.0.0.1 y quita `upgrade-insecure-requests`, igual que `lan`.
   - Se prueban con Chrome sin interfaz los flujos del asesor y del admin, en 1280 y 390 px.
+  - Desde el 2026-11-07 el simulador es Node + PGlite (`supabase-simulado.mjs` en el scratchpad): corre los `.sql` reales, así que RLS, funciones y políticas de Storage son las de verdad. Imita auth con verificación en dos pasos (acepta el código `123456`), REST de lectura, RPC y Storage (TUS, enlaces firmados y borrado). Las cuentas de prueba están en ese archivo; no van en el sitio.
+  - Página auxiliar `/__prueba/entrar.html?como=admin|asesor&verificar=1&ir=%23vista` (scratchpad) para entrar sin teclear, útil con el visor de WebKit.
+- **Motor de Safari en esta Mac:** un visor propio con WKWebView (`tools/visor.swift`, compilado con `swiftc`) abre una URL en una ventana y la captura con `screencapture -l`. Sirve para revisar cómo se ve en Safari de macOS sin tocar el Safari del usuario.
   - Simulador de iOS (2026-11-05): sin el permiso del panel solo se puede abrir enlaces (`simctl openurl`) y tomar capturas.
     - Para entrar al panel se usa una página auxiliar del servidor de prueba (`/__prueba/entrar.html?como=asesor|admin&ir=%23vista`), que vive en el scratchpad y no en el sitio.
     - Cada enlace abre una pestaña nueva y Safari se vuelve lento: hay que esperar de 25 a 60 s por captura, y si se traba, cerrar Safari con `simctl terminate`.
@@ -390,6 +413,9 @@ El usuario pidió un acceso privado para el equipo: los asesores cargan propieda
   - ~~crear su cuenta y hacerla admin~~ (2026-11-05: hay 2 administradores activos, Gerardo Yair Ocaña y Gustavo Álvarez; sus correos no se anotan aquí porque el repositorio es público);
   - dar de alta a los asesores cuando el usuario los tenga.
   El panel se usa hasta que la página esté publicada.
+- [ ] Activar **Documentos** (`supabase/GUIA-PANEL.md`, punto 8): ejecutar `supabase/documentos.sql` en el Supabase real y revisar que TOTP esté prendido.
+- [ ] Decidir si pasan al **plan Pro** de Supabase ($25 USD/mes) para archivos de 150 MB. Hoy, con el plan gratis, el máximo es 50 MB por archivo y 1 GB en total. Al pagar: punto 8.4 de la guía (sin cambios de código).
+- [ ] (Recomendado) Que un abogado revise lo que se agregó al Aviso de Privacidad el 2026-11-07.
 - [ ] Cuando exista el dominio: crear la propiedad de Google Analytics 4 y dar el ID (`G-…`). Mientras siga el marcador `G-XXXXXXXXXX`, GA no se carga.
 - [ ] Dar la dirección completa de la oficina y el horario.
 - [ ] Confirmar la autorización del desarrollador de Yéucate para publicar su plano, sus datos y las fotos de la obra.

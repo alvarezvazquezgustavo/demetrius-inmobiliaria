@@ -30,6 +30,7 @@
   <nav class="pn-nav" id="pnNav" aria-label="Secciones del panel" hidden>
     <a href="#mis" data-vista="mis">Mis propiedades</a>
     <a href="#nueva" data-vista="nueva">Cargar propiedad</a>
+    <a href="#documentos" data-vista="documentos">Documentos <span class="pn-contador" id="pnContadorDocs" hidden></span></a>
     <a href="#validacion" data-vista="validacion" data-solo-admin hidden>Validación <span class="pn-contador" id="pnContador" hidden></span></a>
     <a href="#todas" data-vista="todas" data-solo-admin hidden>Todas</a>
     <a href="#equipo" data-vista="equipo" data-solo-admin hidden>Equipo</a>
@@ -321,6 +322,162 @@
     </div>
     <div class="pn-equipo" id="listaEquipo" aria-live="polite"></div>
   </section>
+
+  <!-- ============ VERIFICACIÓN EN DOS PASOS (antes de Documentos y Bitácora) ============ -->
+  <section class="pn-vista" id="vista-verificacion" hidden aria-labelledby="verTitulo">
+    <div class="pn-verif">
+      <span class="pn-verif-icono" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 1 1 6 0v3H9zm3 3.5a1.75 1.75 0 0 1 1 3.19V18.5h-2v-1.81a1.75 1.75 0 0 1 1-3.19z"/></svg>
+      </span>
+      <h1 id="verTitulo">Verificación en dos pasos</h1>
+      <p id="verIntro">Los documentos son confidenciales. Además de tu contraseña, te pedimos un código de 6 dígitos que genera una app en tu celular.</p>
+      <p class="pn-error" id="verError" role="alert" tabindex="-1" hidden></p>
+      <p class="pn-cargando" id="verCargando">Preparando la verificación…</p>
+
+      <!-- Ya tiene la app configurada: solo escribe el código -->
+      <form class="pn-verif-form" id="verCodigoForm" hidden novalidate>
+        <div class="pn-campo">
+          <label for="verCodigo">Código de 6 dígitos</label>
+          <input id="verCodigo" class="pn-codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" aria-describedby="verCodigoAyuda">
+          <p class="pn-ayuda" id="verCodigoAyuda">Abre tu app de autenticación (Google Authenticator, Microsoft Authenticator…) y escribe el código de «Demetrius». Cambia cada 30 segundos.</p>
+        </div>
+        <button type="submit" class="pn-btn pn-btn-primario pn-btn-ancho" id="verCodigoBtn">Entrar a Documentos</button>
+        <p class="pn-ayuda">¿Cambiaste de celular o borraste la app? Pídele a un administrador que restablezca tu verificación.</p>
+      </form>
+
+      <!-- Primera vez: activar la verificación -->
+      <form class="pn-verif-form" id="verActivarForm" hidden novalidate>
+        <ol class="pn-verif-pasos">
+          <li>Instala en tu celular <b>Google Authenticator</b> o <b>Microsoft Authenticator</b>. Son gratis.</li>
+          <li>
+            En la app toca <b>+</b> y escanea este código:
+            <span class="pn-verif-qr"><img id="verQr" alt="Código QR para agregar «Demetrius» a tu app de autenticación" width="200" height="200"></span>
+            <a class="pn-btn pn-btn-borde pn-verif-app" id="verAbrirApp" href="#">Abrir en mi app de autenticación</a>
+            <span class="pn-ayuda pn-verif-clave">¿No puedes escanearlo? En la app elige «Ingresar una clave» y escribe esta: <code id="verSecreto"></code>
+              <button type="button" class="pn-btn pn-btn-fantasma" id="verCopiar">Copiar clave</button></span>
+          </li>
+          <li>
+            <div class="pn-campo">
+              <label for="verCodigoNuevo">Escribe el código de 6 dígitos que aparece en la app</label>
+              <input id="verCodigoNuevo" class="pn-codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000">
+            </div>
+          </li>
+        </ol>
+        <button type="submit" class="pn-btn pn-btn-primario pn-btn-ancho" id="verActivarBtn">Activar y entrar a Documentos</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ DOCUMENTOS (todo el equipo, con verificación en dos pasos) ============ -->
+  <section class="pn-vista" id="vista-documentos" hidden aria-labelledby="docTitulo">
+    <div class="pn-vista-head">
+      <div>
+        <h1 id="docTitulo">Documentos</h1>
+        <p>Documentación privada de las propiedades, solo para el equipo. Lo que sube un asesor lo ve todo el equipo en cuanto un administrador lo aprueba.</p>
+      </div>
+      <div class="pn-doc-head-acciones">
+        <a class="pn-btn pn-btn-borde" href="#bitacora" data-solo-admin hidden>Bitácora</a>
+        <button type="button" class="pn-btn pn-btn-primario" id="docNuevo">+ Subir documento</button>
+      </div>
+    </div>
+
+    <div class="pn-doc-espacio" id="docEspacio" hidden>
+      <div class="pn-doc-espacio-top"><span id="docEspacioTexto"></span><span id="docEspacioMax"></span></div>
+      <div class="pn-doc-barra" id="docEspacioBarra" role="img"><span id="docEspacioRelleno"></span></div>
+    </div>
+
+    <form class="pn-form pn-doc-form" id="docForm" hidden novalidate>
+      <fieldset class="pn-bloque">
+        <legend>Subir documento</legend>
+        <p class="pn-error" id="docFormError" role="alert" tabindex="-1" hidden></p>
+        <div class="pn-campo">
+          <label for="docTitulo2">Título <span class="pn-req">*</span></label>
+          <input id="docTitulo2" maxlength="150" placeholder="Ej. Escrituras y predial 2026" aria-describedby="docTitulo2Error">
+          <p class="pn-error-campo" id="docTitulo2Error" hidden></p>
+        </div>
+        <div class="pn-campo">
+          <span class="pn-label" id="docLigarEtiqueta">¿De qué propiedad es? <span class="pn-req">*</span></span>
+          <div class="pn-doc-ligar" role="radiogroup" aria-labelledby="docLigarEtiqueta">
+            <label class="pn-check"><input type="radio" name="docLigar" value="propiedad" id="docLigarPropiedad" checked> Una propiedad del panel</label>
+            <label class="pn-check"><input type="radio" name="docLigar" value="expediente" id="docLigarExpediente"> Otra (escribo el nombre)</label>
+          </div>
+          <div id="docCampoPropiedad">
+            <label for="docPropiedad" class="sr-only">Propiedad</label>
+            <select id="docPropiedad" aria-describedby="docPropiedadError"><option value="">Elige la propiedad…</option></select>
+            <p class="pn-error-campo" id="docPropiedadError" hidden></p>
+          </div>
+          <div id="docCampoExpediente" hidden>
+            <label for="docExpediente" class="sr-only">Nombre de la propiedad o expediente</label>
+            <input id="docExpediente" maxlength="120" placeholder="Ej. Casa en Bugambilias — familia Pérez" aria-describedby="docExpedienteAyuda docExpedienteError">
+            <p class="pn-ayuda" id="docExpedienteAyuda">Úsalo para las propiedades que no están cargadas en el panel.</p>
+            <p class="pn-error-campo" id="docExpedienteError" hidden></p>
+          </div>
+        </div>
+        <div class="pn-campo">
+          <label for="docDescripcion">Nota (opcional)</label>
+          <textarea id="docDescripcion" rows="3" maxlength="1000" placeholder="Ej. Copia certificada, 84 páginas. Falta la hoja de la página 12."></textarea>
+        </div>
+        <div class="pn-campo">
+          <span class="pn-label">Archivo <span class="pn-req">*</span></span>
+          <label class="pn-subir" id="docSubir">
+            <input type="file" id="docArchivo" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" aria-describedby="docArchivoAyuda docArchivoError">
+            <b>+ Elegir archivo</b>
+            <span id="docArchivoAyuda">PDF, JPG o PNG</span>
+          </label>
+          <p class="pn-doc-elegido" id="docArchivoElegido" hidden></p>
+          <p class="pn-error-campo" id="docArchivoError" hidden></p>
+        </div>
+        <div class="pn-doc-progreso" id="docProgreso" hidden>
+          <progress id="docBarra" max="100" value="0" aria-labelledby="docProgresoTexto"></progress>
+          <p id="docProgresoTexto" role="status" aria-live="polite"></p>
+        </div>
+      </fieldset>
+      <div class="pn-doc-acciones-form">
+        <p class="pn-ayuda" id="docFormNota"></p>
+        <button type="button" class="pn-btn pn-btn-fantasma" id="docCancelar">Cancelar</button>
+        <button type="submit" class="pn-btn pn-btn-primario" id="docEnviar">Subir documento</button>
+      </div>
+    </form>
+
+    <div class="pn-filtros" id="docFiltros" role="group" aria-label="Filtrar documentos"></div>
+    <div class="pn-campo pn-doc-buscar">
+      <label for="docBuscar" class="sr-only">Buscar documentos</label>
+      <input id="docBuscar" type="search" placeholder="Buscar por título, propiedad, expediente o archivo" autocomplete="off">
+    </div>
+    <div class="pn-lista" id="docLista" aria-live="polite"></div>
+    <div class="pn-vacio" id="docVacio" hidden>
+      <h2 id="docVacioTitulo">Todavía no hay documentos</h2>
+      <p id="docVacioTexto">Sube el primero con el botón «Subir documento».</p>
+    </div>
+  </section>
+
+  <!-- ============ BITÁCORA DE DOCUMENTOS (solo administradores) ============ -->
+  <section class="pn-vista" id="vista-bitacora" hidden aria-labelledby="bitTitulo">
+    <div class="pn-vista-head">
+      <div>
+        <a class="pn-volver" href="#documentos">← Documentos</a>
+        <h1 id="bitTitulo">Bitácora de documentos</h1>
+        <p>Quién entró a Documentos y qué abrió, descargó, subió, aprobó, rechazó, archivó o borró. Solo los administradores ven esta página; el equipo no recibe ningún aviso.</p>
+      </div>
+      <button type="button" class="pn-btn pn-btn-borde" id="bitRecargar">Actualizar</button>
+    </div>
+    <div class="pn-bit-filtros">
+      <div class="pn-campo">
+        <label for="bitPersona">Persona</label>
+        <select id="bitPersona"><option value="">Todas las personas</option></select>
+      </div>
+      <div class="pn-campo">
+        <label for="bitAccion">Acción</label>
+        <select id="bitAccion"><option value="">Todas las acciones</option></select>
+      </div>
+      <div class="pn-campo">
+        <label for="bitBuscar">Documento</label>
+        <input id="bitBuscar" type="search" placeholder="Buscar por título" autocomplete="off">
+      </div>
+    </div>
+    <div class="pn-tabla-caja" id="bitCaja" aria-live="polite"></div>
+    <p class="pn-ayuda" id="bitNota"></p>
+  </section>
 </main>
 
 <div class="pn-toast" id="pnToast" role="status" aria-live="polite" hidden></div>
@@ -369,6 +526,7 @@
 <script src="../js/vendor/supabase-2.118.0.js"></script>
 <script src="../js/propiedades-publicas.js"></script>
 <script src="../js/panel-comun.js"></script>
+<script src="../js/panel-documentos.js"></script>
 <script src="../js/panel.js"></script>
 </body>
 </html>

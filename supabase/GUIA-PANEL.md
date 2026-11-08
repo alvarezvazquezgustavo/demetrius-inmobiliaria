@@ -1,6 +1,6 @@
 # Panel del equipo — Guía paso a paso (Supabase)
 
-Esta guía es para activar el **panel interno** donde tu equipo carga propiedades y tú las validas.
+Esta guía es para activar el **panel interno** donde tu equipo carga propiedades y tú las validas, y el apartado privado de **Documentos** (punto 8).
 No necesitas saber programar: solo copiar, pegar y dar clic.
 
 Tiempo estimado: 15 minutos. Costo: $0 (plan gratuito de Supabase).
@@ -165,7 +165,76 @@ Evita borrar su usuario en Supabase.
   - **Despublicar**: deja de verse y regresa a borrador.
 - **Cargar propiedad**: lo que carga el administrador se publica directo con **Guardar y publicar**.
 
-## 8. Problemas comunes
+## 8. Documentos del equipo (archivos privados)
+
+En el menú del panel está **Documentos**. Ahí el equipo comparte la documentación de las propiedades (escrituras, identificaciones, predial, planos…). Es privado: el público nunca lo ve.
+
+**Cómo funciona:**
+
+1. Un asesor sube un documento (PDF, JPG o PNG) y lo liga a una propiedad del panel o le escribe el nombre del expediente.
+2. Queda **por aprobar**. Ningún otro asesor lo ve todavía.
+3. Un administrador lo **aprueba** (desde ese momento lo ve todo el equipo) o lo **rechaza** con un comentario.
+4. Un documento aprobado **no se puede borrar** desde el panel: el administrador solo lo puede **archivar** (ocultar) y volver a mostrar.
+5. Lo que sube un administrador queda aprobado de una vez.
+
+**Seguridad:**
+
+- Para entrar a Documentos, además de la contraseña, se pide un **código de 6 dígitos** de una app en el celular (verificación en dos pasos). Sin ese código, la base de datos niega los archivos aunque alguien tenga la contraseña.
+- Cada archivo se abre con un enlace que **caduca en 60 segundos**.
+- La sesión del panel se cierra sola después de **30 minutos sin actividad**.
+- **Bitácora** (solo administradores, botón «Bitácora» dentro de Documentos): quién entró, qué abrió o descargó, qué subió, aprobó, rechazó, archivó o borró, con fecha, hora, dispositivo e IP. El equipo no recibe ningún aviso de este registro.
+
+### 8.1 Activarlo (una sola vez)
+
+1. Abre **SQL Editor** → **New query**.
+2. Abre el archivo `supabase/documentos.sql`, copia **todo** su contenido, pégalo y da clic en **Run**.
+3. Debe aparecer **«Success. No rows returned»**. (Se puede volver a ejecutar sin perder nada.)
+4. Revisa que esté prendida la verificación con app: **Authentication** → **Sign In / Providers** → **Multi-Factor** (en algunas versiones, **Authentication → MFA**) → **TOTP (App Authenticator)** debe estar **Enabled**. Viene prendida de fábrica.
+
+### 8.2 La primera vez que alguien entra a Documentos
+
+1. Instala en su celular **Google Authenticator** o **Microsoft Authenticator** (gratis).
+2. En el panel abre **Documentos**: aparece un código QR.
+3. En la app toca **+** y escanea el código. Si entra desde el mismo celular, usa el botón **«Abrir en mi app de autenticación»** o copia la clave.
+4. Escribe el código de 6 dígitos que muestra la app y da clic en **Activar y entrar**.
+
+Las siguientes veces solo escribe el código que aparece en la app (cambia cada 30 segundos).
+
+### 8.3 Si alguien cambió de celular o borró la app
+
+Hay que borrar su verificación para que la vuelva a activar. En **SQL Editor** pega esto, cambiando el correo:
+
+```sql
+delete from auth.mfa_factors
+where user_id = (select id from auth.users where lower(email) = lower('asesor@ejemplo.com'));
+```
+
+Da clic en **Run**. La próxima vez que entre a Documentos le aparecerá otra vez el código QR. (Esto solo quita la verificación de esa persona: no borra documentos ni su cuenta.)
+
+### 8.4 Espacio y tamaño de los archivos
+
+| | Plan gratis (hoy) | Plan Pro ($25 USD al mes) |
+|---|---|---|
+| Máximo por archivo | 50 MB | 300 MB (lo configuramos así) |
+| Espacio total (fotos + documentos) | 1 GB | 100 GB incluidos; después, unos $0.02 USD por GB al mes |
+
+El panel muestra arriba de la lista cuánto espacio se ha usado. Si un escaneo pesa más de 50 MB, vuelve a escanearlo a **200 dpi en escala de grises**: pesa mucho menos y se lee igual.
+
+**Para pasar al plan Pro:**
+
+1. En Supabase: **Organization** → **Billing** → cambia el plan a **Pro**.
+2. En el proyecto: **Storage** → **Settings** → **Upload file size limit**: escribe **300 MB** y guarda.
+3. En **SQL Editor** ejecuta:
+
+   ```sql
+   update public.documentos_config set max_mb = 300, espacio_gb = 100;
+   ```
+
+   Con eso el panel acepta archivos de hasta 300 MB. No hay que cambiar nada más en la página.
+
+> En el plan Pro, el «Spend Cap» (tope de gasto) viene prendido: si se llenan los 100 GB no se cobra de más, pero Supabase puede limitar el servicio hasta que liberes espacio o apagues el tope. Además, el panel no deja subir un archivo si ya no cabe.
+
+## 9. Problemas comunes
 
 | Mensaje | Qué hacer |
 |---|---|
@@ -176,6 +245,11 @@ Evita borrar su usuario en Supabase.
 | «Agrega al menos una foto…» | Una propiedad sin fotos no se puede enviar ni publicar. |
 | «No pudimos abrir … (formato HEIC del iPhone)» | Sube la foto desde el iPhone (ahí se convierte sola) o conviértela a JPG. |
 | «No hay conexión con el servidor» | Revisa el internet e inténtalo de nuevo. |
+| «El código no es correcto o ya cambió» | Escribe el código que aparece en ese momento en la app. Si siempre falla, revisa que la hora del celular esté en automático. |
+| «Para ver los documentos necesitas… la verificación en dos pasos» | Entra otra vez a Documentos y escribe el código de la app. |
+| «El archivo pesa más de 50 MB…» | Vuelve a escanearlo a 200 dpi en escala de grises, o pasen al plan Pro (punto 8.4). |
+| «Ya no hay espacio suficiente…» | Archiva o borra lo que ya no sirva, o pasen al plan Pro (punto 8.4). |
+| «Cerramos tu sesión porque pasaron 30 minutos sin actividad» | Es normal: vuelve a entrar. |
 
 **Un asesor olvidó su contraseña.** Asígnale una temporal:
 

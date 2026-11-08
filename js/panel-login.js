@@ -14,7 +14,8 @@
     salida: 'Cerraste sesión. ¡Hasta pronto!',
     sesion: 'Tu sesión expiró. Vuelve a entrar.',
     inactiva: 'Tu cuenta todavía no está activada (o fue desactivada). Pídele al administrador que la active en el panel, en la sección Equipo.',
-    sinperfil: 'Tu cuenta no tiene perfil en el panel. Pídele al administrador que revise tu cuenta.'
+    sinperfil: 'Tu cuenta no tiene perfil en el panel. Pídele al administrador que revise tu cuenta.',
+    inactividad: 'Cerramos tu sesión porque pasaron 30 minutos sin actividad. Así protegemos los documentos. Vuelve a entrar.'
   };
   const motivo = new URLSearchParams(location.search).get('motivo');
   if (AVISOS[motivo]) { aviso.textContent = AVISOS[motivo]; aviso.hidden = false; }

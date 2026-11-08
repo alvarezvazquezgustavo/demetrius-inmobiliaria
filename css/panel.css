@@ -265,6 +265,96 @@
 .pn-persona .pn-check{padding-bottom:12px;}
 .pn-persona-yo{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dorado-oscuro);font-weight:700;margin-left:6px;}
 
+/* ---------- Documentos ---------- */
+.pn-doc-head-acciones{display:flex;flex-wrap:wrap;gap:10px;}
+.pn-doc-espacio{background:#fff;border-radius:var(--radius-card);box-shadow:var(--shadow-soft);padding:14px 18px;margin-bottom:20px;}
+.pn-doc-espacio-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px 14px;font-size:.78rem;color:var(--grafito);margin-bottom:9px;}
+.pn-doc-espacio-top b{color:var(--negro);font-weight:600;}
+.pn-doc-barra{height:8px;border-radius:999px;background:#ECE7DE;overflow:hidden;}
+.pn-doc-barra span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg, var(--dorado-oscuro), var(--dorado-claro));transition:width .6s var(--ease-apple);}
+.pn-doc-barra.is-lleno span{background:#B3261E;}
+.pn-doc-form{margin-bottom:24px;}
+.pn-doc-form .pn-bloque > .pn-error{margin-bottom:0;}
+.pn-doc-ligar{display:flex;flex-wrap:wrap;gap:10px 26px;margin-bottom:12px;}
+/* Dentro de .pn-campo, las opciones y el recuadro de archivo no llevan el estilo de etiqueta */
+.pn-campo label.pn-check{display:inline-flex;margin:0;font-size:.86rem;letter-spacing:0;text-transform:none;font-weight:400;color:var(--negro);}
+.pn-campo label.pn-check input[type="radio"]{width:18px;height:18px;padding:0;margin:0;border:0;background:none;box-shadow:none;accent-color:var(--dorado-oscuro);flex:0 0 auto;}
+.pn-campo label.pn-subir{display:flex;margin:0;font-size:inherit;letter-spacing:0;text-transform:none;font-weight:400;color:inherit;}
+.pn-verif-pasos .pn-campo label{font-size:.88rem;letter-spacing:0;text-transform:none;font-weight:400;color:var(--grafito);margin-bottom:8px;}
+.pn-doc-elegido{margin-top:10px;font-size:.82rem;color:var(--grafito);overflow-wrap:anywhere;}
+.pn-doc-elegido b{color:var(--negro);font-weight:600;}
+.pn-doc-progreso progress{
+  display:block;width:100%;height:10px;border:0;border-radius:999px;overflow:hidden;
+  -webkit-appearance:none;appearance:none;background:#ECE7DE;
+}
+.pn-doc-progreso progress::-webkit-progress-bar{background:#ECE7DE;border-radius:999px;}
+.pn-doc-progreso progress::-webkit-progress-value{background:linear-gradient(90deg, var(--dorado-oscuro), var(--dorado-claro));border-radius:999px;transition:width .3s;}
+.pn-doc-progreso progress::-moz-progress-bar{background:linear-gradient(90deg, var(--dorado-oscuro), var(--dorado-claro));border-radius:999px;}
+.pn-doc-progreso p{margin-top:8px;font-size:.8rem;font-weight:600;color:var(--grafito);}
+.pn-doc-acciones-form{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:-4px;}
+.pn-doc-acciones-form .pn-ayuda{margin:0 auto 0 0;}
+.pn-doc-buscar{max-width:520px;margin:-8px 0 18px;}
+.pn-chip-n{
+  display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:6px;border-radius:999px;
+  background:rgba(13,13,13,.1);font-size:.6rem;font-weight:800;letter-spacing:0;
+}
+.chip.active .pn-chip-n{background:rgba(13,13,13,.2);}
+.pn-doc{grid-template-columns:64px minmax(0, 1fr) auto;}
+.pn-doc-icono{
+  width:64px;height:78px;border-radius:10px;display:grid;place-items:center;
+  background:var(--negro);color:var(--dorado-claro);font-size:.72rem;font-weight:800;letter-spacing:.12em;
+}
+.pn-doc-icono--pdf{background:#7F1F1A;color:#FBE4E1;}
+.pn-doc-meta{font-size:.76rem;color:var(--grafito);margin-top:6px;overflow-wrap:anywhere;}
+.pn-doc-nota{font-size:.8rem;line-height:1.55;color:var(--grafito);margin-top:8px;white-space:pre-line;overflow-wrap:anywhere;}
+.pn-doc-aviso{margin:10px 0 0;}
+.pn-estado--doc-en_revision{background:#FFF1D2;color:#865A00;}
+.pn-estado--doc-aprobado{background:#E3F1E4;color:#2F6B35;}
+.pn-estado--doc-rechazado, .pn-estado--doc-subiendo{background:#FBE4E1;color:#9B2C2C;}
+
+/* Verificación en dos pasos */
+.pn-verif{
+  max-width:580px;margin:0 auto;background:#fff;border-radius:var(--radius-card);
+  border:1px solid rgba(201,169,97,.35);box-shadow:var(--shadow-soft);padding:32px 30px 30px;
+}
+.pn-verif-icono{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--negro);margin-bottom:16px;}
+.pn-verif-icono svg{fill:var(--dorado-claro);}
+.pn-verif h1{font-size:clamp(1.5rem, 3vw, 1.9rem);color:var(--negro);font-weight:700;line-height:1.2;}
+.pn-verif > p:not(.pn-error):not(.pn-cargando){font-size:.88rem;line-height:1.6;color:var(--grafito-suave);margin:8px 0 20px;}
+.pn-verif .pn-cargando{padding:30px 0;}
+.pn-verif-form .pn-btn-ancho{margin-top:20px;}
+.pn-verif-form > .pn-ayuda{text-align:center;margin-top:14px;}
+.pn-verif-pasos{padding-left:22px;display:flex;flex-direction:column;gap:18px;font-size:.88rem;line-height:1.6;color:var(--grafito);}
+.pn-verif-pasos li::marker{color:var(--dorado-oscuro);font-weight:700;}
+.pn-verif-qr{display:block;width:max-content;margin:12px 0 10px;padding:10px;background:#fff;border:1px solid rgba(58,58,58,.15);border-radius:12px;}
+.pn-verif-qr img{display:block;width:200px;height:200px;}
+.pn-verif-app{display:none;margin:4px 0 10px;}
+.pn-verif-clave{display:block;}
+.pn-verif code{
+  display:inline-block;font-family:ui-monospace, Menlo, Consolas, monospace;font-size:.84rem;letter-spacing:.08em;
+  background:#F3EFE7;color:var(--negro);padding:3px 8px;border-radius:6px;word-break:break-all;margin:4px 0;
+}
+.pn-verif-clave .pn-btn-fantasma{padding:6px 4px;}
+.pn-codigo{font-size:1.5rem !important;letter-spacing:.42em;text-align:center;font-variant-numeric:tabular-nums;max-width:240px;}
+
+/* Bitácora */
+.pn-bit-filtros{display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:14px;margin-bottom:18px;}
+.pn-tabla-caja{background:#fff;border-radius:var(--radius-card);box-shadow:var(--shadow-soft);overflow-x:auto;}
+.pn-tabla{width:100%;border-collapse:collapse;font-size:.8rem;}
+.pn-tabla th{
+  text-align:left;white-space:nowrap;padding:12px 14px;border-bottom:1px solid rgba(58,58,58,.1);
+  font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--dorado-oscuro);
+}
+.pn-tabla td{padding:11px 14px;border-bottom:1px solid rgba(58,58,58,.06);color:var(--grafito);vertical-align:top;overflow-wrap:anywhere;}
+.pn-tabla tbody tr:last-child td{border-bottom:0;}
+.pn-tabla-fecha{white-space:nowrap;color:var(--negro);}
+.pn-tabla-sub{display:block;font-size:.7rem;color:var(--grafito-suave);margin-top:2px;}
+.pn-accion{font-weight:700;color:var(--negro);white-space:nowrap;}
+.pn-accion--abrir, .pn-accion--descargar{color:var(--dorado-oscuro);}
+.pn-accion--borrar, .pn-accion--rechazar{color:#9B2C2C;}
+.pn-accion--aprobar{color:#2F6B35;}
+.pn-bit-vacio{padding:36px 20px;text-align:center;color:var(--grafito-suave);font-size:.88rem;}
+
 /* ---------- Avisos flotantes y diálogos ---------- */
 .pn-toast{
   position:fixed;left:50%;bottom:24px;z-index:400;transform:translateX(-50%);
@@ -284,9 +374,10 @@
 .pn-dialogo-acciones{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;flex-wrap:wrap;}
 
 /* ---------- Responsive ---------- */
-@media (max-width: 1320px){
+/* El menú completo del administrador (con Documentos) necesita ~1560 px en un renglón; abajo de eso baja a su propio renglón */
+@media (max-width: 1560px){
   .pn-top{flex-wrap:wrap;gap:8px 18px;padding:10px 18px 0;}
-  .pn-nav{order:3;flex:1 0 100%;margin:0 -6px;padding-bottom:4px;}
+  .pn-nav{order:3;flex:1 0 100%;margin:0 -6px;padding-bottom:4px;flex-wrap:wrap;overflow:visible;row-gap:0;}
   .pn-usuario{margin-left:auto;}
 }
 @media (max-width: 760px){
@@ -315,6 +406,27 @@
   .pn-persona > :first-child, .pn-persona-correo{grid-column:1 / -1;}
   .pn-persona-correo{padding-bottom:0;}
   .pn-login-card{padding:28px 20px 24px;}
+  .pn-doc{grid-template-columns:52px minmax(0, 1fr);}
+  .pn-doc-icono{width:52px;height:64px;font-size:.64rem;}
+  .pn-doc-head-acciones{width:100%;}
+  .pn-doc-head-acciones .pn-btn{flex:1 1 auto;}
+  .pn-doc-acciones-form .pn-ayuda{flex:1 0 100%;}
+  .pn-doc-acciones-form .pn-btn{flex:1 1 auto;}
+  .pn-verif{padding:24px 18px 22px;}
+  .pn-verif-pasos{padding-left:18px;}
+  /* En el celular el QR no se puede escanear con el mismo celular: se ofrece abrir la app */
+  .pn-verif-app{display:inline-flex;}
+  .pn-verif-qr img{width:168px;height:168px;}
+  .pn-bit-filtros{grid-template-columns:1fr;gap:10px;}
+  .pn-tabla thead{display:none;}
+  .pn-tabla, .pn-tabla tbody, .pn-tabla tr, .pn-tabla td{display:block;width:100%;}
+  .pn-tabla tr{padding:12px 16px;border-bottom:1px solid rgba(58,58,58,.08);}
+  .pn-tabla tbody tr:last-child{border-bottom:0;}
+  .pn-tabla td{padding:3px 0;border:0;}
+  .pn-tabla td::before{
+    content:attr(data-etiqueta);display:block;margin-top:4px;
+    font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--dorado-oscuro);
+  }
 }
 @media (prefers-reduced-motion: reduce){
   .pn-cargando::before{animation:none;}

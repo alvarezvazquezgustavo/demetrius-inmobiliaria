@@ -1,5 +1,6 @@
 /* Demetrius Grupo Inmobiliario — panel del equipo (panel/index.html)
-   Vistas: #mis · #nueva · #editar/<id> · #validacion · #todas · #equipo (las tres últimas, solo admin).
+   Vistas: #mis · #nueva · #editar/<id> · #validacion · #todas · #equipo (las tres últimas, solo admin)
+           #documentos · #bitacora (solo admin): js/panel-documentos.js, con verificación en dos pasos.
    Ocultar botones aquí es solo comodidad: la base de datos (RLS) decide qué puede hacer cada quien. */
 (() => {
   'use strict';
@@ -153,9 +154,22 @@
       if (evento === 'SIGNED_OUT' && !saliendo) location.replace('login.html?motivo=sesion');
     });
     $('#pnSalir').addEventListener('click', () => salir('salida'));
-    if (esAdmin) actualizarContador();
+    if (esAdmin) { actualizarContador(); actualizarContadorDocs(); }
+    vigilarInactividad();
     window.addEventListener('hashchange', mostrarVista);
     mostrarVista();
+  }
+
+  /* ---------- Cierre de sesión por inactividad (30 minutos) ---------- */
+  const INACTIVIDAD_MS = 30 * 60 * 1000;
+  let ultimaActividad = Date.now();
+  const marcarActividad = () => { ultimaActividad = Date.now(); };
+  function vigilarInactividad() {
+    ['pointerdown', 'keydown', 'wheel', 'touchstart', 'scroll'].forEach(ev => window.addEventListener(ev, marcarActividad, { passive: true }));
+    const revisar = () => { if (!saliendo && Date.now() - ultimaActividad > INACTIVIDAD_MS) salir('inactividad'); };
+    setInterval(revisar, 30 * 1000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) revisar(); });
+    window.addEventListener('focus', revisar);
   }
 
   /* =========================================================
@@ -167,7 +181,10 @@
     editar: { seccion: 'vista-formulario', titulo: 'Editar propiedad' },
     validacion: { seccion: 'vista-validacion', titulo: 'Por validar', admin: true },
     todas: { seccion: 'vista-todas', titulo: 'Todas las propiedades', admin: true },
-    equipo: { seccion: 'vista-equipo', titulo: 'Equipo', admin: true }
+    equipo: { seccion: 'vista-equipo', titulo: 'Equipo', admin: true },
+    // Estas dos las maneja js/panel-documentos.js (antes piden la verificación en dos pasos)
+    documentos: { seccion: 'vista-documentos', titulo: 'Documentos', seguro: true },
+    bitacora: { seccion: 'vista-bitacora', titulo: 'Bitácora de documentos', admin: true, seguro: true }
   };
   function leerRuta() {
     const [vista, id] = location.hash.replace(/^#/, '').split('/');
@@ -177,9 +194,10 @@
     const { vista, id } = leerRuta();
     if (VISTAS[vista].admin && !esAdmin) { location.replace('#mis'); return; }
     errorGlobal('');
-    $$('.pn-vista').forEach(s => { s.hidden = s.id !== VISTAS[vista].seccion; });
+    $$('.pn-vista').forEach(s => { s.hidden = VISTAS[vista].seguro || s.id !== VISTAS[vista].seccion; });
+    const marcada = vista === 'bitacora' ? 'documentos' : vista;
     $$('#pnNav a').forEach(a => {
-      if (a.dataset.vista === vista) a.setAttribute('aria-current', 'page');
+      if (a.dataset.vista === marcada) a.setAttribute('aria-current', 'page');
       else a.removeAttribute('aria-current');
     });
     vistaActual = vista;
@@ -191,6 +209,10 @@
     else if (vista === 'validacion') cargarValidacion();
     else if (vista === 'todas') cargarTodas();
     else if (vista === 'equipo') cargarEquipo();
+    else if (VISTAS[vista].seguro) {
+      if (window.PanelDocumentos) window.PanelDocumentos.mostrar(vista, contextoDocumentos);
+      else errorGlobal('No se pudo cargar el apartado de Documentos. Recarga la página.');
+    }
   }
   function recargarVista() {
     if (vistaActual === 'mis') cargarMis();
@@ -198,6 +220,27 @@
     if (vistaActual === 'todas') cargarTodas();
     if (esAdmin) actualizarContador();
   }
+
+  // Documentos por aprobar (solo el número; no necesita la verificación en dos pasos)
+  async function actualizarContadorDocs(total) {
+    let n = total;
+    if (n === undefined) {
+      const { data, error } = await sb.rpc('documentos_pendientes');
+      if (error) return;
+      n = Number(data) || 0;
+    }
+    const c = $('#pnContadorDocs');
+    c.textContent = String(n);
+    c.hidden = !(esAdmin && n);
+  }
+
+  // Lo que necesita js/panel-documentos.js de este archivo
+  const contextoDocumentos = {
+    get yo() { return yo; },
+    get esAdmin() { return esAdmin; },
+    toast, confirmar, manejarError, errorGlobal, marcarActividad, actualizarContadorDocs,
+    boton, enlace
+  };
 
   async function actualizarContador() {
     const { count, error } = await sb.from('propiedades').select('id', { count: 'exact', head: true }).eq('estado', 'en_validacion');
@@ -533,7 +576,7 @@
     });
     if (ok) { formSucio = false; location.hash = a.getAttribute('href'); }
   });
-  window.addEventListener('beforeunload', (e) => { if (formSucio) { e.preventDefault(); e.returnValue = ''; } });
+  window.addEventListener('beforeunload', (e) => { if (formSucio && !saliendo) { e.preventDefault(); e.returnValue = ''; } });
   // Al corregir un campo marcado en rojo, se quita su aviso
   function alCambiarCampo(e) {
     formSucio = true;

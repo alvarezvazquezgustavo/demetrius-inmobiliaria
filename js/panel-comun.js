@@ -9,6 +9,9 @@
   const url = String(cfg.SUPABASE_URL || '').trim().replace(/\/+$/, '');
   const llave = String(cfg.SUPABASE_ANON_KEY || '').trim();
   const configurado = (/^https:\/\/[^\s/]+$/.test(url) || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(url)) && llave.length > 20;
+  // Archivos grandes (Documentos): Supabase pide usar la dirección directa de Storage (<proyecto>.storage.supabase.co)
+  const urlStorage = String(cfg.SUPABASE_STORAGE_URL || '').trim().replace(/\/+$/, '')
+    || (/^https:\/\/[a-z0-9]+\.supabase\.co$/.test(url) ? url.replace('.supabase.co', '.storage.supabase.co') : url);
 
   const sb = configurado && window.supabase && typeof window.supabase.createClient === 'function'
     ? window.supabase.createClient(url, llave, {
@@ -95,6 +98,11 @@
     if (/JWT expired|invalid JWT|Invalid Refresh Token|refresh token|session.*(missing|expired)/i.test(m) || codigo === 'PGRST301' || codigo === 'PGRST303') {
       return 'Tu sesión expiró. Vuelve a iniciar sesión.';
     }
+    if (/Invalid TOTP|invalid.*code|mfa_verification_failed/i.test(m) || codigo === 'mfa_verification_failed') {
+      return 'El código no es correcto o ya cambió. Escribe el que aparece ahora en tu app.';
+    }
+    if (/challenge.*expired|mfa_challenge_expired/i.test(m)) return 'El código tardó demasiado. Escribe el que aparece ahora en tu app.';
+    if (/AAL2 required|insufficient_aal/i.test(m)) return 'Para esto necesitas la verificación en dos pasos.';
     if (/New password should be different/i.test(m)) return 'La nueva contraseña debe ser distinta a la anterior.';
     if (/Password should be|weak password|password.*(short|characters)/i.test(m)) return 'La contraseña es muy débil. Usa al menos 8 caracteres, con letras y números.';
     if (codigo === 'P0001' && m) return m; // mensajes escritos en el SQL (ya están en español)
@@ -115,6 +123,7 @@
 
   window.Panel = Object.freeze({
     sb, configurado, $, $$, el, limpiar, uuid, formatoFecha, mensajeError, sesionExpirada,
-    BUCKET: cfg.BUCKET_FOTOS || 'propiedades'
+    BUCKET: cfg.BUCKET_FOTOS || 'propiedades',
+    URL_STORAGE: urlStorage, LLAVE: llave
   });
 })();
