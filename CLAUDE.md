@@ -20,7 +20,7 @@ Este archivo reúne las decisiones tomadas y las convenciones que hay que respet
 | Redes | Facebook `share/1Hd4mDmCfW`, Instagram `@residencial_demetrius`, TikTok `@demetrius.inmobiliaria` |
 
 Todos estos datos viven en `ENV_CONFIG`, al inicio de `js/principal.js`. Cámbialos ahí, no en cada sección.
-**Excepción (2026-11-05):** la dirección y la llave publicable de Supabase viven **solo** en `js/config.js` (`window.DEMETRIUS_CONFIG`); `ENV_CONFIG` las lee de ahí. Ese archivo también lo usan la ficha (`propiedad.html`) y el panel (`/panel/`). El número de WhatsApp está repetido en `config.js` y en `js/yeucate.js`: si cambia, hay que cambiarlo en los tres lugares.
+**Excepción (2026-11-05):** la dirección y la llave publicable de Supabase viven **solo** en `js/config.js` (`window.DEMETRIUS_CONFIG`); `ENV_CONFIG` las lee de ahí. Ese archivo también lo usan la ficha (`propiedad.html`) y el panel (`/panel/`). El número de WhatsApp está repetido en `config.js` y en `js/yeucate.js`: si cambia, hay que cambiarlo en los tres lugares. Desde el 2026-11-08 también el ID de Google Analytics (`GA_MEASUREMENT_ID`) vive en `js/config.js`.
 
 ## 2. Reglas que no se rompen
 
@@ -112,7 +112,7 @@ Sigue el estándar llmstxt.org. **Este orden se respeta:**
 1. `# Demetrius Grupo Inmobiliario`
 2. Resumen en blockquote (`> `): más de 10 años, Guadalajara y Zapopan, servicios, zonas, precios en MXN sin escrituración.
 3. Línea de marca: marca comercial, responsable e idioma de atención.
-4. `## Servicios principales`: enlaces a `#catalogo`, `#proceso`, `#vender`, `#construccion` y `#mapa`.
+4. `## Servicios principales`: enlaces a `#catalogo`, `#proceso`, `#vender`, `#construccion`, `#mapa` y, desde el 2026-11-14, `#herramientas` (Calculadoras) y `#asesores`.
 5. `## Propiedades destacadas`: una línea por propiedad **disponible**:
    `- Nombre — Colonia/zona, Municipio, Jalisco — $X,XXX,XXX MXN — detalles breves.`
    Orden: Edificio Luviano, Zoi Capital Norte, Yéucate (desarrollo, "precio por lote a consultar" y enlace a `yeucate.html`) y después el resto, en el mismo orden que el catálogo.
@@ -234,7 +234,62 @@ Hoy son 49 tarjetas escritas a mano: 12 disponibles y 37 vendidas (35 "Vendida" 
 - **Foto aérea grande:** `DJI_0375-grande.jpg` (2560 px) se sirve con `srcset` solo a pantallas grandes o de alta resolución. `DJI_0375.JPG` (1600 px) es la normal.
 - **Precios por lote:** no se publican; se piden por WhatsApp. El usuario tiene una lista de precios y planes de pago (12 a 72 meses) que no está en la web.
 - Los textos de la subpágina son originales; no se copiaron de yeucate.mx. Los mensajes de WhatsApp van al número de Demetrius, no al del desarrollador.
-- La subpágina **no carga Google Analytics ni el aviso de cookies**. Cuando se active GA, hay que decidir si también se agregan ahí.
+- **Analytics y aviso de cookies en las subpáginas** (2026-11-08, recomendado y aprobado por el usuario): `yeucate.html` y `propiedad.html` cargan `js/config.js` + `js/cookies.js` y llevan el mismo aviso que el inicio (el enlace va a `index.html#aviso-privacidad`, que abre el modal). Comparten la decisión en `localStorage` (`demetrius_cookie_consent`) con el inicio: si se acepta o rechaza en una página, no se vuelve a preguntar. GA solo carga con «Aceptar»; publicidad siempre en `denied`. `cookies.js` expone `window.DemetriusAnalitica.track()`; la medición mejorada de GA ya registra clics de salida (WhatsApp).
+
+## 5c. Módulos del 2026-11-14 (moneda e idioma, calculadoras, valuación, asesores, comparador)
+
+El usuario pegó una lista de 7 bloques (redactada con otra IA). Se aplicó completa, verificando cada punto contra el código. Se subió a GitHub el 2026-11-22, con permiso del usuario.
+
+- **Archivos nuevos** (solo los carga `index.html`, después de `js/principal.js`):
+  - `js/ajustes.js`: **«PANEL DE CONFIGURACIÓN RÁPIDA DEMETRIUS»**. Aquí se cambian `URL_SIMULADOR_HIPOTECARIA` (vacío = el banner abre WhatsApp), `FALLBACK_USD_MXN` (20.00), `CONFIG_CREDITO` (tasa 10.75 %), `CONFIG_ESCRITURACION_JALISCO`, `CONFIG_ISR` (700,000 UDIS; UDI del 13-nov-2026 = 8.904621), `VALORES_MERCADO_PORTALES_ZMG` y `ASESORES_DEMETRIUS`. Se carga antes de `principal.js`.
+  - `js/i18n-en.js`: `DICCIONARIO_I18N` (por clave), `TEXTOS_I18N` (por texto en español) y `PATRONES_I18N`.
+  - `js/idioma-moneda.js`: motor de idioma y moneda, menú 🌐 del encabezado y «Buscar al mover el mapa». Expone `window.DemetriusAjustes`.
+  - `js/herramientas.js`: pestañas de `#herramientas` y valuación instantánea (`window.DemetriusValuacion`).
+  - `js/asesores.js`, `js/comparador.js` y `css/modulos.css` (todos los estilos nuevos; usa las variables de `estilos.css`).
+- **Puente:** al final de `js/principal.js` está `window.Demetrius` (`el`, `limpiar`, `waLink`, `track`, validación de formularios, `catalogo`, `mapa`). Los módulos solo usan eso. `principal.js` avisa con los eventos `demetrius:catalogo` y `demetrius:mapa`; el motor, con `demetrius:ajustes`.
+- **Idioma (es MX / en US):**
+  - Los elementos nuevos llevan `data-i18n`, `data-i18n-placeholder` o `data-i18n-aria`. El español es el del HTML; el inglés sale de `DICCIONARIO_I18N.en`.
+  - Lo que ya existía se traduce por su texto en español (`TEXTOS_I18N`). **Si se cambia un texto en `index.html`, hay que cambiar su renglón ahí**; si no, ese texto se queda en español al ver la página en inglés.
+  - Lo que la página escribe después (tarjetas del panel, mensajes, mapa) se traduce con un `MutationObserver`.
+  - No se traducen: modales legales, reseñas de clientes, nombres propios, `data-no-i18n` ni los mensajes de WhatsApp (siempre en español).
+  - Antes de traducir, a cada `<option>` sin `value` se le fija su texto en español como valor, para que filtros y mensajes sigan igual.
+- **Moneda (MXN / USD):** el tipo de cambio se pide a `https://open.er-api.com/v6/latest/USD` solo cuando hace falta (dólares activos, menú abierto, calculadoras o comparador a la vista) y se guarda 12 h en `localStorage`. Solo cambia el **texto** de los precios (`.prop-price`, `.opcion-precio`, `.popup-price`, `#presupuestoSelect`, `#conPresupuesto`); `data-precio` y los filtros siguen en pesos. Con dólares activos aparece una nota bajo los filtros: el precio oficial es en M.N.
+- **Catálogo:**
+  - Interruptor **Disponibles / Vendidas · Casos de Éxito** (`estadoCatalogo.vista`). Ya no se mezclan: antes las vendidas iban al final de «Ver más». Las búsquedas del Hero siempre son sobre disponibles.
+  - Chips nuevos: `terrenos` (`data-tipo="terreno"`) y `comercial` (`bodega`, `edificio`, `terraza`).
+  - «Ver más» ahora cuenta sobre las tarjetas que coinciden: 7 al inicio y de 9 en 9.
+  - Botón «Comparar» en cada tarjeta (lo inserta `comparador.js`), barra flotante y modal lado a lado con pesos y dólares; máximo 3.
+- **`#herramientas`** (después de `#proceso`): crédito hipotecario (banner + desglosador), gastos de escrituración (estimador por municipio y cotizador por WhatsApp) e ISR (pre-evaluador del art. 93 LISR). Enlaces directos: `#herramientas-escrituracion`, `#herramientas-isr`.
+- **Valuación instantánea:** al enviar `#formValuacion` se muestra el rango (mínimo, promedio, máximo y precio por m²) y el botón «Confirmar y enviar por WhatsApp», que manda la solicitud de siempre más el rango. Si faltan los m², se puede enviar sin rango. El texto de la animación se dejó como «Comparando con los valores de mercado de referencia…» y no «Consultando… los portales», porque la página **no consulta portales en vivo**: usa la tabla de `ajustes.js`.
+- **`#asesores`** (antes de las reseñas): directorio con filtros y páginas (6 por página) y modal de perfil con formulario a WhatsApp del asesor. Hoy solo está Gerardo Yair Ocaña Vázquez (sin foto: se ven sus iniciales; idioma: Español). Hay 2 perfiles de ejemplo comentados.
+- **Mapa:** interruptor «Buscar al mover el mapa» (en el menú 🌐 y bajo el mapa): lista las propiedades del área visible y resalta sus tarjetas. Los marcadores del panel ahora llevan `id`; el del Luviano, `selector: ".prop-destacada"`.
+- **Botón flotante de llamada** (`#telFloat`) arriba del de WhatsApp. Su centro va en la misma línea que el de WhatsApp: en computadora `right:29px` (52 px; WhatsApp mide 58 px con `right:26px`) y en celular (≤640 px) `right:18px`, igual que WhatsApp (52 px). El 2026-11-19 el usuario vio que en celular quedaba 11 px a la izquierda (seguía con 29 px); se corrigió y se midió en 360, 375, 640, 641, 1024 y 1440 px. Si cambia el tamaño o la orilla de `.wa-float`, hay que cambiar también `.tel-float`.
+- **Encabezado** (medido en el navegador): completo ≥ 1820 px; compacto con «Agendar cita» 1560–1819; sin ese botón 1440–1559; muy compacto 1340–1439; **hamburguesa ≤ 1339 px** (antes 1309; mismo número en `principal.js`). En celular el selector es un ícono redondo; Instagram y TikTok se ocultan desde **480 px** (antes 380).
+- **Textos corregidos a petición del usuario:** títulos sin comillas, «Ciudad Bugambilias», «2da Sección», «La mejor ubicación», «Área de Asador», «Área condominal» y Balanty «$3,300,000.00 M.N.». También en `supabase/catalogo-inicial.sql`. El menú ya no dice «Blog»: ahora Calculadoras, Asesores y Reseñas (el ancla `#blog` sigue existiendo).
+- **Edificio Luviano:** ahora dice `$80,000,000.00 M.N.` y `$500,000.00 M.N. / mes` (HTML, JSON-LD, mapa y `llms`). Lo indicó el texto pegado; antes estaba «por confirmar». **Falta que el usuario lo confirme.**
+- **Años de experiencia:** «12+» de `#nosotros` pasó a «10+», igual que el resto del sitio. Falta que el usuario confirme cuál es el correcto.
+- **Lo que NO se aplicó, y por qué:**
+  - `defer` en `js/inicio.js`: ese archivo debe correr antes de pintar (pone la clase `js` del esqueleto de fotos); con `defer` las fotos parpadean. Pesa 1.4 KB.
+  - Codificar los `src` de las fotos: se quedan tal cual (regla 2 y el propio bloque 7 de la lista). Los navegadores los codifican solos. Sí se agregó `width="800" height="600"`.
+- **Valores de referencia (hay que revisarlos):** las tarifas de escrituración y los precios por m² son estimados armados con fuentes públicas de 2026 (leyes de ingresos municipales, reportes de precios de lista de octubre 2026). El usuario dijo que los ajustará con datos de su notaría.
+- **Las subpáginas** (`yeucate.html`, `propiedad.html`) no tienen el selector de moneda e idioma.
+- **Probado** en el navegador integrado con el servidor local (CSP real): 1820, 1560, 1440, 1366, 1340, 1339, 660, 481, 390 y 360 px; inglés y dólares; calculadoras, valuación, asesores, comparador y mapa. Único error de consola: el 400 de Supabase mientras no se ejecute el SQL nuevo (pendiente de antes).
+
+## 5d. Ajustes legales del 2026-11-19 (NOM-247-SE-2021)
+
+El usuario preguntó qué faltaba para evitar demandas o denuncias. Se revisó la página contra la NOM-247 (numeral «Obligaciones respecto al portal de Internet»: precios de contado; leyenda de crédito; dirección física y electrónica para quejas y horario; modelo de contrato de adhesión registrado ante PROFECO; formas de pago; tasa/CAT si el proveedor financia; Aviso de Privacidad). El usuario aprobó («Sí, hazlos») estos cambios. Se subieron a GitHub el 2026-11-22.
+
+- **Leyenda de crédito** (texto casi literal de la NOM): «En operaciones de crédito, el precio total se determinará en función de los montos variables de los conceptos de crédito y de los gastos notariales, que deben consultarse con tu asesor.» Está en `.nom-note` del catálogo, en Términos §5 y en `.ficha-legal` de `propiedad.html`. Su inglés está en `TEXTOS_I18N` (el renglón de la nota completa).
+- **Se quitó «· Tour virtual 360° disponible en fichas marcadas»** de `.compare-note`: ninguna ficha tiene tour (riesgo de publicidad engañosa, art. 32 LFPC). Si algún día hay tours, se vuelve a poner.
+- **Domicilio y contrato PROFECO, listos para llenar** en `js/config.js`: `DOMICILIO_OFICINA`, `PROFECO_REGISTRO` y `PROFECO_CONTRATO_PDF` (PDF en la raíz, solo nombre de archivo, termina en `.pdf`). `js/datos-legales.js` (lo cargan las tres páginas después de `config.js`) llena los `[data-legal="…"]` y muestra los `[data-legal-si="…"]`, que están `hidden` mientras el dato esté vacío. Claves: `domicilio`, `profeco-registro`, `profeco-pdf`. Dónde aparecen:
+  - pie de las tres páginas: «Oficina: …» y el enlace «Contrato registrado ante PROFECO» (en inglés: «Office:» / «Contract registered with PROFECO»);
+  - Términos §7: número de registro y enlace al contrato; Términos §8: párrafo nuevo de quejas (correo, WhatsApp, 24/7 y, si existe, la oficina);
+  - Aviso de Privacidad §1: «Domicilio de la oficina del Responsable: …».
+  - **Cuando el usuario dé la dirección**, además hay que ponerla a mano en el JSON-LD (`address` de `RealEstateAgent`), en `llms.txt` y en `llms-full.txt`.
+- `~/Herramientas-Demetrius/servidor-enlace.py` ahora también sirve `.pdf` (para el contrato).
+- **No se tocó** «Liderando el mercado inmobiliario de lujo en la Zona Metropolitana de Guadalajara.» (`#nosotros`): se le dijo al usuario que, si no se puede probar, conviene suavizarlo; decide él.
+- Lo que ya cumplía: precios en M.N. con nota del tipo de cambio, Aviso de Privacidad con la autoridad actual (Secretaría Anticorrupción y Buen Gobierno), Términos con PROFECO, imágenes ilustrativas, descargos de las calculadoras («no es un avalúo», «no constituye una cotización oficial»), reseñas moderadas.
+- Probado con un servidor local de prueba (scratchpad) con datos de ejemplo y sin ellos: 1440 y 390 px, español e inglés, las tres páginas; sin desbordamiento; sin errores de consola salvo el 400 de Supabase de siempre.
 
 ## 6. Seguridad (OWASP)
 
@@ -247,6 +302,7 @@ Hoy son 49 tarjetas escritas a mano: 12 disponibles y 37 vendidas (35 "Vendida" 
 - Leaflet 1.9.4 se carga desde cdnjs con SRI (`sha384`). Si cambia la versión, hay que actualizar el hash y la CSP.
 - `supabase-js` **2.118.0** está copiada dentro del sitio (`js/vendor/supabase-2.118.0.js`, con su licencia MIT), así que la CSP de scripts no cambió. Se descargó del registro oficial de npm verificando su firma (sha512) y no usa `eval`. Para actualizarla: elegir una versión publicada hace más de 2 semanas, descargarla igual, cambiar el nombre del archivo y las dos etiquetas `<script>` de `panel/`.
 - La CSP permite además `blob:` (vista previa de las fotos antes de subirlas) y `https://*.supabase.co` en `img-src` (fotos de las propiedades del panel).
+- Desde el 2026-11-14, `connect-src` permite también `https://open.er-api.com` (tipo de cambio USD/MXN del selector de moneda), en `_headers` y en `.htaccess`. Es una consulta sin datos personales.
 - `/panel/` lleva `noindex, nofollow` (meta, `X-Robots-Tag` en `_headers` y `.htaccess`), `Cache-Control: no-store` y `Disallow: /panel/` en `robots.txt`.
 - Otras cabeceras: HSTS de 2 años con preload, `X-Frame-Options DENY`, `frame-ancestors 'none'`, COOP `same-origin-allow-popups`, Permissions-Policy restrictiva y `X-XSS-Protection 0`.
 - `netlify.toml` solo maneja redirecciones. GitHub Pages **no puede** enviar cabeceras.
@@ -354,7 +410,7 @@ Apartado privado del panel (`#documentos`) para compartir la documentación deli
 
 - Repositorio: `alvarezvazquezgustavo/demetrius-inmobiliaria` (público), rama `main`.
 - Autor de los commits: `alvarezvazquezgustavo <334010730+alvarezvazquezgustavo@users.noreply.github.com>`. Es el correo noreply; **no se usa el correo personal**.
-- Mensajes de commit en español, terminados con la línea `Co-Authored-By` de Claude.
+- Mensajes de commit en español. Desde el 2026-11-22 ya **no** llevan la línea `Co-Authored-By` de Claude (así lo indica ahora Claude Code).
 - Antes de cada push:
   1. Verificar que nadie cambió el remoto.
   2. Confirmar que la carpeta local es igual al repositorio.
@@ -377,6 +433,7 @@ Apartado privado del panel (`#documentos`) para compartir la documentación deli
 | `f15b23b` | Panel del equipo con Supabase, ficha de propiedades, filtro de recámaras, acceso "Iniciar sesión" y capas del bloque Yéucate para Safari |
 | `3ab298f` | Documentos privados del panel (dos pasos, aprobación, bitácora), Aviso de Privacidad y guía en PDF |
 | `e79d50c` | Las 48 propiedades escritas a mano pasan al panel sin cambiar cómo se ven (`catalogo-inicial.sql`) |
+| `8e3e22a` | Correo `inmobiliariademetrius@gmail.com`, horario 24/7 y Google Analytics `G-HENM9J0QYE` |
 
 ## 10. Cómo se prueba
 
@@ -386,6 +443,11 @@ Apartado privado del panel (`#documentos`) para compartir la documentación deli
   - 0 violaciones de CSP;
   - sin desbordamiento horizontal.
 - Servidor local que aplica `_headers`, para probar la CSP real.
+  - **El scratchpad se borra al reiniciarse la sesión** (pasó el 2026-11-14): el servidor de prueba, el Supabase simulado y el visor de WebKit hay que volver a escribirlos cuando hagan falta. El servidor actual es `tools/servidor.py <sitio> <puerto>` (sirve la carpeta con la CSP real, sin `upgrade-insecure-requests`, y cambia el ID de Analytics por `G-PRUEBA1234`).
+  - Si el navegador integrado está oculto, las capturas fallan: primero se muestra el panel y después se captura. Tras cambiar el ancho hay que esperar 1–2 s antes de medir (el encabezado anima su margen).
+- **Enlace temporal para otra computadora u otra red** (2026-11-11, mientras no hay dominio): túnel rápido de Cloudflare (`cloudflared tunnel --url http://127.0.0.1:<puerto>`, sin cuenta) hacia un servidor de solo lectura que bloquea `supabase/`, `CLAUDE.md`, `_headers`, `netlify.toml` y los archivos con punto, no lista carpetas, pone `noindex` en todo y quita el ID de Analytics. La dirección `https://…trycloudflare.com` cambia cada vez y solo funciona con la Mac prendida y la sesión abierta. No es publicar el sitio.
+  - **Desde el 2026-11-19 vive en `~/Herramientas-Demetrius/`** (fuera del sitio, a petición del usuario, para que no se borre al reiniciar la sesión): `servidor-enlace.py`, `cloudflared` 2026.10.4 (sha256 del programa `fdec0f9a…c883a9`, firma Cloudflare Inc. 68WVV388M8, notarizado) e `iniciar-enlace.sh`.
+  - Para abrirlo: `bash ~/Herramientas-Demetrius/iniciar-enlace.sh` en segundo plano. El script revisa la firma, arranca el servidor en 127.0.0.1:8797 y el túnel con `caffeinate`; la dirección sale en un renglón con «trycloudflare.com». Al detenerlo se apagan los dos. Ya no hace falta descargar nada.
 - **Simulador de iOS** (instalado el 2026-11-05: Xcode 26.5 y el simulador de iOS 26.5, con iPhone 17, 17 Pro, 17 Pro Max y Air):
   - El simulador llega a la Mac por `127.0.0.1`. Se abre la página con `xcrun simctl openurl <iPhone> http://127.0.0.1:<puerto>/` y se toma la captura con `xcrun simctl io <iPhone> screenshot`.
   - Para que el panel de Claude pueda usar el iPhone simulado, el usuario tiene que dar el permiso ("Let Claude use it") en el panel; Claude no puede aceptarlo por él.
@@ -414,11 +476,35 @@ Apartado privado del panel (`#documentos`) para compartir la documentación deli
 
 - Edificio Luviano:
   - Se queda la foto recortada del folleto.
-  - La nota "*Moneda de los importes y periodicidad de la renta por confirmar" **se queda así** por ahora.
+  - La nota "*Moneda de los importes y periodicidad de la renta por confirmar" **se queda así** por ahora. (Cambió el 2026-11-14: ahora dice M.N. y renta mensual, ver §5c; falta la confirmación del usuario.)
 - Zoi Capital Norte: el usuario **confirmó la autorización** del propietario para publicarla.
 - `og-preview.jpg` ya tiene el logo nuevo.
 
 ## 12. Pendientes del usuario
+
+Del 2026-11-19 (revisión legal, ver §5d; se le recomendó llevarlo con su abogado y su contador):
+
+- [ ] Registrar ante PROFECO (Registro Público de Contratos de Adhesión) el modelo de contrato con el que comercializan, y pasar el número y el PDF para `js/config.js`.
+- [ ] Dar el domicilio de la oficina para `DOMICILIO_OFICINA` (y para el JSON-LD y los `llms`).
+- [ ] Decidir si se suaviza «Liderando el mercado inmobiliario de lujo en la ZMG» (`#nosotros`).
+- [ ] Ley antilavado (LFPIORPI, reformada el 16-jul-2025): la compraventa de inmuebles es actividad vulnerable; alta en el portal de PLD del SAT, identificación del cliente y avisos. Confirmar umbrales con su contador.
+- [ ] Revisar y registrar la marca «Demetrius» en el IMPI (servicios inmobiliarios).
+- [ ] Permisos por escrito de los dueños para publicar fotos y precio (también de las 37 vendidas que siguen con foto) y de cada asesor para su foto y WhatsApp.
+- [ ] Definir cuánto tiempo se guardan los documentos del panel y cómo se borran si un cliente lo pide (hoy nadie borra un aprobado desde el panel).
+- [ ] Verificación en dos pasos en Gmail, WhatsApp Business, Facebook, Instagram, TikTok, GitHub, Supabase y el registrador del dominio.
+- [ ] Seguir la iniciativa del Congreso de Jalisco (oct-2026) para el registro obligatorio de agentes inmobiliarios (todavía no es ley).
+
+Del 2026-11-14 (módulos nuevos, ver §5c):
+
+- [x] ~~Dar permiso para subir a GitHub los cambios del 2026-11-08 (Analytics en subpáginas), del 2026-11-14 (módulos nuevos) y del 2026-11-19 (ajustes legales y botón de llamada).~~ El usuario dio permiso («Sí, súbelos») y se subieron el 2026-11-22 (ver el historial de la sección 9).
+- [ ] Confirmar que el Edificio Luviano es en pesos (M.N.) y que la renta de $500,000 es mensual.
+- [ ] Confirmar los años de experiencia: quedó «10+» en todo el sitio (antes `#nosotros` decía «12+»).
+- [ ] Revisar en `js/ajustes.js` las tarifas de escrituración y los precios por m² con datos de su notaría y de su mercado.
+- [ ] Pegar en `js/ajustes.js` el enlace del simulador de la hipotecaria (`URL_SIMULADOR_HIPOTECARIA`).
+- [ ] Dar los datos de los demás asesores (nombre, WhatsApp, especialidades, foto) y decir si Gerardo atiende en inglés.
+- [ ] (Opcional) Llevar el selector de moneda e idioma a `yeucate.html` y `propiedad.html`.
+
+De antes:
 
 - [ ] Comprar el dominio `inmobiliariademetrius.com`: el usuario dijo que lo compra a fin de noviembre de 2026. Recomendado: comprarlo y publicar en **Netlify** (la página ya está preparada para Netlify: `netlify.toml` con redirecciones y bloqueos 404, y `_headers`; en Cloudflare Pages harían falta un `_redirects` y revisar los bloqueos).
 - [ ] Ejecutar en Supabase la versión nueva de `supabase/propiedades.sql` y después `supabase/catalogo-inicial.sql` (guía, punto 7.1).
@@ -432,9 +518,9 @@ Apartado privado del panel (`#documentos`) para compartir la documentación deli
 - [ ] Activar **Documentos** (`supabase/GUIA-PANEL.md`, punto 8): ejecutar `supabase/documentos.sql` en el Supabase real y revisar que TOTP esté prendido.
 - [ ] (2026-11-08: por ahora NO pasan al plan Pro) Decidir si pasan al **plan Pro** de Supabase ($25 USD/mes) para archivos de 150 MB. Hoy, con el plan gratis, el máximo es 50 MB por archivo y 1 GB en total. Al pagar: punto 8.4 de la guía (sin cambios de código).
 - [ ] (Recomendado) Que un abogado revise lo que se agregó al Aviso de Privacidad el 2026-11-07.
-- [x] ~~Crear la propiedad de Google Analytics 4 y dar el ID~~: `G-HENM9J0QYE` (2026-11-08), en `GA_MEASUREMENT_ID` al inicio de `js/principal.js`. Solo carga si la persona acepta las cookies; GA mostrará «recogida de datos no activada» hasta que la página esté publicada.
-- [ ] Decidir si `yeucate.html` y `propiedad.html` también cargan Analytics (hoy solo el inicio lo carga; esas páginas no tienen aviso de cookies).
-- [ ] Dar la dirección completa de la oficina. (El horario ya está: 24 horas, los 7 días, 2026-11-08.)
+- [x] ~~Crear la propiedad de Google Analytics 4 y dar el ID~~: `G-HENM9J0QYE` (2026-11-08), en `js/config.js`. Solo carga si la persona acepta las cookies; GA mostrará «recogida de datos no activada» hasta que la página esté publicada. El servidor de prueba usa `G-PRUEBA1234` para no ensuciar las estadísticas.
+- [x] ~~Decidir si Yéucate y la ficha cargan Analytics~~: sí (2026-11-08), con su aviso de cookies.
+- [ ] Dar la dirección completa de la oficina. (El horario ya está: 24 horas, los 7 días, 2026-11-08.) Desde el 2026-11-19 va en `DOMICILIO_OFICINA` de `js/config.js` (ver §5d).
 - [x] ~~Aclarar el correo~~: el 2026-11-08 el usuario eligió `inmobiliariademetrius@gmail.com` (el de su ficha).
 - [x] ~~Confirmar la autorización del desarrollador de Yéucate para publicar su plano, sus datos y las fotos de la obra.~~ El usuario confirmó el 2026-11-08 que ya tiene el permiso.
 - [ ] (Opcional) Borrar la reseña "Prueba de conexión" en Supabase. No es urgente: está sin aprobar, así que no aparece en la web.

@@ -1,0 +1,599 @@
+/* Demetrius Grupo Inmobiliario — estilos de los módulos agregados el 2026-11-14
+   (moneda e idioma, filtros nuevos del catálogo, comparador, calculadoras, valuación instantánea,
+   directorio de asesores, «Buscar al mover el mapa» y botón de llamada).
+   Usa las variables de color y las tipografías de css/estilos.css; no define colores de marca nuevos. */
+
+/* =========================================================
+   ENCABEZADO: selector 🌐 ES.MXN
+   ========================================================= */
+.ajustes-sitio{position:relative;display:flex;flex:none;}
+.ajustes-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  height:34px;padding:0 12px 0 10px;
+  border:1px solid rgba(201,169,97,.45);border-radius:999px;
+  background:rgba(13,13,13,.28);color:var(--hueso);
+  font-family:'Montserrat',sans-serif;font-size:.7rem;font-weight:600;letter-spacing:.08em;
+  cursor:pointer;white-space:nowrap;
+  transition:background-color .3s var(--ease-apple), border-color .3s var(--ease-apple);
+}
+.ajustes-btn:hover, .ajustes-btn[aria-expanded="true"]{background:rgba(201,169,97,.18);border-color:var(--dorado);}
+.ajustes-btn svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.ajustes-btn .ajustes-globo{width:16px;height:16px;color:var(--dorado-claro);}
+.ajustes-btn .ajustes-flecha{width:10px;height:7px;transform:rotate(180deg);transition:transform .3s var(--ease-apple);}
+.ajustes-btn[aria-expanded="true"] .ajustes-flecha{transform:none;}
+
+.ajustes-menu{
+  position:absolute;top:calc(100% + 12px);right:0;z-index:60;
+  width:236px;padding:10px;
+  background:#fff;color:var(--negro);
+  border:1px solid rgba(58,58,58,.1);border-radius:16px;
+  box-shadow:var(--shadow-lift);
+  animation:ajustes-in .25s var(--ease-apple);
+}
+@keyframes ajustes-in{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+.ajustes-titulo{
+  padding:10px 12px 6px;
+  font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--grafito-suave);
+}
+.ajustes-opcion ~ .ajustes-titulo{margin-top:6px;border-top:1px solid rgba(58,58,58,.1);padding-top:14px;}
+.ajustes-opcion{
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;padding:10px 12px;
+  border:none;border-radius:10px;background:none;
+  font-family:'Montserrat',sans-serif;font-size:.88rem;font-weight:600;color:var(--negro);
+  cursor:pointer;text-align:left;
+}
+.ajustes-opcion:hover{background:var(--hueso);}
+.ajustes-check{opacity:0;color:var(--dorado-oscuro);font-weight:700;}
+.ajustes-opcion[aria-pressed="true"] .ajustes-check{opacity:1;}
+
+/* Interruptor (menú del encabezado y leyenda del mapa) */
+.ajustes-switch, .mapa-switch{
+  position:relative;display:flex;align-items:center;gap:10px;
+  font-size:.8rem;font-weight:500;line-height:1.3;cursor:pointer;
+}
+.ajustes-switch{margin-top:8px;padding:14px 12px 8px;border-top:1px solid rgba(58,58,58,.1);color:var(--negro);}
+.ajustes-switch input, .mapa-switch input{position:absolute;opacity:0;width:1px;height:1px;}
+.interruptor{
+  position:relative;flex:none;width:38px;height:22px;border-radius:999px;
+  background:#CFC9BD;transition:background-color .3s var(--ease-apple);
+}
+.interruptor::after{
+  content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(13,13,13,.3);
+  transition:transform .3s var(--ease-apple);
+}
+input:checked + .interruptor{background:var(--negro);}
+input:checked + .interruptor::after{transform:translateX(16px);}
+input:focus-visible + .interruptor{outline:2px solid var(--dorado);outline-offset:3px;}
+.mapa-switch input:checked + .interruptor{background:var(--dorado);}
+
+/* =========================================================
+   CATÁLOGO: Disponibles / Vendidas, tipo de cambio, comparar y resaltados
+   ========================================================= */
+.vista-toggle{flex-basis:100%;display:flex;justify-content:center;margin-bottom:6px;}
+.vista-btn{
+  border:1px solid rgba(58,58,58,.18);background:#fff;
+  padding:11px 22px;
+  font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--grafito);cursor:pointer;
+  transition:background-color .3s var(--ease-apple), color .3s var(--ease-apple);
+}
+.vista-btn:first-child{border-radius:999px 0 0 999px;border-right:none;}
+.vista-btn:last-child{border-radius:0 999px 999px 0;}
+.vista-btn.active{background:var(--negro);color:var(--dorado-claro);border-color:var(--negro);}
+.vista-btn:focus-visible{outline:2px solid var(--dorado);outline-offset:3px;position:relative;}
+
+.catalog-tc{
+  max-width:860px;margin:-10px auto 26px;text-align:center;
+  font-size:.74rem;line-height:1.6;color:var(--grafito-suave);
+}
+
+.comparar-btn{
+  position:absolute;top:12px;right:12px;z-index:4;
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 12px;
+  border:1px solid rgba(255,255,255,.35);border-radius:999px;
+  background:rgba(13,13,13,.62);color:var(--hueso);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  font-family:'Montserrat',sans-serif;font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  cursor:pointer;
+  transition:background-color .3s var(--ease-apple), color .3s var(--ease-apple), transform .3s var(--ease-apple);
+}
+.comparar-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.comparar-btn[aria-pressed="true"]{
+  background:linear-gradient(120deg,var(--dorado-oscuro),var(--dorado-claro));
+  color:var(--negro);border-color:transparent;
+}
+.prop-card.is-comparando{border-color:var(--dorado);box-shadow:var(--ring-dorado), var(--shadow-soft);}
+.prop-card.en-mapa{box-shadow:0 0 0 2px var(--dorado), var(--shadow-soft);}
+.prop-card.tarjeta-resaltada{animation:tarjeta-resaltada 2.4s var(--ease-apple);}
+@keyframes tarjeta-resaltada{
+  0%, 60%{box-shadow:0 0 0 4px rgba(201,169,97,.75), var(--shadow-lift);}
+  100%{box-shadow:var(--shadow-soft);}
+}
+@media (hover:hover){
+  .comparar-btn:hover{transform:translateY(-1px);background:rgba(13,13,13,.82);}
+  .comparar-btn[aria-pressed="true"]:hover{background:linear-gradient(120deg,var(--dorado-oscuro),var(--dorado-claro));filter:brightness(1.06);}
+}
+
+/* Tarjeta destacada: los importes ahora dicen "M.N." y "/ mes"; un poco más chicos para que la cifra no se parta */
+.prop-destacada .opcion-precio{font-size:1.02rem;line-height:1.35;}
+
+/* =========================================================
+   HERRAMIENTAS: pestañas y calculadoras
+   ========================================================= */
+.herramientas{background:linear-gradient(180deg,#fff 0%, var(--hueso) 100%);}
+.herr-tabs{
+  max-width:1180px;margin:0 auto 34px;
+  display:flex;justify-content:center;gap:10px;flex-wrap:wrap;
+}
+.herr-tab{
+  border:1px solid rgba(58,58,58,.18);border-radius:999px;background:#fff;
+  padding:12px 24px;
+  font-family:'Montserrat',sans-serif;font-size:.74rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--grafito);cursor:pointer;
+  box-shadow:0 1px 2px rgba(13,13,13,.04);
+  transition:background-color .3s var(--ease-apple), color .3s var(--ease-apple), border-color .3s var(--ease-apple);
+}
+.herr-tab.active{background:var(--negro);color:var(--dorado-claro);border-color:var(--negro);}
+.herr-tab:focus-visible{outline:2px solid var(--dorado);outline-offset:3px;}
+.herr-panel{max-width:1180px;margin:0 auto;}
+.herr-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;}
+.herr-modos{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:28px;}
+
+.calc, .credito-card, .isr-info{
+  background:#fff;
+  border:1px solid rgba(58,58,58,.08);border-radius:var(--radius-card);
+  box-shadow:var(--shadow-soft);
+  padding:34px 32px;
+  min-width:0;
+}
+.calc h3, .isr-info h3{font-size:1.35rem;font-weight:600;line-height:1.3;color:var(--negro);}
+.calc-sub{margin:10px 0 24px;font-size:.84rem;line-height:1.65;color:var(--grafito-suave);}
+.calc-campo{margin-bottom:22px;}
+.calc-campo > label, .calc-label{
+  display:block;margin-bottom:8px;
+  font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--dorado-oscuro);
+}
+.calc-campo output{margin-left:6px;font-size:.82rem;letter-spacing:0;color:var(--negro);}
+.calc-monto{display:flex;gap:8px;}
+.calc-monto input, .calc-moneda, .calc-select{
+  border:1px solid rgba(58,58,58,.18);border-radius:var(--radius-ui);background:#fff;
+  padding:12px 14px;
+  font-family:'Montserrat',sans-serif;font-size:.9rem;color:var(--negro);
+  transition:border-color .3s var(--ease-apple), box-shadow .3s var(--ease-apple);
+}
+.calc-monto input{flex:1;min-width:0;width:100%;font-weight:600;}
+.calc-moneda, .calc-select{
+  -webkit-appearance:none;appearance:none;cursor:pointer;padding-right:34px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23C9A961' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+}
+.calc-moneda{flex:none;width:92px;font-weight:600;font-size:.8rem;}
+.calc-select{width:100%;}
+.form-group .calc-monto .calc-moneda{width:92px;}
+.calc-monto input:focus, .calc-moneda:focus, .calc-select:focus{outline:none;border-color:var(--dorado);box-shadow:0 0 0 3px rgba(201,169,97,.2);}
+.calc input[type="range"]{width:100%;accent-color:var(--dorado-oscuro);cursor:pointer;}
+
+.calc-segmento{display:flex;gap:8px;flex-wrap:wrap;}
+.calc-segmento label{position:relative;cursor:pointer;}
+.calc-segmento input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.calc-segmento span{
+  display:block;padding:10px 18px;
+  border:1px solid rgba(58,58,58,.18);border-radius:999px;background:#fff;
+  font-size:.78rem;font-weight:600;color:var(--grafito);
+  transition:background-color .3s var(--ease-apple), color .3s var(--ease-apple);
+}
+.calc-segmento input:checked + span{background:var(--negro);color:var(--dorado-claro);border-color:var(--negro);}
+.calc-segmento input:focus-visible + span{outline:2px solid var(--dorado);outline-offset:3px;}
+.calc-pregunta{border:none;margin:0 0 20px;padding:0;min-width:0;}
+.calc-pregunta legend{padding:0;margin-bottom:10px;font-size:.84rem;font-weight:600;line-height:1.5;color:var(--negro);}
+
+.calc-resultado{margin-top:6px;}
+.calc-tabla{width:100%;border-collapse:collapse;font-size:.82rem;}
+.calc-tabla th, .calc-tabla td{
+  padding:12px 10px;border-bottom:1px solid rgba(58,58,58,.08);
+  text-align:right;vertical-align:top;line-height:1.45;
+}
+.calc-tabla thead th{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--grafito-suave);}
+.calc-tabla th:first-child{text-align:left;font-weight:500;color:var(--grafito);}
+.calc-tabla td{font-weight:600;color:var(--negro);}
+.calc-tabla .calc-total th, .calc-tabla .calc-total td{background:rgba(201,169,97,.14);font-weight:700;color:var(--negro);}
+.calc-nota{margin-top:14px;font-size:.72rem;line-height:1.65;color:var(--grafito-suave);}
+.calc-error{font-size:.8rem;line-height:1.6;color:#B4472F;}
+.calc-cta{display:block;margin-top:18px;white-space:normal;padding:14px 18px;}
+.calc--resultado{position:sticky;top:96px;}
+
+/* Precalificador */
+.credito-card{background:var(--negro);border-color:rgba(201,169,97,.3);color:var(--hueso);}
+.credito-card .eyebrow{color:var(--dorado-claro);}
+.credito-lema{font-family:'Playfair Display',serif;font-size:1.6rem;line-height:1.3;font-weight:600;margin:18px 0 14px;color:var(--hueso);}
+.credito-instr{font-size:.86rem;line-height:1.65;color:#B9B3A6;margin-bottom:24px;}
+.credito-banner{
+  display:grid;grid-template-columns:auto 1fr;gap:16px 18px;align-items:center;
+  padding:26px 24px;border-radius:14px;
+  background:linear-gradient(120deg,var(--dorado-oscuro),var(--dorado-claro));color:var(--negro);
+  box-shadow:0 18px 40px rgba(0,0,0,.35);
+  transition:transform .45s var(--ease-apple), filter .45s var(--ease-apple);
+}
+.credito-banner-icono{
+  width:58px;height:58px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--negro);color:var(--dorado-claro);
+}
+.credito-banner-icono svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.credito-banner-texto b{display:block;font-family:'Playfair Display',serif;font-size:1.15rem;line-height:1.3;}
+.credito-banner-texto span{display:block;margin-top:4px;font-size:.8rem;line-height:1.5;}
+.credito-banner-cta{
+  grid-column:1 / -1;justify-self:start;
+  padding:11px 20px;border-radius:var(--radius-ui);
+  background:var(--negro);color:var(--dorado-claro);
+  font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+}
+@media (hover:hover){ .credito-banner:hover{transform:translateY(-3px);filter:brightness(1.05);} }
+
+/* Cotizador de escrituras y avisos */
+.herr-cotizador{max-width:860px;margin:0 auto;}
+.herr-cotizador .form-msg{margin-top:14px;font-size:.76rem;line-height:1.6;}
+.herr-aviso{
+  max-width:1180px;margin:28px auto 0;
+  display:flex;gap:12px;align-items:flex-start;
+  padding:16px 18px;
+  background:#FFF9EA;border:1px solid rgba(201,169,97,.5);border-left:3px solid var(--dorado);
+  border-radius:var(--radius-ui);
+  font-size:.78rem;line-height:1.65;color:var(--grafito);
+}
+.herr-aviso b{color:var(--negro);}
+.herr-aviso-icono{flex:none;font-size:1rem;line-height:1.4;}
+.herr-tc{max-width:1180px;margin:22px auto 0;text-align:center;font-size:.72rem;line-height:1.6;color:var(--grafito-suave);}
+
+/* ISR */
+.isr-info p{margin-top:14px;font-size:.88rem;line-height:1.75;color:var(--grafito-suave);}
+.isr-lista{list-style:none;margin:18px 0 0;}
+.isr-lista li{position:relative;padding:0 0 12px 22px;font-size:.86rem;line-height:1.65;color:var(--grafito);}
+.isr-lista li::before{content:"";position:absolute;left:0;top:.6em;width:8px;height:8px;background:var(--dorado);}
+.isr-info .isr-ley{
+  margin-top:10px;padding:14px 16px;
+  background:var(--hueso);border-left:3px solid var(--dorado);border-radius:var(--radius-ui);
+  font-size:.8rem;color:var(--grafito);
+}
+.isr-diagnostico{
+  padding:18px 20px;border-radius:var(--radius-ui);
+  background:var(--hueso);border:1px solid rgba(201,169,97,.45);border-left:4px solid var(--dorado);
+}
+.isr-diagnostico--estudio{border-color:rgba(58,58,58,.18);border-left-color:var(--grafito);}
+.isr-diagnostico-etiqueta{display:block;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--grafito-suave);}
+.isr-diagnostico strong{display:block;margin:6px 0 8px;font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--negro);}
+.isr-diagnostico p{font-size:.82rem;line-height:1.7;color:var(--grafito);}
+
+/* =========================================================
+   VALUACIÓN INSTANTÁNEA (dentro del formulario oscuro de #vender)
+   ========================================================= */
+.valuacion{
+  margin-top:22px;padding:26px 24px;
+  background:var(--hueso);color:var(--grafito);
+  border:1px solid rgba(201,169,97,.55);border-radius:var(--radius-card);
+  scroll-margin-top:110px;
+}
+.valuacion h4{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:600;color:var(--negro);margin:6px 0;}
+.valuacion-kicker{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--dorado-oscuro);}
+.valuacion-zona{font-size:.78rem;color:var(--grafito-suave);margin-bottom:16px;}
+.valuacion-datos{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.valuacion-dato{background:#fff;border:1px solid rgba(58,58,58,.08);border-radius:var(--radius-ui);padding:14px;min-width:0;}
+.valuacion-etiqueta{display:block;margin-bottom:6px;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;line-height:1.4;color:var(--grafito-suave);}
+.valuacion-dato b{display:block;font-family:'Playfair Display',serif;font-size:1.05rem;line-height:1.3;color:var(--negro);overflow-wrap:anywhere;}
+.valuacion-usd{display:block;margin-top:2px;font-size:.76rem;color:var(--grafito-suave);}
+.valuacion-dato--principal{background:var(--negro);border-color:var(--negro);}
+.valuacion-dato--principal .valuacion-etiqueta{color:#C9C3B6;}
+.valuacion-dato--principal b{color:var(--dorado-claro);}
+.valuacion-dato--principal .valuacion-usd{color:#B9B3A6;}
+.valuacion-nota, .valuacion-aviso{margin-top:14px;font-size:.72rem;line-height:1.65;color:var(--grafito-suave);}
+.valuacion-aviso{color:var(--grafito);}
+.valuacion-acciones{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:18px;}
+.valuacion-corregir{
+  background:none;border:none;border-bottom:1px solid var(--dorado);padding:0 0 1px;
+  font-family:'Montserrat',sans-serif;font-size:.74rem;font-weight:700;color:var(--dorado-oscuro);cursor:pointer;
+}
+.valuacion-cargando{display:flex;align-items:center;gap:14px;font-size:.84rem;line-height:1.6;color:var(--grafito);}
+.valuacion-giro{
+  flex:none;width:26px;height:26px;border-radius:50%;
+  border:3px solid rgba(201,169,97,.3);border-top-color:var(--dorado-oscuro);
+  animation:valuacion-giro .8s linear infinite;
+}
+@keyframes valuacion-giro{to{transform:rotate(360deg);}}
+
+/* =========================================================
+   ASESORES: directorio y perfil
+   ========================================================= */
+.asesores{background:#fff;}
+.asesores-barra{
+  max-width:1180px;margin:0 auto 34px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+}
+.asesores-filtros{display:flex;gap:10px;flex-wrap:wrap;}
+.asesores-paginas{display:flex;align-items:center;gap:12px;}
+.pagina-btn{
+  border:1px solid rgba(58,58,58,.18);border-radius:999px;background:var(--hueso);
+  padding:10px 18px;
+  font-family:'Montserrat',sans-serif;font-size:.76rem;font-weight:600;color:var(--negro);cursor:pointer;
+}
+.pagina-btn:disabled{opacity:.4;cursor:default;}
+.pagina-num{min-width:48px;text-align:center;font-size:.85rem;font-weight:700;color:var(--negro);}
+.asesores-grid{
+  max-width:1180px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(auto-fit, minmax(270px, 360px));justify-content:center;gap:32px;
+}
+.asesores-vacio{max-width:620px;margin:0 auto;text-align:center;font-size:.9rem;line-height:1.7;color:var(--grafito-suave);}
+.asesor-card{
+  position:relative;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  padding:38px 26px 26px;
+  background:var(--hueso);
+  border:1px solid rgba(58,58,58,.08);border-radius:18px;
+  box-shadow:var(--shadow-soft);
+  transition:transform .6s var(--ease-apple), box-shadow .6s var(--ease-apple);
+}
+@media (hover:hover){ .asesor-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lift);} }
+.asesor-insignia{
+  position:absolute;top:18px;left:18px;
+  width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--negro);color:#fff;font-size:.85rem;font-weight:700;
+}
+.asesor-foto{
+  width:124px;height:124px;border-radius:50%;object-fit:cover;
+  border:4px solid #fff;box-shadow:0 8px 22px rgba(13,13,13,.14);
+  margin-bottom:22px;
+}
+.asesor-foto--iniciales{
+  display:flex;align-items:center;justify-content:center;
+  background:var(--negro);color:var(--dorado-claro);
+  font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:600;
+}
+.asesor-card h3{font-size:1.2rem;font-weight:700;line-height:1.3;color:var(--negro);}
+.asesor-cargo{margin-top:8px;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--grafito);}
+.asesor-oficina{margin-top:4px;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--dorado-oscuro);}
+.asesor-pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:16px;}
+.asesor-pills span{
+  padding:6px 12px;border-radius:999px;
+  background:#fff;border:1px solid rgba(58,58,58,.1);
+  font-size:.7rem;color:var(--grafito);
+}
+.asesor-exp{margin-top:12px;font-size:.76rem;color:var(--grafito-suave);}
+.asesor-ver{
+  margin-top:22px;width:100%;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:14px;
+  border:1px solid rgba(13,13,13,.55);border-radius:var(--radius-ui);background:transparent;
+  font-family:'Montserrat',sans-serif;font-size:.74rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--negro);cursor:pointer;
+  transition:background-color .3s var(--ease-apple), color .3s var(--ease-apple);
+}
+.asesor-ver svg{width:16px;height:16px;fill:currentColor;}
+@media (hover:hover){ .asesor-ver:hover{background:var(--negro);color:var(--dorado-claro);} }
+
+/* Modales anchos (perfil del asesor y comparador) */
+.legal-modal.modal-ancho{width:min(980px, calc(100% - 32px));}
+.asesor-cuerpo{display:grid;grid-template-columns:1.25fr 1fr;gap:28px;align-items:start;}
+.legal-body .asesor-desc{font-size:.95rem;font-weight:600;line-height:1.6;color:var(--negro);}
+.asesor-datos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0;}
+.asesor-datos > div{
+  display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;
+  padding:18px 12px;
+  background:#fff;border:1px solid rgba(58,58,58,.08);border-radius:14px;
+  min-width:0;
+}
+.asesor-dato-icono{
+  width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--hueso);color:var(--grafito);
+}
+.asesor-dato-icono svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.asesor-dato-icono--ok{background:var(--negro);color:#fff;}
+.asesor-dato-label{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--grafito-suave);}
+.asesor-datos b{font-size:.82rem;font-weight:600;line-height:1.35;color:var(--negro);overflow-wrap:anywhere;}
+.legal-body .asesor-subtitulo{margin-bottom:10px;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--grafito-suave);}
+.asesor-info .asesor-pills{justify-content:flex-start;margin-top:0;}
+.asesor-contacto{
+  padding:22px;
+  background:#fff;border:1px solid rgba(58,58,58,.08);border-radius:16px;
+  box-shadow:var(--shadow-soft);
+}
+.legal-body .asesor-contacto h3{
+  margin:0 0 16px;padding-bottom:14px;border-bottom:1px solid rgba(58,58,58,.1);
+  font-family:'Montserrat',sans-serif;font-size:.95rem;font-weight:700;color:var(--negro);
+}
+.asesor-contacto .form-group{margin-bottom:12px;}
+.asesor-contacto .form-group textarea{height:96px;}
+.asesor-contacto .consent{margin:4px 0 12px;}
+.legal-body .asesor-contacto .form-msg{margin:12px 0 0;font-size:.76rem;line-height:1.6;}
+.asesor-enviar{
+  width:100%;margin-top:4px;padding:15px;
+  border:none;border-radius:var(--radius-ui);
+  background:var(--negro);color:#fff;
+  font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.04em;cursor:pointer;
+  transition:filter .3s var(--ease-apple), transform .3s var(--ease-apple);
+}
+@media (hover:hover){ .asesor-enviar:hover{filter:brightness(1.35);transform:translateY(-1px);} }
+
+/* =========================================================
+   COMPARADOR: barra flotante y tabla
+   ========================================================= */
+.comparar-barra{
+  position:fixed;left:50%;bottom:calc(20px + var(--cookie-h));z-index:78;
+  transform:translateX(-50%);
+  display:flex;align-items:center;gap:18px;
+  max-width:calc(100% - 32px);padding:10px 12px 10px 22px;
+  background:rgba(13,13,13,.9);color:var(--hueso);
+  backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+  border:1px solid rgba(201,169,97,.4);border-radius:999px;
+  box-shadow:0 20px 50px rgba(0,0,0,.35);
+  font-size:.8rem;line-height:1.4;
+}
+.comparar-barra-acciones{display:flex;align-items:center;gap:12px;flex:none;}
+.comparar-barra-limpiar{
+  background:none;border:none;border-bottom:1px solid currentColor;padding:0 0 1px;
+  font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:600;color:var(--dorado-claro);cursor:pointer;
+}
+.comparar-barra .cta-btn{border:none;cursor:pointer;padding:11px 20px;}
+.comparar-barra .cta-btn:disabled{opacity:.45;cursor:not-allowed;}
+
+.comparar-contenido{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.comparar-tabla{width:100%;min-width:520px;border-collapse:separate;border-spacing:0;table-layout:fixed;font-size:.82rem;}
+.comparar-tabla--3{min-width:700px;}
+.comparar-tabla th, .comparar-tabla td{
+  padding:12px;border-bottom:1px solid rgba(58,58,58,.08);
+  text-align:left;vertical-align:top;line-height:1.5;overflow-wrap:anywhere;
+}
+.comparar-tabla tbody th, .comparar-esquina{
+  width:124px;
+  font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--grafito-suave);
+}
+.comparar-prop{position:relative;font-weight:400;}
+.comparar-prop img{display:block;width:100%;height:130px;object-fit:cover;border-radius:10px;margin-bottom:10px;}
+.comparar-prop.is-vendida img{filter:grayscale(.9) brightness(.7);}
+.comparar-zona{display:block;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--dorado-oscuro);}
+.comparar-titulo{display:block;margin-top:4px;font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:600;color:var(--negro);}
+.comparar-quitar{
+  position:absolute;top:18px;right:18px;
+  width:26px;height:26px;border:none;border-radius:50%;
+  background:rgba(13,13,13,.72);color:#fff;font-size:.7rem;cursor:pointer;
+}
+.comparar-precio td{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--negro);}
+.comparar-precio--usd td{color:var(--dorado-oscuro);}
+.comparar-estatus{
+  display:inline-block;padding:4px 10px;border-radius:999px;
+  background:rgba(201,169,97,.18);color:var(--dorado-oscuro);
+  font-size:.66rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+}
+.comparar-estatus.is-vendida{background:rgba(58,58,58,.12);color:var(--grafito);}
+.comparar-acciones td{border-bottom:none;}
+.legal-body .comparar-cta{display:inline-block;padding:10px 14px;font-size:.66rem;white-space:normal;color:var(--negro);border-bottom:none;}
+.legal-body .comparar-nota{margin:16px 0 0;font-size:.72rem;line-height:1.6;color:var(--grafito-suave);}
+
+/* =========================================================
+   MAPA: «Buscar al mover el mapa»
+   ========================================================= */
+.mapa-zona{
+  padding:16px 28px 20px;
+  background:var(--negro);color:var(--hueso);
+  border-top:1px solid rgba(201,169,97,.22);
+}
+.mapa-zona-resultado{margin-top:16px;}
+.mapa-zona-titulo{font-size:.8rem;color:#C9C3B6;}
+.mapa-zona-titulo b{color:var(--dorado-claro);}
+.mapa-zona-lista{display:grid;grid-template-columns:repeat(auto-fill, minmax(230px, 1fr));gap:10px;margin-top:12px;}
+.mapa-zona-item{
+  display:flex;flex-direction:column;gap:3px;text-align:left;
+  padding:12px 14px;
+  background:rgba(255,255,255,.04);color:var(--hueso);
+  border:1px solid rgba(201,169,97,.28);border-radius:var(--radius-ui);
+  font-family:'Montserrat',sans-serif;font-size:.74rem;line-height:1.45;cursor:pointer;
+  transition:background-color .3s var(--ease-apple), border-color .3s var(--ease-apple);
+}
+.mapa-zona-item b{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:600;}
+.mapa-zona-item span{color:#B9B3A6;}
+.mapa-zona-item .mapa-zona-precio{color:var(--dorado-claro);font-weight:600;}
+@media (hover:hover){ .mapa-zona-item:hover{background:rgba(201,169,97,.14);border-color:var(--dorado);} }
+
+/* =========================================================
+   BOTÓN FLOTANTE DE LLAMADA (arriba del de WhatsApp)
+   ========================================================= */
+.tel-float{
+  position:fixed;right:29px;bottom:98px;z-index:80;
+  width:52px;height:52px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--negro);color:var(--dorado-claro);
+  border:1px solid rgba(201,169,97,.55);
+  box-shadow:0 10px 28px rgba(13,13,13,.35);
+  transition:transform .35s var(--ease-apple), background-color .35s var(--ease-apple), color .35s var(--ease-apple);
+}
+.tel-float svg{width:24px;height:24px;fill:currentColor;}
+@media (hover:hover){ .tel-float:hover{transform:translateY(-2px) scale(1.05);background:var(--dorado);color:var(--negro);} }
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+/* Menú de escritorio: con Calculadoras, Asesores y Reseñas son 9 enlaces. Medido el 2026-11-14:
+   completo necesita ~1815px; compacto con «Agendar cita», ~1540px; compacto sin el botón, ~1390px;
+   muy compacto, ~1335px. Abajo de 1340px pasa a hamburguesa (antes, 1309px).
+   (con min-width, para no pisar los márgenes del encabezado en tableta y celular) */
+@media (min-width: 1340px) and (max-width: 1819px){
+  header{padding-left:32px;padding-right:32px;}
+  .desktop-nav{gap:16px;}
+  .desktop-nav a{font-size:.72rem;letter-spacing:.03em;}
+  .desktop-nav a.cta-btn{padding:11px 18px;font-size:.7rem;}
+  .social-icons{gap:10px;}
+}
+@media (min-width: 1340px) and (max-width: 1559px){
+  .desktop-nav a.cta-btn{display:none;}
+}
+@media (min-width: 1340px) and (max-width: 1439px){
+  .desktop-nav{gap:12px;}
+  .desktop-nav a{font-size:.7rem;}
+  .social-icons{gap:8px;}
+}
+@media (max-width: 1339px){
+  .desktop-nav{display:none;}
+  .hamburger{display:flex;}
+}
+/* Celulares: con el selector de moneda e idioma ya no caben los 5 íconos; Instagram y TikTok se ocultan
+   desde 480px (antes se ocultaban, junto con «Iniciar sesión», desde 380px) */
+@media (max-width: 480px){
+  .social-icons a:nth-child(3), .social-icons a:nth-child(4){display:none;}
+}
+
+@media (max-width: 980px){
+  .herr-grid{grid-template-columns:1fr;gap:22px;}
+  .calc--resultado{position:static;}
+  .asesor-cuerpo{grid-template-columns:1fr;}
+  /* Los flotantes suben cuando aparece la barra del comparador */
+  .wa-float{bottom:calc(26px + var(--cookie-h) + var(--cmp-h, 0px));}
+  .wa-tooltip{bottom:calc(38px + var(--cookie-h) + var(--cmp-h, 0px));}
+  .tel-float{bottom:calc(98px + var(--cookie-h) + var(--cmp-h, 0px));}
+}
+
+@media (max-width: 640px){
+  /* En celular el selector se queda como ícono redondo, igual que los demás del encabezado */
+  .ajustes-btn{width:30px;height:30px;padding:0;justify-content:center;}
+  .ajustes-btn .ajustes-etiqueta, .ajustes-btn .ajustes-flecha{display:none;}
+  .ajustes-btn .ajustes-globo{width:15px;height:15px;}
+  .ajustes-menu{position:fixed;top:62px;right:12px;}
+
+  .vista-btn{padding:11px 14px;font-size:.66rem;letter-spacing:.03em;}
+  .herr-tab{flex:1 1 100%;}
+  .calc, .credito-card, .isr-info{padding:26px 22px;}
+  .credito-lema{font-size:1.35rem;}
+  .credito-banner{grid-template-columns:1fr;text-align:left;}
+  .calc-moneda{width:84px;}
+
+  /* Tablas de resultados: cada concepto en su bloque */
+  .calc-tabla thead{display:none;}
+  .calc-tabla tr{display:block;padding:10px 0;border-bottom:1px solid rgba(58,58,58,.08);}
+  .calc-tabla th, .calc-tabla td{display:flex;justify-content:space-between;gap:12px;padding:4px 10px;border:none;text-align:right;}
+  .calc-tabla th:first-child{display:block;text-align:left;font-weight:600;color:var(--negro);}
+  .calc-tabla td::before{content:attr(data-columna);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--grafito-suave);text-align:left;}
+
+  .valuacion{padding:22px 18px;}
+  .valuacion-datos{grid-template-columns:1fr;}
+  .asesores-barra{flex-direction:column;align-items:stretch;}
+  .asesores-filtros, .asesores-paginas{justify-content:center;}
+  .asesor-datos{grid-template-columns:1fr;}
+  .asesor-datos > div{flex-direction:row;justify-content:flex-start;text-align:left;gap:12px;padding:12px 14px;}
+  .asesor-datos b{margin-left:auto;text-align:right;}
+  .mapa-zona{padding:16px 18px 20px;}
+
+  .comparar-barra{
+    left:12px;right:12px;transform:none;max-width:none;justify-content:space-between;
+    bottom:calc(var(--mbar-h) + var(--cookie-h) + 10px + env(safe-area-inset-bottom));
+    border-radius:16px;padding:10px 12px 10px 16px;font-size:.74rem;gap:10px;
+  }
+  .wa-float{bottom:calc(var(--mbar-h) + var(--cookie-h) + var(--cmp-h, 0px) + 14px + env(safe-area-inset-bottom));}
+  /* Mismo ancho (52px) y misma orilla (18px) que .wa-float en celular (estilos.css), para que queden en la misma línea */
+  .tel-float{right:18px;bottom:calc(var(--mbar-h) + var(--cookie-h) + var(--cmp-h, 0px) + 84px + env(safe-area-inset-bottom));}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .valuacion-giro{animation-duration:1.6s !important;animation-iteration-count:infinite !important;}
+}

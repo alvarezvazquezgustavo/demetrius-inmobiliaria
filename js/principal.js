@@ -2,7 +2,8 @@
   /* =========================================================
      CONFIGURACIÓN CENTRAL
      ========================================================= */
-  const GA_MEASUREMENT_ID = "G-HENM9J0QYE"; // Google Analytics 4 · flujo «Página web Demetrius» (2026-11-08). Solo carga si la persona acepta las cookies.
+  // Google Analytics 4: el ID vive en js/config.js (lo comparten el inicio, Yéucate y la ficha). Solo carga si la persona acepta las cookies.
+  const GA_MEASUREMENT_ID = String((window.DEMETRIUS_CONFIG || {}).GA_MEASUREMENT_ID || "");
 
   // Solo valores PÚBLICOS. Las llaves privadas (EasyBroker, etc.) viven en .env y se
   // usan desde una función serverless; nunca se escriben en este archivo.
@@ -221,9 +222,11 @@
   navOverlay.addEventListener('click', () => setMenu(false));
   $$('a', mobileNav).forEach(link => link.addEventListener('click', () => setMenu(false)));
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && mobileNav.classList.contains('open')) setMenu(false); });
-  window.addEventListener('resize', () => { if (window.innerWidth > 1259 && mobileNav.classList.contains('open')) setMenu(false); }, { passive: true });
+  // Mismo corte que css/modulos.css: arriba de ese ancho se ve el menú de escritorio
+  window.addEventListener('resize', () => { if (window.innerWidth > 1339 && mobileNav.classList.contains('open')) setMenu(false); }, { passive: true });
 
-  // "Blog" lleva a las reseñas de la comunidad (ancla #blog dentro de #testimonios)
+  // El menú ya no dice "Blog": ahora enlaza a Calculadoras, Asesores y Reseñas.
+  // El ancla #blog sigue dentro de #testimonios para no romper enlaces viejos.
 
   /* =========================================================
      COLONIAS (buscador del Hero)
@@ -304,9 +307,12 @@
   const catalogStatus = $('#catalogStatus');
   const catalogEmpty = $('#catalogEmpty');
   const catalogToolbar = $('#catalogToolbar');
-  const nombresFiltro = { todas: 'Todas', casas: 'Casas', departamentos: 'Departamentos', coto: 'Coto residencial', preventa: 'Preventa' };
+  const nombresFiltro = { todas: 'Todas', casas: 'Casas', departamentos: 'Departamentos', coto: 'Coto residencial', preventa: 'Preventa', terrenos: 'Terrenos', comercial: 'Comercial y Bodegas' };
+  // "Comercial y Bodegas" reúne estos tipos de tarjeta (data-tipo)
+  const TIPOS_COMERCIALES = ['bodega', 'edificio', 'terraza'];
 
   const estadoCatalogo = {
+    vista: 'disponibles', // 'disponibles' (inventario activo) o 'vendidas' (casos de éxito)
     tipo: 'todas',
     busqueda: false,
     operacion: 'Comprar',
@@ -345,12 +351,15 @@
   function coincide(card) {
     const d = card.dataset;
     const { tipo } = estadoCatalogo;
-    // Las vendidas solo se muestran en el catálogo completo, nunca en filtros ni búsquedas
-    if (d.vendida === 'si' && (tipo !== 'todas' || estadoCatalogo.busqueda)) return false;
+    // Vista "Disponibles" (inventario activo) o "Vendidas / Casos de Éxito": nunca se mezclan.
+    // Las búsquedas del Hero siempre son sobre las disponibles.
+    if ((d.vendida === 'si') !== (estadoCatalogo.vista === 'vendidas')) return false;
     if (tipo === 'casas' && d.tipo !== 'casa') return false;
     if (tipo === 'departamentos' && d.tipo !== 'departamento') return false;
     if (tipo === 'coto' && d.coto !== 'si') return false;
     if (tipo === 'preventa' && d.preventa !== 'si') return false;
+    if (tipo === 'terrenos' && d.tipo !== 'terreno') return false;
+    if (tipo === 'comercial' && !TIPOS_COMERCIALES.includes(d.tipo)) return false;
     if (!estadoCatalogo.busqueda) return true;
     const operaciones = (d.operacion || '').split(' ');
     if (estadoCatalogo.operacion === 'Comprar' && !operaciones.includes('venta')) return false;
@@ -380,17 +389,20 @@
 
   function renderCatalogo() {
     const filtrando = estadoCatalogo.tipo !== 'todas' || estadoCatalogo.busqueda;
-    let visibles = 0;
-    estadoCatalogo.expandido = estadoCatalogo.extra >= tarjetasOcultas.length;
+    const vendidas = estadoCatalogo.vista === 'vendidas';
+    const coincidentes = tarjetas.filter(coincide);
+    // Sin filtros se ven las primeras 7 y "Ver más" agrega de 9 en 9; con filtros se ven todas las que coinciden
+    const limite = filtrando ? coincidentes.length : Math.min(coincidentes.length, VISIBLES_INICIALES + estadoCatalogo.extra);
+    const aMostrar = new Set(coincidentes.slice(0, limite));
+    const visibles = aMostrar.size;
+    estadoCatalogo.expandido = limite >= coincidentes.length;
     tarjetas.forEach(card => {
-      const ocultaPorVerMas = !filtrando && tarjetasOcultas.indexOf(card) >= estadoCatalogo.extra;
-      const mostrar = coincide(card) && !ocultaPorVerMas;
+      const mostrar = aMostrar.has(card);
       card.classList.toggle('is-hidden', !mostrar);
       card.classList.toggle('is-shown', mostrar);
-      if (mostrar) visibles++;
     });
 
-    btnVerMas.parentElement.hidden = filtrando;
+    btnVerMas.parentElement.hidden = filtrando || coincidentes.length <= VISIBLES_INICIALES;
     btnVerMas.textContent = estadoCatalogo.expandido ? 'Ver menos propiedades' : 'Ver más propiedades';
     btnVerMas.setAttribute('aria-expanded', String(estadoCatalogo.expandido));
 
@@ -404,7 +416,11 @@
     if (filtrando) {
       catalogStatus.append('Mostrando ', el('b', {}, visibles), ` ${visibles === 1 ? 'propiedad' : 'propiedades'} `,
         el('button', { type: 'button', clase: 'link-btn', 'data-limpiar-filtros': true }, 'Limpiar filtros'));
+    } else if (vendidas) {
+      catalogStatus.append('Casos de éxito: ', el('b', {}, coincidentes.length), ' propiedades vendidas o rentadas con Demetrius');
     }
+    // Aviso para los módulos (comparador, moneda e idioma): el catálogo cambió
+    document.dispatchEvent(new CustomEvent('demetrius:catalogo'));
   }
 
   function limpiarFiltros() {
@@ -413,6 +429,24 @@
     $$('.chip', catalogToolbar).forEach(c => { const activo = c.dataset.filtro === 'todas'; c.classList.toggle('active', activo); c.setAttribute('aria-pressed', String(activo)); });
     renderCatalogo();
   }
+
+  // Interruptor "Disponibles" / "Vendidas · Casos de Éxito"
+  const vistaBotones = $$('.vista-btn', catalogToolbar);
+  function fijarVista(vista) {
+    estadoCatalogo.vista = vista === 'vendidas' ? 'vendidas' : 'disponibles';
+    estadoCatalogo.extra = 0;
+    vistaBotones.forEach(b => {
+      const activo = b.dataset.vista === estadoCatalogo.vista;
+      b.classList.toggle('active', activo);
+      b.setAttribute('aria-pressed', String(activo));
+    });
+  }
+  vistaBotones.forEach(boton => boton.addEventListener('click', () => {
+    if (boton.dataset.vista === 'vendidas') estadoCatalogo.busqueda = false; // las búsquedas son sobre el inventario disponible
+    fijarVista(boton.dataset.vista);
+    renderCatalogo();
+    track('cambiar_vista_catalogo', { vista: estadoCatalogo.vista });
+  }));
 
   function irAResultados() {
     catalogToolbar.scrollIntoView({ behavior: scrollBehavior, block: 'start' });
@@ -426,7 +460,7 @@
       if (propGrid.getBoundingClientRect().top < 0) irAResultados();
       return;
     }
-    estadoCatalogo.extra = Math.min(estadoCatalogo.extra + TARJETAS_POR_CLIC, tarjetasOcultas.length);
+    estadoCatalogo.extra += TARJETAS_POR_CLIC;
     renderCatalogo();
   }
   btnVerMas.addEventListener('click', mostrarMasPropiedades);
@@ -449,6 +483,7 @@
       return;
     }
     const [min, max] = ($('#presupuestoSelect').value || '').split('-');
+    fijarVista('disponibles');
     Object.assign(estadoCatalogo, {
       busqueda: true,
       operacion,
@@ -528,7 +563,6 @@
     tarjetas = $$('.prop-card', propGrid);
     tarjetas.forEach((card, i) => card.classList.toggle('tarjeta-oculta', i >= VISIBLES_INICIALES));
     tarjetasOcultas = tarjetas.filter(card => card.classList.contains('tarjeta-oculta'));
-    estadoCatalogo.extra = Math.min(estadoCatalogo.extra, tarjetasOcultas.length);
   }
 
   const panelPropiedades = window.DemetriusPropiedades;
@@ -719,8 +753,23 @@
       `📅 *Fecha preferida:* ${fecha}\n` +
       `⏰ *Horario preferido:* ${horario}`;
 
-    abrirWhatsApp(mensaje, form);
-    track('agendar_valuacion', { tipo_propiedad: tipoPropiedad, municipio, antiguedad });
+    // Envía la solicitud por WhatsApp; "extra" agrega el rango de la valuación instantánea cuando existe
+    const enviar = (extra = '') => {
+      abrirWhatsApp(mensaje + extra, form);
+      track('agendar_valuacion', { tipo_propiedad: tipoPropiedad, municipio, antiguedad });
+    };
+    // Valuación instantánea (js/herramientas.js): muestra el rango estimado y deja el botón para confirmar el envío.
+    // Si ese módulo no cargó, la solicitud se envía de inmediato, como siempre.
+    const instantanea = window.DemetriusValuacion;
+    if (instantanea) {
+      instantanea.mostrar({
+        tipo: tipoPropiedad, municipio, colonia: valor('valColonia'), antiguedad,
+        construccion: valor('valConstruccion'), terreno: valor('valTerreno'),
+        recamaras: valor('valRecamaras'), banos: valor('valBanos')
+      }, enviar);
+    } else {
+      enviar();
+    }
   }
   $('#formValuacion').addEventListener('submit', enviarWhatsAppValuacion);
   const hoy = new Date();
@@ -1064,11 +1113,11 @@
     { id: "d55094dd-23c3-551c-95d3-609300e8624f", lat: 20.722392121213318, lng: -103.4764693423289, zona: "Parques Vallarta · Zapopan", titulo: "Casa En Venta", precio: "$9,900,000.00 M.N." },     // (listo)
     { id: "60d2f40c-208e-5119-9c2e-16380f72d777", lat: 20.717072912690632, lng: -103.32776600006594, zona: "Col. Lomas De Independencia · Guadalajara", titulo: "Casa En Venta", precio: "$4,750,000.00 M.N." }, // (listo)}
     { id: "58a9d805-edb7-55df-b370-299fac90006a", lat: 20.728365480919404, lng: -103.37751172883554, zona: "Col. Constitucion · Zapopan", titulo: "Casa En Venta", precio: "$2,800,000.00 M.N." },       // (listo)}
-    { id: "331740e9-b451-531e-ba38-50b1a1412de1", lat: 20.59056053032381, lng: -103.43716371664033, zona: "La Tijera · Zapopan", titulo: "Departamento En Venta", precio: "$3'300,000.00 M.N." },     // (listo)}
+    { id: "331740e9-b451-531e-ba38-50b1a1412de1", lat: 20.59056053032381, lng: -103.43716371664033, zona: "La Tijera · Zapopan", titulo: "Departamento En Venta", precio: "$3,300,000.00 M.N." },     // (listo)}
     { id: "6e125a49-1da8-57fc-ba0b-f466acff0836", lat: 20.766653331806882, lng: -103.39456730008078, zona: "Los Almendros · Zapopan", titulo: "Casa En Venta", precio: "$6,980,000.00 M.N." },  // (listo)}
     { id: "d1f557f9-d6ea-5205-a628-b2ffe26818be", lat: 20.65738913571202, lng: -103.28536297097166, zona: "Col. Insurgentes · Guadalajara", titulo: "Bodega En Venta", precio: "$3,750,000.00 M.N." },    // (listo)
     { id: "1856b3dc-adb9-52bd-8921-ab5bc0bcf201", lat: 20.785784, lng: -103.411437, zona: "Zoi Capital Norte · Río Blanco, Zapopan", titulo: "Casa En Venta", precio: "$3,199,000.00 M.N." },    // Av. D, Capital Norte (ubicación aproximada de la calle)
-    { lat: 20.673519, lng: -103.371727, zona: "López Cotilla 1701 · Col. Americana, Guadalajara", titulo: "Edificio Luviano · Venta y Renta", precio: "Venta $80,000,000 · Renta completa $500,000" },    // C. Manuel López Cotilla 1701
+    { selector: ".prop-destacada", lat: 20.673519, lng: -103.371727, zona: "López Cotilla 1701 · Col. Americana, Guadalajara", titulo: "Edificio Luviano · Venta y Renta", precio: "Venta $80,000,000.00 M.N. · Renta completa $500,000.00 M.N. / mes" },    // C. Manuel López Cotilla 1701
   ];
 
   let mapaIniciado = false;
@@ -1117,6 +1166,8 @@
 
     propiedades.forEach(agregarMarcador);
     encuadrarMapa();
+    // Aviso para los módulos: el mapa ya existe ("Buscar al mover el mapa", moneda e idioma)
+    document.dispatchEvent(new CustomEvent('demetrius:mapa'));
   }
 
   // Leyenda del mapa: el total sale del arreglo (el número del HTML es solo respaldo)
@@ -1137,6 +1188,7 @@
     const nuevas = lista
       .filter(p => Number.isFinite(p.lat) && Number.isFinite(p.lng))
       .map(p => ({
+        id: p.id,
         lat: p.lat, lng: p.lng,
         zona: panelPropiedades.textoZona(p),
         titulo: p.titulo,
@@ -1145,7 +1197,7 @@
       }));
     propiedades.push(...nuevas);
     actualizarTotalMapa();
-    if (mapa) { nuevas.forEach(agregarMarcador); encuadrarMapa(); }
+    if (mapa) { nuevas.forEach(agregarMarcador); encuadrarMapa(); document.dispatchEvent(new CustomEvent('demetrius:mapa')); }
   }
 
   const contenedorMapa = document.getElementById('map-zmg');
@@ -1157,3 +1209,38 @@
   } else {
     iniciarMapa();
   }
+
+  /* =========================================================
+     PUENTE PARA LOS MÓDULOS
+     (js/idioma-moneda.js, js/herramientas.js, js/asesores.js y js/comparador.js)
+     Les da las mismas piezas seguras de esta página: construcción de DOM sin innerHTML,
+     sanitización, validación de formularios, WhatsApp, eventos de Analytics, catálogo y mapa.
+     ========================================================= */
+  window.Demetrius = Object.freeze({
+    config: ENV_CONFIG,
+    $, $$, el, limpiar, waLink, track, mostrarToast, abrirModal, cerrarModal, enlaceExterno,
+    nombreValido, telefonoValido, correoValido, validarFormulario, mensajeForm, esSpam, valor,
+    scrollBehavior,
+    catalogo: {
+      get tarjetas() { return tarjetas; },
+      estado: estadoCatalogo,
+      render: renderCatalogo,
+      // Deja a la vista una tarjeta (quita filtros, cambia de vista y abre "Ver más" si hace falta) y baja hasta ella
+      mostrarTarjeta(card) {
+        if (!card) return;
+        estadoCatalogo.tipo = 'todas';
+        estadoCatalogo.busqueda = false;
+        $$('.chip', catalogToolbar).forEach(c => { const activo = c.dataset.filtro === 'todas'; c.classList.toggle('active', activo); c.setAttribute('aria-pressed', String(activo)); });
+        fijarVista(card.dataset.vendida === 'si' ? 'vendidas' : 'disponibles');
+        estadoCatalogo.extra = tarjetas.length;
+        renderCatalogo();
+        card.scrollIntoView({ behavior: scrollBehavior, block: 'center' });
+        card.classList.add('tarjeta-resaltada');
+        setTimeout(() => card.classList.remove('tarjeta-resaltada'), 2600);
+      }
+    },
+    mapa: {
+      get instancia() { return mapa; },
+      get marcadores() { return propiedades; }
+    }
+  });

@@ -136,7 +136,7 @@
         vendida ? el('span', { clase: 'sello-vendida' }, textoSello(p)) : null,
         p.fotos && p.fotos[0]
           ? el('img', {
-              clase: 'prop-img', src: urlFoto(p.fotos[0]), loading: 'lazy', decoding: 'async',
+              clase: 'prop-img', width: 800, height: 600, src: urlFoto(p.fotos[0]), loading: 'lazy', decoding: 'async',
               alt: `${p.titulo} en ${zona}${vendida ? ` (${textoSello(p).toLowerCase()})` : ''} - Demetrius Grupo Inmobiliario`
             })
           : null),

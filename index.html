@@ -323,7 +323,9 @@
           "@id": "https://inmobiliariademetrius.com/#propiedad-edificio-luviano-venta",
           "name": "Edificio Luviano en venta — Col. Americana, Guadalajara",
           "category": "Edificio",
-          "description": "Edificio Luviano: edificio de concreto aparente del Arq. Félix Aceves Ortega (1978) con 2,720 m² de construcción, 727 m² de terreno y 34 estacionamientos. Venta: $80,000,000 (moneda por confirmar).",
+          "description": "Edificio Luviano: edificio de concreto aparente del Arq. Félix Aceves Ortega (1978) con 2,720 m² de construcción, 727 m² de terreno y 34 estacionamientos. Venta: $80,000,000.00 M.N.",
+          "price": "80000000",
+          "priceCurrency": "MXN",
           "businessFunction": "http://purl.org/goodrelations/v1#Sell",
           "image": "https://inmobiliariademetrius.com/edificioluviano.jpg",
           "url": "https://inmobiliariademetrius.com/#catalogo",
@@ -353,7 +355,14 @@
           "@id": "https://inmobiliariademetrius.com/#propiedad-edificio-luviano-renta",
           "name": "Edificio Luviano en renta — completo u oficinas por piso — Col. Americana, Guadalajara",
           "category": "Edificio de oficinas",
-          "description": "Edificio Luviano: edificio de concreto aparente del Arq. Félix Aceves Ortega (1978) con 2,720 m² de construcción, 727 m² de terreno y 34 estacionamientos. Renta completa: $500,000; oficinas por piso: precio a convenir (moneda y periodicidad por confirmar).",
+          "description": "Edificio Luviano: edificio de concreto aparente del Arq. Félix Aceves Ortega (1978) con 2,720 m² de construcción, 727 m² de terreno y 34 estacionamientos. Renta completa: $500,000.00 M.N. al mes; oficinas por piso: precio a convenir.",
+          "priceSpecification": {
+            "@type": "UnitPriceSpecification",
+            "price": "500000",
+            "priceCurrency": "MXN",
+            "unitCode": "MON",
+            "unitText": "mes"
+          },
           "businessFunction": "http://purl.org/goodrelations/v1#LeaseOut",
           "image": "https://inmobiliariademetrius.com/edificioluviano.jpg",
           "url": "https://inmobiliariademetrius.com/#catalogo",
@@ -1786,6 +1795,7 @@
 }
 </script>
 <link rel="stylesheet" href="css/estilos.css">
+<link rel="stylesheet" href="css/modulos.css">
 </head>
 <body id="top">
 <a class="skip-link" href="#catalogo">Saltar al catálogo</a>
@@ -1814,6 +1824,27 @@
     <a class="acceso-equipo" href="panel/login.html" aria-label="Iniciar sesión (acceso del equipo)" title="Iniciar sesión">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4.6 4.6 0 1 0 0-9.2 4.6 4.6 0 0 0 0 9.2zm0 2.1c-4.5 0-8.2 2.3-8.2 5.2v1.9h16.4v-1.9c0-2.9-3.7-5.2-8.2-5.2z"/></svg>
     </a>
+    <!-- Moneda, idioma y control del mapa (js/idioma-moneda.js) -->
+    <div class="ajustes-sitio" id="ajustesSitio">
+      <button type="button" class="ajustes-btn" id="ajustesBtn" aria-haspopup="true" aria-expanded="false" aria-controls="ajustesMenu" aria-label="Moneda e idioma" data-i18n-aria="ajustes.abrir">
+        <svg class="ajustes-globo" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>
+        <span class="ajustes-etiqueta" id="ajustesEtiqueta" data-no-i18n>ES.MXN</span>
+        <svg class="ajustes-flecha" viewBox="0 0 12 8" aria-hidden="true"><path d="M1 6.5l5-5 5 5"/></svg>
+      </button>
+      <div class="ajustes-menu" id="ajustesMenu" hidden>
+        <p class="ajustes-titulo" data-i18n="ajustes.moneda">Moneda</p>
+        <button type="button" class="ajustes-opcion" data-moneda="MXN" aria-pressed="true"><span data-no-i18n>MXN</span><span class="ajustes-check" aria-hidden="true">✓</span></button>
+        <button type="button" class="ajustes-opcion" data-moneda="USD" aria-pressed="false"><span data-no-i18n>USD</span><span class="ajustes-check" aria-hidden="true">✓</span></button>
+        <p class="ajustes-titulo" data-i18n="ajustes.idioma">Idioma</p>
+        <button type="button" class="ajustes-opcion" data-idioma="es" aria-pressed="true" lang="es-MX"><span data-no-i18n>es MX</span><span class="ajustes-check" aria-hidden="true">✓</span></button>
+        <button type="button" class="ajustes-opcion" data-idioma="en" aria-pressed="false" lang="en-US"><span data-no-i18n>en US</span><span class="ajustes-check" aria-hidden="true">✓</span></button>
+        <label class="ajustes-switch" for="buscarAlMover">
+          <input type="checkbox" id="buscarAlMover" role="switch">
+          <span class="interruptor" aria-hidden="true"></span>
+          <span data-i18n="ajustes.mapa">Buscar al mover el mapa</span>
+        </label>
+      </div>
+    </div>
   </div>
  <nav class="desktop-nav" aria-label="Navegación principal">
   <a href="#catalogo">Catálogo</a>
@@ -1821,7 +1852,9 @@
   <a href="#vender">Vender</a>
   <a href="#proceso">Proceso</a>
   <a href="#nosotros">Nosotros</a>
-  <a href="#blog">Blog</a>
+  <a href="#herramientas">Calculadoras</a>
+  <a href="#asesores">Asesores</a>
+  <a href="#testimonios">Reseñas</a>
   <a href="#contacto">Contacto</a>
   <a class="cta-btn" href="#contacto">Agendar cita</a>
 </nav>
@@ -1845,7 +1878,9 @@
     <a href="#vender">Vender</a>
     <a href="#proceso">Proceso</a>
     <a href="#nosotros">Nosotros</a>
-    <a href="#blog">Blog</a>
+    <a href="#herramientas">Calculadoras</a>
+    <a href="#asesores">Asesores</a>
+    <a href="#testimonios">Reseñas</a>
     <a href="#contacto">Contacto</a>
     <a href="panel/login.html">Iniciar sesión</a>
   </div>
@@ -1933,18 +1968,25 @@
   </div>
 
   <div class="catalog-toolbar" id="catalogToolbar" role="group" aria-label="Filtrar propiedades">
+    <div class="vista-toggle" id="catalogVista" role="group" aria-label="Ver propiedades disponibles o vendidas">
+      <button type="button" class="vista-btn active" data-vista="disponibles" aria-pressed="true">Disponibles</button>
+      <button type="button" class="vista-btn" data-vista="vendidas" aria-pressed="false">Vendidas / Casos de Éxito</button>
+    </div>
     <button type="button" class="chip active" data-filtro="todas" aria-pressed="true">Todas</button>
     <button type="button" class="chip" data-filtro="casas" aria-pressed="false">Casas</button>
     <button type="button" class="chip" data-filtro="departamentos" aria-pressed="false">Departamentos</button>
     <button type="button" class="chip" data-filtro="coto" aria-pressed="false">Coto residencial</button>
     <button type="button" class="chip" data-filtro="preventa" aria-pressed="false">Preventa</button>
+    <button type="button" class="chip" data-filtro="terrenos" aria-pressed="false">Terrenos</button>
+    <button type="button" class="chip" data-filtro="comercial" aria-pressed="false">Comercial y Bodegas</button>
   </div>
   <p class="catalog-status" id="catalogStatus" aria-live="polite"></p>
+  <p class="catalog-tc" id="catalogTipoCambio" aria-live="polite" data-no-i18n hidden></p>
 
   <div class="prop-grid" id="propGrid">
     <article class="prop-card prop-destacada" data-tipo="edificio" data-municipio="guadalajara" data-colonia="Americana" data-precio="80000000" data-precio-renta="500000" data-operacion="venta renta" data-coto="no" data-preventa="no">
       <div class="prop-media">
-        <img class="prop-img" src="edificioluviano.jpg" alt="Edificio Luviano en venta y renta: edificio de oficinas de concreto aparente en López Cotilla 1701, Col. Americana, Guadalajara - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="edificioluviano.jpg" alt="Edificio Luviano en venta y renta: edificio de oficinas de concreto aparente en López Cotilla 1701, Col. Americana, Guadalajara - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Venta · Renta · Oficinas por piso</span>
@@ -1958,14 +2000,14 @@
           <div><b>34</b><span>Estacionamientos</span></div>
         </div>
         <div class="destacada-opciones">
-          <a class="opcion" href="https://wa.me/5213351070944" target="_blank" rel="noopener noreferrer" data-wa-msg="Hola Demetrius Grupo Inmobiliario, me interesa la VENTA del Edificio Luviano (López Cotilla 1701, Col. Americana, Guadalajara) de $80,000,000. ¿Podemos agendar una visita?" data-ubicacion="edificio_luviano_venta">
+          <a class="opcion" href="https://wa.me/5213351070944" target="_blank" rel="noopener noreferrer" data-wa-msg="Hola Demetrius Grupo Inmobiliario, me interesa la VENTA del Edificio Luviano (López Cotilla 1701, Col. Americana, Guadalajara) de $80,000,000.00 M.N. ¿Podemos agendar una visita?" data-ubicacion="edificio_luviano_venta">
             <span class="opcion-tipo">Venta</span>
-            <span class="opcion-precio">$80,000,000</span>
+            <span class="opcion-precio">$80,000,000.00 M.N.</span>
             <span class="opcion-cta">Me interesa →</span>
           </a>
-          <a class="opcion" href="https://wa.me/5213351070944" target="_blank" rel="noopener noreferrer" data-wa-msg="Hola Demetrius Grupo Inmobiliario, me interesa la RENTA COMPLETA del Edificio Luviano (López Cotilla 1701, Col. Americana, Guadalajara) de $500,000. ¿Me comparten disponibilidad y condiciones?" data-ubicacion="edificio_luviano_renta">
+          <a class="opcion" href="https://wa.me/5213351070944" target="_blank" rel="noopener noreferrer" data-wa-msg="Hola Demetrius Grupo Inmobiliario, me interesa la RENTA COMPLETA del Edificio Luviano (López Cotilla 1701, Col. Americana, Guadalajara) de $500,000.00 M.N. al mes. ¿Me comparten disponibilidad y condiciones?" data-ubicacion="edificio_luviano_renta">
             <span class="opcion-tipo">Renta completa</span>
-            <span class="opcion-precio">$500,000*</span>
+            <span class="opcion-precio">$500,000.00 M.N. / mes</span>
             <span class="opcion-cta">Me interesa →</span>
           </a>
           <a class="opcion" href="https://wa.me/5213351070944" target="_blank" rel="noopener noreferrer" data-wa-msg="Hola Demetrius Grupo Inmobiliario, me interesa rentar OFICINAS POR PISO en el Edificio Luviano (López Cotilla 1701, Col. Americana, Guadalajara). ¿Qué pisos están disponibles y cuál es la cotización?" data-ubicacion="edificio_luviano_piso">
@@ -1974,12 +2016,12 @@
             <span class="opcion-cta">Cotizar →</span>
           </a>
         </div>
-        <p class="destacada-nota">Solicita disponibilidad, cotización y una visita al inmueble. *Moneda de los importes y periodicidad de la renta por confirmar.</p>
+        <p class="destacada-nota">Solicita disponibilidad, cotización y una visita al inmueble. Precios en Moneda Nacional (M.N.), sujetos a disponibilidad; la renta completa es mensual. No incluyen impuestos, gastos de escrituración ni honorarios notariales.</p>
       </div>
     </article>
     <article class="prop-card" data-tipo="casa" data-municipio="zapopan" data-colonia="Río Blanco" data-precio="3199000" data-operacion="venta" data-coto="si" data-preventa="no" data-id="1856b3dc-adb9-52bd-8921-ab5bc0bcf201">
       <div class="prop-media">
-        <img class="prop-img" src="zoicapitalnorte.jpg" alt="Casa en coto en Venta en Zoi Capital Norte, Río Blanco, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="zoicapitalnorte.jpg" alt="Casa en coto en Venta en Zoi Capital Norte, Río Blanco, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Coto con Amenidades</span>
@@ -1996,10 +2038,10 @@
     </article>
     <article class="prop-card" data-tipo="casa" data-municipio="guadalajara" data-colonia="Lomas Independencia" data-precio="4750000" data-operacion="venta" data-coto="no" data-preventa="no" data-id="60d2f40c-208e-5119-9c2e-16380f72d777">
       <div class="prop-media">
-        <img class="prop-img" src="lomasindependenciapreguntan.jpeg" alt="Casa en Venta en Col. Lomas de Independencia, Guadalajara - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="lomasindependenciapreguntan.jpeg" alt="Casa en Venta en Col. Lomas de Independencia, Guadalajara - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
-        <span class="prop-tag">La mejor ubicacion</span>
+        <span class="prop-tag">La mejor ubicación</span>
         <div class="prop-zone">Col. Lomas de Independencia, Guadalajara</div>
         <h3>Casa En Venta</h3>
         <div class="prop-meta">
@@ -2014,14 +2056,14 @@
 
     <article class="prop-card" data-tipo="terraza" data-municipio="zapopan" data-colonia="Constitución" data-precio="2800000" data-operacion="venta" data-coto="no" data-preventa="no" data-id="58a9d805-edb7-55df-b370-299fac90006a">
       <div class="prop-media">
-        <img class="prop-img" src="terrza charros.jpeg" alt="Terraza para eventos en Venta en Col. Constitución, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="terrza charros.jpeg" alt="Terraza para eventos en Venta en Col. Constitución, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Para Tus Eventos</span>
         <div class="prop-zone">Col. Constitución, Zapopan</div>
         <h3>Terraza en Venta</h3>
         <div class="prop-meta">
-          <span>93 m²</span><span>2 W.C.</span><span>Area De Asador</span>
+          <span>93 m²</span><span>2 W.C.</span><span>Área de Asador</span>
         </div>
         <div class="prop-foot">
           <span class="prop-price">$2,800,000.00 M.N.</span>
@@ -2032,7 +2074,7 @@
 
     <article class="prop-card" data-tipo="bodega" data-municipio="guadalajara" data-colonia="Insurgentes" data-precio="3750000" data-operacion="venta" data-coto="no" data-preventa="no" data-id="d1f557f9-d6ea-5205-a628-b2ffe26818be">
       <div class="prop-media">
-        <img class="prop-img" src="bodega insurgentes gris.jpeg" alt="Bodega en Venta en Col. Insurgentes, Guadalajara - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="bodega insurgentes gris.jpeg" alt="Bodega en Venta en Col. Insurgentes, Guadalajara - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Amplio Espacio</span>
@@ -2050,7 +2092,7 @@
 
     <article class="prop-card" data-tipo="departamento" data-municipio="guadalajara" data-colonia="Lomas Independencia" data-precio="2990000" data-operacion="venta" data-coto="si" data-preventa="no" data-id="6a8bb67b-90eb-5178-91ad-fc782c728576">
       <div class="prop-media">
-        <img class="prop-img" src="depapuntonorte.jpeg" alt="Departamento Punto Norte en Venta en Lomas Independencia, Guadalajara - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="depapuntonorte.jpeg" alt="Departamento Punto Norte en Venta en Lomas Independencia, Guadalajara - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">La Mejor Residencial</span>
@@ -2068,12 +2110,12 @@
 
     <article class="prop-card" data-tipo="casa" data-municipio="zapopan" data-colonia="Ciudad Bugambilias" data-precio="12000000" data-operacion="venta" data-coto="no" data-preventa="no" data-id="1081eea8-4173-5267-a63b-6ffd46371355">
       <div class="prop-media">
-        <img class="prop-img" src="casabugamorada.jpeg" alt="Casa de 606 m² con terraza en Venta en Ciudad Bugambilias, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="casabugamorada.jpeg" alt="Casa de 606 m² con terraza en Venta en Ciudad Bugambilias, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">¿Espacio? De Sobra!</span>
         <div class="prop-zone">Ciudad Bugambilias, Zapopan</div>
-        <h3>Casa en "Venta"</h3>
+        <h3>Casa en Venta</h3>
         <div class="prop-meta">
           <span>606.00 m²</span><span>5 rec.</span><span>Terraza De 200m²</span>
         </div>
@@ -2086,14 +2128,14 @@
 
     <article class="prop-card tarjeta-oculta" data-tipo="terreno" data-municipio="zapopan" data-colonia="Ciudad Bugambilias" data-precio="10500000" data-operacion="venta" data-coto="si" data-preventa="no" data-id="60190f0d-b192-5e48-9db5-a4256cffde62">
       <div class="prop-media">
-        <img class="prop-img" src="1.jpeg" alt="Terreno en Venta con vista al bosque en Ciudad Bugambilias 2da Sección, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="1.jpeg" alt="Terreno en Venta con vista al bosque en Ciudad Bugambilias 2da Sección, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Todo En Uno</span>
-        <div class="prop-zone">Ciudad Bugambilias 2nda Sección, Zapopan</div>
+        <div class="prop-zone">Ciudad Bugambilias 2da Sección, Zapopan</div>
         <h3>Terreno en Venta </h3>
         <div class="prop-meta">
-          <span>860.00 m²</span><span>Area condominal</span><span>Vista Al Bosque</span>
+          <span>860.00 m²</span><span>Área condominal</span><span>Vista Al Bosque</span>
         </div>
         <div class="prop-foot">
           <span class="prop-price">$10,500,000.00 M.N.</span>
@@ -2104,12 +2146,12 @@
 
     <article class="prop-card tarjeta-oculta" data-tipo="casa" data-municipio="zapopan" data-colonia="Ciudad Bugambilias" data-precio="12000000" data-operacion="venta" data-coto="no" data-preventa="no" data-id="2cfec632-5b9d-56be-ba0b-b72e83334f2f">
       <div class="prop-media">
-        <img class="prop-img" src="CASA BUGA GRANDE.jpeg" alt="Casa de 413 m² en Venta en Ciudad Bugambilias, Zapopan, Jalisco - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="CASA BUGA GRANDE.jpeg" alt="Casa de 413 m² en Venta en Ciudad Bugambilias, Zapopan, Jalisco - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Oportunidad de Inversión</span>
-        <div class="prop-zone">Ciudad Bugmbilias, Zapopan, Jalisco</div>
-        <h3>Casa en "Venta"</h3>
+        <div class="prop-zone">Ciudad Bugambilias, Zapopan, Jalisco</div>
+        <h3>Casa en Venta</h3>
         <div class="prop-meta">
           <span>413 m²</span><span>4 rec.</span><span>4 estac.</span>
         </div>
@@ -2122,12 +2164,12 @@
 
     <article class="prop-card tarjeta-oculta" data-tipo="casa" data-municipio="zapopan" data-colonia="Parques Vallarta" data-precio="9900000" data-operacion="venta" data-coto="si" data-preventa="no" data-id="d55094dd-23c3-551c-95d3-609300e8624f">
       <div class="prop-media">
-        <img class="prop-img" src="parquesvallarta.jpeg" alt="Casa con alberca en Venta en Parques Vallarta, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="parquesvallarta.jpeg" alt="Casa con alberca en Venta en Parques Vallarta, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
-        <span class="prop-tag">La mejor ubicacion</span>
+        <span class="prop-tag">La mejor ubicación</span>
         <div class="prop-zone"> Parques Vallarta, Zapopan</div>
-        <h3>Casa en "Venta"</h3>
+        <h3>Casa en Venta</h3>
         <div class="prop-meta">
           <span>Cocina Con Cuarzo</span><span>3 rec.</span><span>Alberca</span>
         </div>
@@ -2140,17 +2182,17 @@
 
     <article class="prop-card tarjeta-oculta" data-tipo="departamento" data-municipio="zapopan tlajomulco" data-colonia="La Tijera" data-precio="3300000" data-operacion="venta" data-coto="no" data-preventa="no" data-id="331740e9-b451-531e-ba38-50b1a1412de1">
       <div class="prop-media">
-        <img class="prop-img" src="depa balenty.jpeg" alt="Departamento en Venta en Torre Balanty Viva, La Tijera, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="depa balenty.jpeg" alt="Departamento en Venta en Torre Balanty Viva, La Tijera, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Torre Balanty Viva</span>
         <div class="prop-zone">Zapopan, La Tijera</div>
-        <h3>Departamento en "Venta"</h3>
+        <h3>Departamento en Venta</h3>
         <div class="prop-meta">
           <span>2 W.C.</span><span>3 rec.</span><span>2 estac.</span>
         </div>
         <div class="prop-foot">
-          <span class="prop-price">$3'300,000.00 M.N.</span>
+          <span class="prop-price">$3,300,000.00 M.N.</span>
           <a class="prop-cta" href="https://wa.me/5213351070944" target="_blank" rel="noopener noreferrer">Ver ficha →</a>
         </div>
       </div>
@@ -2158,12 +2200,12 @@
 
     <article class="prop-card tarjeta-oculta" data-tipo="casa" data-municipio="zapopan" data-colonia="Los Almendros" data-precio="6980000" data-operacion="venta" data-coto="si" data-preventa="no" data-id="6e125a49-1da8-57fc-ba0b-f466acff0836">
       <div class="prop-media">
-        <img class="prop-img" src="losalmendros.jpeg" alt="Casa en Venta en Los Almendros Residencial, Zapopan, Jalisco - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="losalmendros.jpeg" alt="Casa en Venta en Los Almendros Residencial, Zapopan, Jalisco - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Los Almendros Residencial</span>
         <div class="prop-zone">Zapopan, Jalisco</div>
-        <h3>Casa de "Venta"</h3>
+        <h3>Casa en Venta</h3>
         <div class="prop-meta">
           <span>10 min. CUCEA</span><span>Terraza</span><span>2 W.C.</span>
         </div>
@@ -2177,10 +2219,10 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="zapopan" data-colonia="Solares" data-precio="9400000" data-operacion="venta" data-coto="si" data-preventa="no" data-vendida="si" data-id="ba7e45ee-a86b-55bb-9635-d170f50923a8">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="residenciasolares.jpeg" alt="Residencia Solares con Roof Garden en Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async" data-fallback="https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=1200&auto=format&fit=crop">
+        <img class="prop-img" width="800" height="600" src="residenciasolares.jpeg" alt="Residencia Solares con Roof Garden en Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async" data-fallback="https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=1200&auto=format&fit=crop">
       </div>
       <div class="prop-body">
-        <span class="prop-tag">La mejor ubicacion</span>
+        <span class="prop-tag">La mejor ubicación</span>
         <div class="prop-zone">Zapopan</div>
         <h3>Residencia Solares</h3>
         <div class="prop-meta">
@@ -2195,7 +2237,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="tlajomulco" data-colonia="Casa Fuerte" data-precio="5600000" data-coto="si" data-preventa="si" data-operacion="venta" data-vendida="si" data-id="0f9f726f-990a-5ffc-bc50-aeaa8077f7d7">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="casa en pre-venta.jpg" alt="Casa en pre-venta (vendida) en coto Casa Fuerte, Tlajomulco de Zúñiga, con casa club y alberca - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="casa en pre-venta.jpg" alt="Casa en pre-venta (vendida) en coto Casa Fuerte, Tlajomulco de Zúñiga, con casa club y alberca - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Coto con Casa Club</span>
@@ -2213,7 +2255,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="zapopan" data-colonia="Ciudad Bugambilias" data-precio="15500000" data-coto="no" data-preventa="no" data-operacion="venta" data-vendida="si" data-id="7f91456d-8653-5b3b-a472-78fbe9b46502">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="casa en venta cuidad bugambilias.jpg" alt="Casa en esquina (vendida) en Ciudad Bugambilias Segunda Sección, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="casa en venta cuidad bugambilias.jpg" alt="Casa en esquina (vendida) en Ciudad Bugambilias Segunda Sección, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Propiedad en Esquina</span>
@@ -2231,7 +2273,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="tlajomulco" data-colonia="Casa Fuerte" data-precio="6200000" data-coto="si" data-preventa="no" data-operacion="venta" data-vendida="si" data-id="158ff379-1e2e-51f6-8436-5868658d2bd9">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta, Residencial Casa Fuerte.jpg" alt="Casa nueva (vendida) en Residencial Casa Fuerte, Tlajomulco de Zúñiga, con casa club y alberca - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta, Residencial Casa Fuerte.jpg" alt="Casa nueva (vendida) en Residencial Casa Fuerte, Tlajomulco de Zúñiga, con casa club y alberca - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Estrena tu Nuevo Hogar</span>
@@ -2249,12 +2291,12 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="zapopan" data-colonia="Mirador del Bosque" data-precio="1350000" data-coto="no" data-preventa="no" data-operacion="venta" data-vendida="si" data-id="b13cef28-26c0-505b-b9af-3d644c2d3749">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="asa en Venta, Mirador del Bosque, Zapopan.jpg" alt="Casa (vendida) en Col. Mirador del Bosque, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="asa en Venta, Mirador del Bosque, Zapopan.jpg" alt="Casa (vendida) en Col. Mirador del Bosque, Zapopan - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Estacionamiento Techado</span>
         <div class="prop-zone">Col. Mirador del Bosque, Zapopan</div>
-        <h3>Casa en "Venta"</h3>
+        <h3>Casa en Venta</h3>
         <div class="prop-meta">
           <span>55 m²</span><span>3 rec.</span><span>1 baño</span><span>1 estac.</span>
         </div>
@@ -2267,7 +2309,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="terreno" data-municipio="jocotepec" data-colonia="" data-precio="36400000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="ec9ff200-6739-5c0a-bef4-413efaca5315">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="terrenojocotepec.jpeg" alt="Terreno en Venta en Jocotepec, Jalisco (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="terrenojocotepec.jpeg" alt="Terreno en Venta en Jocotepec, Jalisco (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Varios Lotes</span>
@@ -2285,7 +2327,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="zapopan" data-colonia="Colomos Providencia" data-precio="46900000" data-operacion="venta renta" data-coto="no" data-preventa="no" data-vendida="si" data-id="735d8af6-8bfb-55dd-b9f2-7e17b5314d84">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta-Renta, Colomos Providencia, Zapopan.jpg" alt="Casa en Venta o Renta en Colomos Providencia, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta-Renta, Colomos Providencia, Zapopan.jpg" alt="Casa en Venta o Renta en Colomos Providencia, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Venta · Renta</span>
@@ -2303,7 +2345,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="tlajomulco" data-colonia="Casa Fuerte" data-precio="6050000" data-operacion="venta" data-coto="si" data-preventa="no" data-vendida="si" data-id="87a07f48-b1a8-55ff-9c92-3dbd236a1373">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta, Residencial Casa Fuerte, Tlajomulco de Zuñiga.jpg" alt="Casa en Venta en Residencial Casa Fuerte, Tlajomulco de Zúñiga (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta, Residencial Casa Fuerte, Tlajomulco de Zuñiga.jpg" alt="Casa en Venta en Residencial Casa Fuerte, Tlajomulco de Zúñiga (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Residencial Casa Fuerte</span>
@@ -2321,7 +2363,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="tlajomulco" data-colonia="Santa Anita" data-precio="10800000" data-operacion="venta" data-coto="si" data-preventa="no" data-vendida="si" data-id="d470fbea-7bc6-5cf6-b7c3-975c76b89514">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta Coto Laureles.jpg" alt="Casa en Venta en Condominio Laureles, Santa Anita, Tlajomulco (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta Coto Laureles.jpg" alt="Casa en Venta en Condominio Laureles, Santa Anita, Tlajomulco (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">En Esquina</span>
@@ -2339,7 +2381,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="tlajomulco" data-colonia="Casa Fuerte" data-precio="5600000" data-operacion="venta" data-coto="si" data-preventa="si" data-vendida="si" data-id="1e9dd045-6877-5d76-8bb0-b7de4241a28f">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Pre-Venta, Residencial Casa Fuerte, Tlajomulco de Zuñiga Jalisco 🏡.jpg" alt="Casa en Pre-Venta en Residencial Casa Fuerte, Tlajomulco de Zúñiga (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Pre-Venta, Residencial Casa Fuerte, Tlajomulco de Zuñiga Jalisco 🏡.jpg" alt="Casa en Pre-Venta en Residencial Casa Fuerte, Tlajomulco de Zúñiga (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Pre-Venta</span>
@@ -2357,7 +2399,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="zapopan" data-colonia="Residencial Guadalupe" data-precio="16000" data-precio-renta="16000" data-operacion="renta" data-coto="no" data-preventa="no" data-vendida="si" data-id="482520cf-ef0b-5f79-985a-5a7909175499">
       <div class="prop-media">
         <span class="sello-vendida">Rentada</span>
-        <img class="prop-img" src="Casa en Renta, Residencial Guadalupe, Zapopan 🏡.jpg" alt="Casa en Renta en Residencial Guadalupe, Zapopan (rentada) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Renta, Residencial Guadalupe, Zapopan 🏡.jpg" alt="Casa en Renta en Residencial Guadalupe, Zapopan (rentada) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">En Renta</span>
@@ -2375,7 +2417,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="departamento" data-municipio="zapopan" data-colonia="La Calma" data-precio="2600000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="fdfb9247-bc7e-59b5-b69e-9424bf24a07b">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Departamento en Venta, Col. La Calma, Zapopan 🏡.jpg" alt="Departamento en Venta en Col. La Calma, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Departamento en Venta, Col. La Calma, Zapopan 🏡.jpg" alt="Departamento en Venta en Col. La Calma, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Listo para Habitar</span>
@@ -2393,7 +2435,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="tlaquepaque" data-colonia="Santa Cruz del Valle" data-precio="2100000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="cffe9272-0c43-531d-a2be-1ac2bc7cb0e6">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta, Parques Santa Cruz del Valle, Tlaquepaque.jpg" alt="Casa en Venta en Parques Santa Cruz del Valle, Tlaquepaque (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta, Parques Santa Cruz del Valle, Tlaquepaque.jpg" alt="Casa en Venta en Parques Santa Cruz del Valle, Tlaquepaque (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">A 2 min. de Periférico</span>
@@ -2411,7 +2453,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="departamento" data-municipio="zapopan" data-colonia="Lomas Universidad" data-precio="2750000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="fb54899c-befe-5ecc-9ce5-469363525e42">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Departamento en Venta, Lomas Universidad, Zapopan 🏡.jpg" alt="Departamento en Venta en Col. Lomas Universidad, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Departamento en Venta, Lomas Universidad, Zapopan 🏡.jpg" alt="Departamento en Venta en Col. Lomas Universidad, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Remodelado · Planta Baja</span>
@@ -2429,7 +2471,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="tlajomulco" data-colonia="Santa Anita" data-precio="4450000" data-operacion="venta" data-coto="si" data-preventa="no" data-vendida="si" data-id="cd85dc57-36a2-54e4-9e94-b6fa1c0bef00">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta, Zoí Sur Residencial, Tlajomulco de Zuñiga.jpg" alt="Casa en Venta en Zoí Sur Residencial, Tlajomulco de Zúñiga (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta, Zoí Sur Residencial, Tlajomulco de Zuñiga.jpg" alt="Casa en Venta en Zoí Sur Residencial, Tlajomulco de Zúñiga (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Nueva y Equipada</span>
@@ -2447,7 +2489,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="departamento" data-municipio="zapopan" data-colonia="La Estancia" data-precio="3250000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="3cc7ce48-1b0d-5ccf-b25c-076f61d58f3b">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Departamento en Venta, Col. La Estancia, Zapopan.jpg" alt="Departamento en Venta en Col. La Estancia, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Departamento en Venta, Col. La Estancia, Zapopan.jpg" alt="Departamento en Venta en Col. La Estancia, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Estacionamiento Techado</span>
@@ -2465,7 +2507,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="zapopan" data-colonia="Virreyes Residencial" data-precio="16500000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="cab73512-1828-5308-ad2d-86db516b8616">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta, Residencial Virreyes, Zapopan.jpg" alt="Casa en Venta en Residencial Parque Virreyes, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta, Residencial Virreyes, Zapopan.jpg" alt="Casa en Venta en Residencial Parque Virreyes, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Acabados de Lujo</span>
@@ -2483,7 +2525,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="zapopan" data-colonia="Colinas de San Javier" data-precio="170000" data-precio-renta="170000" data-operacion="renta" data-coto="no" data-preventa="no" data-vendida="si" data-id="6d626d55-e6a6-5cda-af41-3e3d78754c10">
       <div class="prop-media">
         <span class="sello-vendida">Rentada</span>
-        <img class="prop-img" src="Casa en Renta, Colinas de San Javier, Zapopan.jpg" alt="Casa en Renta en Colinas de San Javier, Zapopan (rentada) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Renta, Colinas de San Javier, Zapopan.jpg" alt="Casa en Renta en Colinas de San Javier, Zapopan (rentada) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Se Renta Amueblada</span>
@@ -2501,7 +2543,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="terreno" data-municipio="zapopan" data-colonia="Bosques Del Centinela" data-precio="4800000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="22380770-12c7-549e-a619-37276e642b6f">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Terreno Ejidal en Venta, Bosques del Centinela, Zapopan.jpg" alt="Terreno en Venta en Bosques del Centinela, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Terreno Ejidal en Venta, Bosques del Centinela, Zapopan.jpg" alt="Terreno en Venta en Bosques del Centinela, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Título Ejidal</span>
@@ -2519,7 +2561,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="departamento" data-municipio="zapopan" data-colonia="Prados de Guadalupe" data-precio="6290000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="012e7eb6-0e64-51d3-a94a-ee3d9124aa26">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Departamento en Venta, Prados Guadalupe, Zapopan.jpg" alt="Departamento en Venta en Prados Guadalupe, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Departamento en Venta, Prados Guadalupe, Zapopan.jpg" alt="Departamento en Venta en Prados Guadalupe, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Remodelado con Lujo</span>
@@ -2537,7 +2579,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="zapopan" data-colonia="Valle Real" data-precio="16900000" data-operacion="venta" data-coto="si" data-preventa="no" data-vendida="si" data-id="5b82fedc-5ebf-53ef-8684-48bf47d9a9b3">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta, Valle Real, Zapopan, Jalisco.jpg" alt="Casa en Venta en Fracc. Valle Real, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta, Valle Real, Zapopan, Jalisco.jpg" alt="Casa en Venta en Fracc. Valle Real, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">En Esquina · Coto</span>
@@ -2555,7 +2597,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="tlajomulco" data-colonia="La Rioja" data-precio="8920000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="d71ceed9-0f08-54e8-9a97-3a6940f49855">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta, Fraccionamiento La Rioja, Tlajomulco de Zuñiga, Jalisco.jpg" alt="Casa en Venta en Fracc. La Rioja, Tlajomulco de Zúñiga (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta, Fraccionamiento La Rioja, Tlajomulco de Zuñiga, Jalisco.jpg" alt="Casa en Venta en Fracc. La Rioja, Tlajomulco de Zúñiga (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Nueva para Estrenar</span>
@@ -2573,7 +2615,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="zapopan" data-colonia="La Calma" data-precio="5490000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="4666373b-302c-5903-9c58-040eed338eac">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta, La Calma, Zapopan, Jalisco.jpg" alt="Casa en Venta en Col. La Calma, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta, La Calma, Zapopan, Jalisco.jpg" alt="Casa en Venta en Col. La Calma, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Recámara en Planta Baja</span>
@@ -2591,7 +2633,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="zapopan" data-colonia="Agrícola" data-precio="4350000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="75991967-fc6b-5c8d-a116-133edf47d628">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta, Col. Agrícola, Zapopan.jpg" alt="Casa en Venta en Col. Agrícola, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta, Col. Agrícola, Zapopan.jpg" alt="Casa en Venta en Col. Agrícola, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Cochera para 4 Autos</span>
@@ -2609,7 +2651,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="zapopan" data-colonia="Chapalita Inn" data-precio="4980000" data-operacion="venta" data-coto="si" data-preventa="no" data-vendida="si" data-id="bc9d6471-39d4-5d91-abe8-ea9988081f30">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta, Chapalita In, Zapopan, Jalisco.jpg" alt="Casa en Venta en Chapalita Inn, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta, Chapalita In, Zapopan, Jalisco.jpg" alt="Casa en Venta en Chapalita Inn, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Coto con Alberca</span>
@@ -2627,7 +2669,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="zapopan" data-colonia="Ciudad Bugambilias" data-precio="14500000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="504d9417-9336-5bc1-af25-9cff1ec9bfd8">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta, Ciudad Bugambilias, Zapopan, Jalisco.jpg" alt="Casa en Venta en Ciudad Bugambilias 2da Sección, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta, Ciudad Bugambilias, Zapopan, Jalisco.jpg" alt="Casa en Venta en Ciudad Bugambilias 2da Sección, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Amueblada · Alberca</span>
@@ -2645,7 +2687,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="departamento" data-municipio="zapopan" data-colonia="Arcos de Zapopan" data-precio="1450000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="a425944d-b80e-53b8-a601-34a58ffe0f8c">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Departamento en Venta, Arcos de Zapopan, Jalisco.jpg" alt="Departamento en Venta en Col. Arcos de Zapopan, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Departamento en Venta, Arcos de Zapopan, Jalisco.jpg" alt="Departamento en Venta en Col. Arcos de Zapopan, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">A 2 calles del Tren Ligero</span>
@@ -2663,7 +2705,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="tlaquepaque" data-colonia="Mirador del Tesoro" data-precio="3650000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="25fa9bd6-786c-5652-857f-c21ca8d3fec6">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta, Mirador del Tesoro,Tlaquepaque, Jalisco.jpg" alt="Casa en Venta en Col. Mirador del Tesoro, Tlaquepaque (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta, Mirador del Tesoro,Tlaquepaque, Jalisco.jpg" alt="Casa en Venta en Col. Mirador del Tesoro, Tlaquepaque (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">A 2 calles del Tren Ligero</span>
@@ -2681,7 +2723,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="tlaquepaque" data-colonia="Mirador del Tesoro" data-precio="3300000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="680c329c-b078-55bd-a9ee-a184dfc238a3">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta, Col. Mirador del Tesoro, Tlaquepaque, Jalisco.jpg" alt="Casa en Venta en Col. Mirador del Tesoro, Tlaquepaque (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta, Col. Mirador del Tesoro, Tlaquepaque, Jalisco.jpg" alt="Casa en Venta en Col. Mirador del Tesoro, Tlaquepaque (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Cerca del Tren Ligero</span>
@@ -2699,7 +2741,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="tlajomulco" data-colonia="Cajititlán" data-precio="2850000" data-operacion="venta" data-coto="si" data-preventa="no" data-vendida="si" data-id="f637a76f-7e34-5eb9-8cab-627d5d58cf58">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta, Residencial Tres Reyes, Cajititlan, Jalisco.jpg" alt="Casa en Venta en Residencial Tres Reyes, Cajititlán (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta, Residencial Tres Reyes, Cajititlan, Jalisco.jpg" alt="Casa en Venta en Residencial Tres Reyes, Cajititlán (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Casa de Descanso</span>
@@ -2717,7 +2759,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="tlajomulco" data-colonia="Residencial San Miguel" data-precio="2250000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="d7e92e8b-6e85-5cd3-9834-2b92f1da85ec">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta, Residencial San Miguel, Tlajomulco de Zuñiga.jpg" alt="Casa en Venta en Residencial San Miguel, Tlajomulco de Zúñiga (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta, Residencial San Miguel, Tlajomulco de Zuñiga.jpg" alt="Casa en Venta en Residencial San Miguel, Tlajomulco de Zúñiga (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Terraza Panorámica</span>
@@ -2735,7 +2777,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="tlajomulco" data-colonia="La Esmeralda" data-precio="1250000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="1e89d748-8809-50ba-946c-da77dd5e8769">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta.jpg" alt="Casa en Venta en Residencial La Esmeralda, Tlajomulco de Zúñiga (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta.jpg" alt="Casa en Venta en Residencial La Esmeralda, Tlajomulco de Zúñiga (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">En Esquina</span>
@@ -2753,7 +2795,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="zapopan" data-colonia="Ciudad Bugambilias" data-precio="8499000" data-operacion="venta" data-coto="si" data-preventa="no" data-vendida="si" data-id="fc377ab2-7c6a-5887-aaad-e25f9d5bd2bd">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta Ciudad Bugambilias, Zapopan.jpg" alt="Casa en Venta en Villa San Pablo, Cd. Bugambilias, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta Ciudad Bugambilias, Zapopan.jpg" alt="Casa en Venta en Villa San Pablo, Cd. Bugambilias, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Nueva · Recién Terminada</span>
@@ -2771,7 +2813,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="tlajomulco" data-colonia="Casa Fuerte" data-precio="5500000" data-operacion="venta" data-coto="si" data-preventa="no" data-vendida="si" data-id="145b0b1c-7c6a-53ef-9faf-d25761fb5969">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta, Residencial Casa Fuerte, Tlajomulco de Zuñiga (2).jpg" alt="Casa en Venta en Residencial Casa Fuerte, Tlajomulco de Zúñiga (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta, Residencial Casa Fuerte, Tlajomulco de Zuñiga (2).jpg" alt="Casa en Venta en Residencial Casa Fuerte, Tlajomulco de Zúñiga (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Nueva para Estrenar</span>
@@ -2789,7 +2831,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="tlajomulco" data-colonia="Sendero de las Moras" data-precio="4050000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="0428989e-2219-5ee3-b247-d0780654e0bc">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta Sendero de las Moras, Tlajomulco de zuñiga.jpg" alt="Casa en Venta en Sendero de las Moras, Tlajomulco de Zúñiga (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta Sendero de las Moras, Tlajomulco de zuñiga.jpg" alt="Casa en Venta en Sendero de las Moras, Tlajomulco de Zúñiga (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Sendero de las Moras</span>
@@ -2807,7 +2849,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="tlajomulco" data-colonia="Los Olmos" data-precio="7950000" data-operacion="venta" data-coto="si" data-preventa="no" data-vendida="si" data-id="01e4ea72-8884-58f7-a8a8-ccc4645ee391">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta Coto los Olmos, Tlajomulco de zuñiga.jpg" alt="Casa en Venta en Coto Los Olmos, Tlajomulco de Zúñiga (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta Coto los Olmos, Tlajomulco de zuñiga.jpg" alt="Casa en Venta en Coto Los Olmos, Tlajomulco de Zúñiga (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Coto con Alberca y Gym</span>
@@ -2825,7 +2867,7 @@
     <article class="prop-card tarjeta-oculta is-vendida" data-tipo="casa" data-municipio="zapopan" data-colonia="Paseos del Sol" data-precio="5200000" data-operacion="venta" data-coto="no" data-preventa="no" data-vendida="si" data-id="65a22e9a-962f-5eb4-af95-96cf32cdc90e">
       <div class="prop-media">
         <span class="sello-vendida">Vendida</span>
-        <img class="prop-img" src="Casa en Venta Paseos del Sol, Zapopan.jpg" alt="Casa en Venta en Col. Paseos del Sol, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
+        <img class="prop-img" width="800" height="600" src="Casa en Venta Paseos del Sol, Zapopan.jpg" alt="Casa en Venta en Col. Paseos del Sol, Zapopan (vendida) - Demetrius Grupo Inmobiliario" loading="lazy" decoding="async">
       </div>
       <div class="prop-body">
         <span class="prop-tag">Precio a Negociar</span>
@@ -2855,8 +2897,8 @@
         Ver más propiedades
     </button>
   </div>
-  <p class="compare-note">Selecciona hasta <b>3 propiedades</b> para compararlas lado a lado · Tour virtual 360° disponible en fichas marcadas</p>
-  <p class="nom-note">Precios en Moneda Nacional (M.N.), sujetos a disponibilidad. Las imágenes son de carácter ilustrativo. El precio de venta no incluye gastos de escrituración, honorarios notariales, impuestos ni gastos de gestión hipotecaria, salvo pacto por escrito. Información comercial conforme a la <span class="nowrap">NOM-247-SE-2021</span> · <a href="#terminos-y-condiciones" data-modal-open="modalTerminos">Términos y Condiciones</a></p>
+  <p class="compare-note">Selecciona hasta <b>3 propiedades</b> para compararlas lado a lado</p>
+  <p class="nom-note">Precios en Moneda Nacional (M.N.), sujetos a disponibilidad. Las imágenes son de carácter ilustrativo. El precio de venta no incluye gastos de escrituración, honorarios notariales, impuestos ni gastos de gestión hipotecaria, salvo pacto por escrito. En operaciones de crédito, el precio total se determinará en función de los montos variables de los conceptos de crédito y de los gastos notariales, que deben consultarse con tu asesor. Información comercial conforme a la <span class="nowrap">NOM-247-SE-2021</span> · <a href="#terminos-y-condiciones" data-modal-open="modalTerminos">Términos y Condiciones</a></p>
 </section>
 
 <!-- DESARROLLO DESTACADO: YÉUCATE -->
@@ -2895,7 +2937,7 @@
 
   <div class="why-grid">
     <div class="why-item">
-      <div class="why-num">12+</div>
+      <div class="why-num">10+</div>
       <h3>Años de Experiencia</h3>
       <p>Liderando el mercado inmobiliario de lujo en la Zona Metropolitana de Guadalajara.</p>
     </div>
@@ -3179,6 +3221,209 @@
   </div>
 </section>
 
+<!-- HERRAMIENTAS: precalificador, gastos de escrituración e ISR (js/herramientas.js; los datos se ajustan en js/ajustes.js) -->
+<section class="herramientas" id="herramientas">
+  <div class="section-head">
+    <span class="eyebrow" data-i18n="herr.eyebrow">Calculadoras</span>
+    <h2 data-i18n="herr.titulo">Decide con números claros</h2>
+    <p data-i18n="herr.sub">Estima tu crédito, tus gastos de escrituración y el ISR de tu venta antes de dar el siguiente paso. Resultados informativos, en pesos y en dólares.</p>
+  </div>
+
+  <div class="herr-tabs" role="tablist" aria-label="Calculadoras" data-i18n-aria="herr.eyebrow">
+    <button type="button" class="herr-tab active" role="tab" id="tabCredito" aria-controls="panelCredito" aria-selected="true" data-i18n="herr.tab1">Crédito hipotecario</button>
+    <button type="button" class="herr-tab" role="tab" id="tabEscrituras" aria-controls="panelEscrituras" aria-selected="false" tabindex="-1" data-i18n="herr.tab2">Gastos de escrituración</button>
+    <button type="button" class="herr-tab" role="tab" id="tabIsr" aria-controls="panelIsr" aria-selected="false" tabindex="-1" data-i18n="herr.tab3">ISR por venta</button>
+  </div>
+
+  <!-- Pestaña 1: precalificador y desglosador de pagos -->
+  <div class="herr-panel" id="panelCredito" role="tabpanel" aria-labelledby="tabCredito">
+    <div class="herr-grid">
+      <div class="credito-card">
+        <span class="eyebrow" data-i18n="cred.eyebrow">Créditos hipotecarios</span>
+        <p class="credito-lema" data-i18n="cred.lema">Tu Crédito Hipotecario es la llave para la puerta principal de tu próxima propiedad.</p>
+        <p class="credito-instr" data-i18n="cred.instr">Da clic en la imagen para entrar a nuestro precalificador de créditos.</p>
+        <a class="credito-banner" id="creditoBanner" href="https://wa.me/5213351070944" target="_blank" rel="noopener noreferrer" data-ubicacion="precalificador">
+          <span class="credito-banner-icono" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4.2"/><path d="M11.2 12.2L19.5 4M16.2 7.3l2.8 2.8M13.6 9.9l2.2 2.2"/></svg></span>
+          <span class="credito-banner-texto">
+            <b data-i18n="cred.banner1">Precalificador de crédito hipotecario</b>
+            <span data-i18n="cred.banner2">Descubre qué tan cerca estás de tu crédito en minutos.</span>
+          </span>
+          <span class="credito-banner-cta" id="creditoBannerCta" data-no-i18n>Entrar →</span>
+        </a>
+      </div>
+
+      <form class="calc" id="calcCredito" novalidate>
+        <h3 data-i18n="cred.calcTitulo">Desglosador rápido de pagos</h3>
+        <p class="calc-sub" data-i18n="cred.calcSub">Ajusta los datos y mira tu desglose al instante, antes de ir al precalificador.</p>
+        <div class="calc-campo">
+          <label for="credValor" data-i18n="cred.valor">Valor de la propiedad</label>
+          <div class="calc-monto">
+            <input type="text" id="credValor" inputmode="numeric" maxlength="16" value="3,000,000" autocomplete="off">
+            <select id="credMoneda" class="calc-moneda" aria-label="Moneda del importe" data-i18n-aria="calc.moneda"><option value="MXN">MXN</option><option value="USD">USD</option></select>
+          </div>
+        </div>
+        <div class="calc-campo">
+          <label for="credEnganche"><span data-i18n="cred.enganche">Enganche</span> <output id="credEngancheTxt" for="credEnganche" data-no-i18n>20%</output></label>
+          <input type="range" id="credEnganche" min="10" max="50" step="5" value="20">
+        </div>
+        <div class="calc-campo">
+          <span class="calc-label" id="credPlazoLabel" data-i18n="cred.plazo">Plazo</span>
+          <div class="calc-segmento" role="radiogroup" aria-labelledby="credPlazoLabel">
+            <label><input type="radio" name="credPlazo" value="10"><span data-i18n="cred.p10">10 años</span></label>
+            <label><input type="radio" name="credPlazo" value="15"><span data-i18n="cred.p15">15 años</span></label>
+            <label><input type="radio" name="credPlazo" value="20" checked><span data-i18n="cred.p20">20 años</span></label>
+          </div>
+        </div>
+        <div class="calc-resultado" id="credResultado" aria-live="polite" data-no-i18n></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Pestaña 2: gastos de escrituración y cotizador de escrituras -->
+  <div class="herr-panel" id="panelEscrituras" role="tabpanel" aria-labelledby="tabEscrituras" hidden>
+    <div class="herr-modos" role="group" aria-label="Tipo de cálculo" data-i18n-aria="esc.modos">
+      <button type="button" class="chip active" data-modo="estimador" aria-pressed="true" data-i18n="esc.modoA">Estimador de gastos (compraventa)</button>
+      <button type="button" class="chip" data-modo="cotizador" aria-pressed="false" data-i18n="esc.modoB">Cotizador de escrituras y otros trámites</button>
+    </div>
+
+    <div class="herr-grid" id="escEstimador">
+      <form class="calc" id="calcEscrituras" novalidate>
+        <h3 data-i18n="esc.tituloA">Estimador de gastos de escrituración</h3>
+        <p class="calc-sub" data-i18n="esc.subA">Para la compraventa de un inmueble en Jalisco. Elige el municipio y el valor de la operación.</p>
+        <div class="calc-campo">
+          <label for="escValor" data-i18n="esc.valor">Valor de la operación</label>
+          <div class="calc-monto">
+            <input type="text" id="escValor" inputmode="numeric" maxlength="16" value="3,000,000" autocomplete="off">
+            <select id="escMoneda" class="calc-moneda" aria-label="Moneda del importe" data-i18n-aria="calc.moneda"><option value="MXN">MXN</option><option value="USD">USD</option></select>
+          </div>
+        </div>
+        <div class="calc-campo">
+          <label for="escMunicipio" data-i18n="esc.municipio">Municipio en Jalisco</label>
+          <select id="escMunicipio" class="calc-select" data-no-i18n></select>
+        </div>
+        <p class="calc-nota" data-i18n="esc.notaA">El total suele quedar entre el 4 % y el 7 % del valor de la operación.</p>
+      </form>
+      <div class="calc calc--resultado">
+        <h3 data-i18n="esc.resTitulo">Presupuesto estimado</h3>
+        <div class="calc-resultado" id="escResultado" aria-live="polite" data-no-i18n></div>
+      </div>
+    </div>
+
+    <form class="calc herr-cotizador" id="formCotizador" novalidate hidden>
+      <h3 data-i18n="cot.titulo">Cotizador general de escrituras</h3>
+      <p class="calc-sub" data-i18n="cot.sub">Cuéntanos qué trámite necesitas y te enviamos la cotización por WhatsApp.</p>
+
+      <!-- Honeypot anti-spam (invisible para personas) -->
+      <div class="hp-field" aria-hidden="true">
+        <label for="cotEmpresaWeb">No llenar este campo</label>
+        <input type="text" id="cotEmpresaWeb" name="empresa_web" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="cotTramite" data-i18n="cot.tramite">Tipo de trámite</label>
+          <select id="cotTramite" name="tramite">
+            <option value="Compraventa tradicional o con crédito hipotecario" data-i18n="cot.t1">Compraventa tradicional o con crédito hipotecario</option>
+            <option value="Adjudicación por herencia / sucesión testamentaria o intestamentaria" data-i18n="cot.t2">Adjudicación por herencia / sucesión testamentaria o intestamentaria</option>
+            <option value="Donación de inmueble (cesión entre familiares)" data-i18n="cot.t3">Donación de inmueble (cesión entre familiares)</option>
+            <option value="Regularización de predios / escrituración de terrenos" data-i18n="cot.t4">Regularización de predios / escrituración de terrenos</option>
+            <option value="Subdivisión, fusión de predios o régimen en condominio" data-i18n="cot.t5">Subdivisión, fusión de predios o régimen en condominio</option>
+            <option value="Cancelación de hipoteca o extinción de fideicomiso" data-i18n="cot.t6">Cancelación de hipoteca o extinción de fideicomiso</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="cotMunicipio" data-i18n="cot.municipio">Municipio</label>
+          <select id="cotMunicipio" name="municipio" data-no-i18n></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="cotNombre" data-i18n="cot.nombre">Nombre</label>
+          <input type="text" id="cotNombre" name="nombre" placeholder="Tu nombre" data-i18n-placeholder="cot.phNombre" autocomplete="name" required maxlength="60">
+        </div>
+        <div class="form-group">
+          <label for="cotWhatsapp" data-no-i18n>WhatsApp</label>
+          <input type="tel" id="cotWhatsapp" name="telefono" placeholder="33 0000 0000" autocomplete="tel" inputmode="tel" required maxlength="20">
+        </div>
+      </div>
+      <div class="form-group full">
+        <label for="cotValor" data-i18n="cot.valor">Valor estimado del inmueble (opcional)</label>
+        <div class="calc-monto">
+          <input type="text" id="cotValor" name="valor" inputmode="numeric" maxlength="16" placeholder="Ej. 2,500,000" data-i18n-placeholder="cot.phValor" autocomplete="off">
+          <select id="cotMoneda" class="calc-moneda" aria-label="Moneda del importe" data-i18n-aria="calc.moneda"><option value="MXN">MXN</option><option value="USD">USD</option></select>
+        </div>
+      </div>
+      <div class="form-group full">
+        <label for="cotDetalles" data-i18n="cot.detalles">Detalles del trámite</label>
+        <textarea id="cotDetalles" name="detalles" maxlength="800" placeholder="Ej. número de herederos, si hay hipoteca vigente, superficie del predio, etc." data-i18n-placeholder="cot.phDetalles"></textarea>
+      </div>
+
+      <label class="consent" for="cotAcepto">
+        <input type="checkbox" id="cotAcepto" name="acepto" required>
+        <span>Acepto el <a href="#aviso-privacidad" data-modal-open="modalPrivacidad">Aviso de Privacidad</a> y los <a href="#terminos-y-condiciones" data-modal-open="modalTerminos">Términos y Condiciones</a></span>
+      </label>
+
+      <button type="submit" class="form-submit" data-i18n="cot.enviar">Solicitar cotización por WhatsApp</button>
+      <p class="form-msg" role="status" aria-live="polite"></p>
+    </form>
+
+    <p class="herr-aviso" role="note"><span class="herr-aviso-icono" aria-hidden="true">⚠️</span><span><b data-i18n="esc.avisoT">Nota importante:</b> <span data-i18n="esc.aviso">En el cálculo de los gastos de escrituración influyen múltiples valores, tablas municipales, características del inmueble, tipo de operación y aranceles notariales vigentes en Jalisco. Este presupuesto es únicamente un estimado aproximado de carácter informativo y no constituye una cotización oficial.</span></span></p>
+  </div>
+
+  <!-- Pestaña 3: pre-diagnóstico de ISR por venta -->
+  <div class="herr-panel" id="panelIsr" role="tabpanel" aria-labelledby="tabIsr" hidden>
+    <div class="herr-grid">
+      <div class="isr-info">
+        <h3 data-i18n="isr.titulo">¿Por qué el ISR de una venta no es un porcentaje fijo?</h3>
+        <p data-i18n="isr.p1">El ISR por enajenación de un inmueble se calcula sobre la ganancia y no sobre el precio de venta. Por eso cambia en cada caso, y lo determina el notario al escriturar.</p>
+        <ul class="isr-lista">
+          <li data-i18n="isr.f1">Fecha y costo de adquisición que constan en tu escritura.</li>
+          <li data-i18n="isr.f2">Actualización del costo por inflación (INPC).</li>
+          <li data-i18n="isr.f3">Mejoras, ampliaciones y gastos notariales deducibles, con sus facturas.</li>
+          <li data-i18n="isr.f4">Comisiones pagadas por la venta y retenciones que aplica el notario.</li>
+        </ul>
+        <p class="isr-ley" data-i18n="isr.ley">La venta de tu casa habitación puede quedar exenta hasta por 700,000 UDIS (artículo 93, fracción XIX, inciso a) de la Ley del ISR), siempre que no hayas usado esa exención en los tres años anteriores.</p>
+      </div>
+      <form class="calc" id="calcIsr" novalidate>
+        <h3 data-i18n="isr.calcTitulo">Pre-evaluador de exención de ISR</h3>
+        <p class="calc-sub" data-i18n="isr.calcSub">Responde cuatro preguntas y recibe un pre-diagnóstico inmediato (Art. 93 LISR).</p>
+        <fieldset class="calc-pregunta">
+          <legend data-i18n="isr.q1">1. ¿El inmueble es tu casa habitación?</legend>
+          <div class="calc-segmento">
+            <label><input type="radio" name="isrCasa" value="si" checked><span data-i18n="comun.si">Sí</span></label>
+            <label><input type="radio" name="isrCasa" value="no"><span data-i18n="comun.no">No</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="calc-pregunta">
+          <legend data-i18n="isr.q2">2. ¿Tienes comprobantes a tu nombre con esa dirección (INE, recibo de CFE o estados de cuenta)?</legend>
+          <div class="calc-segmento">
+            <label><input type="radio" name="isrComprobantes" value="si" checked><span data-i18n="comun.si">Sí</span></label>
+            <label><input type="radio" name="isrComprobantes" value="no"><span data-i18n="comun.no">No</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="calc-pregunta">
+          <legend data-i18n="isr.q3">3. ¿Exentaste el ISR por la venta de otra vivienda en los últimos 3 años?</legend>
+          <div class="calc-segmento">
+            <label><input type="radio" name="isrPrevio" value="si"><span data-i18n="comun.si">Sí</span></label>
+            <label><input type="radio" name="isrPrevio" value="no" checked><span data-i18n="comun.no">No</span></label>
+          </div>
+        </fieldset>
+        <div class="calc-campo">
+          <label for="isrValor" data-i18n="isr.q4">4. Valor estimado de venta</label>
+          <div class="calc-monto">
+            <input type="text" id="isrValor" inputmode="numeric" maxlength="16" value="5,000,000" autocomplete="off">
+            <select id="isrMoneda" class="calc-moneda" aria-label="Moneda del importe" data-i18n-aria="calc.moneda"><option value="MXN">MXN</option><option value="USD">USD</option></select>
+          </div>
+        </div>
+        <div class="calc-resultado" id="isrResultado" aria-live="polite" data-no-i18n></div>
+      </form>
+    </div>
+    <p class="herr-aviso" role="note"><span class="herr-aviso-icono" aria-hidden="true">⚠️</span><span><b data-i18n="esc.avisoT">Nota importante:</b> <span data-i18n="isr.aviso">Este pre-diagnóstico es informativo. No sustituye el cálculo del notario ni la asesoría de un contador; el resultado definitivo depende de tu escritura, tus comprobantes y las disposiciones fiscales vigentes.</span></span></p>
+  </div>
+
+  <p class="herr-tc" id="herrTipoCambio" aria-live="polite" data-no-i18n></p>
+</section>
+
 <!-- ZONAS: oculta temporalmente mientras se define su contenido.
      Para reactivarla, quita este comentario y vuelve a agregar los enlaces "#zonas"
      en el menú de escritorio, el menú móvil y el footer.
@@ -3214,7 +3459,44 @@ FIN ZONAS -->
       <span><span class="dot"></span>Propiedad publicadas — Actuales</span>
       <span><b id="mapaTotal">11</b> propiedades activas en el mapa</span>
     </div>
+    <div class="mapa-zona" id="mapaZona">
+      <label class="mapa-switch" for="buscarAlMoverMapa">
+        <input type="checkbox" id="buscarAlMoverMapa" role="switch">
+        <span class="interruptor" aria-hidden="true"></span>
+        <span data-i18n="ajustes.mapa">Buscar al mover el mapa</span>
+      </label>
+      <div class="mapa-zona-resultado" id="mapaZonaResultado" hidden>
+        <p class="mapa-zona-titulo"><b id="mapaZonaTotal" data-no-i18n>0</b> <span data-i18n="mapa.enArea">en el área visible del mapa</span></p>
+        <div class="mapa-zona-lista" id="mapaZonaLista" data-no-i18n></div>
+      </div>
+    </div>
   </div>
+</section>
+
+<!-- ASESORES: directorio del equipo (js/asesores.js; los perfiles se editan en js/ajustes.js → ASESORES_DEMETRIUS) -->
+<section class="asesores" id="asesores">
+  <div class="section-head">
+    <span class="eyebrow" data-i18n="ases.eyebrow">Nuestro equipo</span>
+    <h2 data-i18n="ases.titulo">Asesores verificados</h2>
+    <p data-i18n="ases.sub">Profesionales de Demetrius Grupo Inmobiliario listos para acompañarte al comprar, vender o rentar.</p>
+  </div>
+
+  <div class="asesores-barra">
+    <div class="asesores-filtros" id="asesoresFiltros" role="group" aria-label="Filtrar asesores por especialidad" data-i18n-aria="ases.filtrar">
+      <button type="button" class="chip active" data-especialidad="todos" aria-pressed="true" data-i18n="ases.todos">Todos</button>
+      <button type="button" class="chip" data-especialidad="Comercial" aria-pressed="false" data-i18n="ases.comercial">Comercial</button>
+      <button type="button" class="chip" data-especialidad="Residencial" aria-pressed="false" data-i18n="ases.residencial">Residencial</button>
+      <button type="button" class="chip" data-especialidad="Terrenos" aria-pressed="false" data-i18n="ases.terrenos">Terrenos</button>
+    </div>
+    <div class="asesores-paginas" role="group" aria-label="Páginas del directorio" data-i18n-aria="ases.paginas">
+      <button type="button" class="pagina-btn" id="asesoresAnterior" data-i18n="ases.anterior">« Anterior</button>
+      <span class="pagina-num" id="asesoresPagina" aria-live="polite" data-no-i18n>1 / 1</span>
+      <button type="button" class="pagina-btn" id="asesoresSiguiente" data-i18n="ases.siguiente">Siguiente »</button>
+    </div>
+  </div>
+
+  <div class="asesores-grid" id="asesoresGrid" data-no-i18n></div>
+  <p class="asesores-vacio" id="asesoresVacio" hidden data-i18n="ases.vacio">Por ahora no hay asesores con esa especialidad. Escríbenos y te atendemos con gusto.</p>
 </section>
 
 <!-- RESEÑAS DE LA COMUNIDAD (Supabase) -->
@@ -3387,6 +3669,9 @@ FIN ZONAS -->
       <a href="#construccion">Construcción a la Medida</a>
       <a href="#vender">Vender mi Propiedad</a>
       <a href="#proceso">Proceso de Compra</a>
+      <a href="#herramientas">Calculadoras</a>
+      <a href="#asesores">Asesores</a>
+      <a href="#testimonios">Reseñas</a>
       <a href="yeucate.html">Desarrollo Yéucate</a>
       <a href="#mapa">Mapa ZMG</a>
       <a href="#preguntas-frecuentes">Preguntas Frecuentes</a>
@@ -3399,13 +3684,14 @@ FIN ZONAS -->
       <p>Teléfono: <a class="footer-inline" href="tel:+523351070944" data-ubicacion="footer">(33) 5107-0944</a></p>
       <p>Email: <a class="footer-inline subrayado" href="mailto:inmobiliariademetrius@gmail.com">inmobiliariademetrius@gmail.com</a></p>
       <p>Horario: abierto las 24 horas, los 7 días</p>
+      <p data-legal-si="domicilio" hidden>Oficina: <span data-legal="domicilio" data-no-i18n></span></p>
       </address>
     </div>
   </div>
 
   <div class="footer-bottom">
     <span>© 2026 Demetrius Grupo Inmobiliario. Todos los derechos reservados.</span>
-    <span><a href="#aviso-privacidad" data-modal-open="modalPrivacidad">Aviso de Privacidad</a> · <a href="#terminos-y-condiciones" data-modal-open="modalTerminos">Términos y Condiciones</a></span>
+    <span><a href="#aviso-privacidad" data-modal-open="modalPrivacidad">Aviso de Privacidad</a> · <a href="#terminos-y-condiciones" data-modal-open="modalTerminos">Términos y Condiciones</a><span data-legal-si="profeco-pdf" hidden> · <a data-legal="profeco-pdf" target="_blank" rel="noopener">Contrato registrado ante PROFECO</a></span></span>
   </div>
 </footer>
 
@@ -3421,6 +3707,20 @@ FIN ZONAS -->
   <span class="wa-badge"></span>
   <svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1.1 2.8 1.2 3c.1.2 2.2 3.3 5.3 4.6.7.3 1.3.5 1.8.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15L2 22l5.1-1.3A10 10 0 1 0 12 2z"/></svg>
 </a>
+
+<!-- LLAMADA FLOTANTE -->
+<a class="tel-float" id="telFloat" href="tel:+523351070944" aria-label="Llamar a Demetrius Grupo Inmobiliario" data-i18n-aria="flot.llamar" data-ubicacion="boton_flotante">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z"/></svg>
+</a>
+
+<!-- COMPARADOR: barra flotante (js/comparador.js) -->
+<div class="comparar-barra" id="compararBarra" role="region" aria-label="Comparador de propiedades" data-i18n-aria="cmp.region" hidden>
+  <span class="comparar-barra-texto" id="compararBarraTexto" aria-live="polite" data-no-i18n></span>
+  <div class="comparar-barra-acciones">
+    <button type="button" class="comparar-barra-limpiar" id="compararLimpiar" data-i18n="cmp.limpiar">Limpiar</button>
+    <button type="button" class="cta-btn" id="compararAbrir" data-i18n="cmp.abrir">Comparar</button>
+  </div>
+</div>
 
 <!-- COOKIE BANNER -->
 <aside class="cookie-banner" id="cookieBanner" aria-label="Aviso de cookies" hidden>
@@ -3463,6 +3763,7 @@ FIN ZONAS -->
 
       <h3>5. Precios en Moneda Nacional y disponibilidad</h3>
       <p>Todos los precios se expresan en <strong>Moneda Nacional (pesos mexicanos, M.N.)</strong> como precio total de venta del inmueble y están <strong>sujetos a disponibilidad</strong> a la fecha de tu consulta. Demetrius respeta el precio publicado mientras la publicación se encuentre vigente y el inmueble esté disponible, en términos de la LFPC. Una publicación puede actualizarse o retirarse cuando el inmueble se venda, se aparte o su propietario modifique las condiciones.</p>
+      <p>En operaciones de crédito, el precio total se determinará en función de los montos variables de los conceptos de crédito y de los gastos notariales, que deben consultarse con tu asesor.</p>
 
       <h3>6. Conceptos no incluidos en el precio</h3>
       <div class="legal-callout">
@@ -3478,10 +3779,13 @@ FIN ZONAS -->
 
       <h3>7. Apartados, anticipos y contratos</h3>
       <p>Todo apartado, anticipo o depósito debe documentarse con recibo y/o contrato por escrito que indique su monto, finalidad, vigencia y condiciones de devolución. Los contratos de adhesión utilizados en operaciones de casa habitación deben contar con registro ante la Procuraduría Federal del Consumidor (PROFECO) conforme a la normatividad aplicable.</p>
+      <!-- Se muestra solo cuando PROFECO_REGISTRO está escrito en js/config.js (js/datos-legales.js) -->
+      <p data-legal-si="profeco-registro" hidden>Modelo de contrato de adhesión registrado ante la PROFECO con el número <strong data-legal="profeco-registro"></strong><span data-legal-si="profeco-pdf" hidden>: <a data-legal="profeco-pdf" target="_blank" rel="noopener">consultar el contrato</a></span>.</p>
       <p><strong>Seguridad:</strong> Demetrius nunca solicita pagos ni datos bancarios por redes sociales o mensajes no verificados. Ante cualquier duda, comunícate únicamente a nuestros medios oficiales.</p>
 
       <h3>8. Derechos del consumidor</h3>
       <p>Como consumidor tienes derecho a recibir información veraz, clara y comprobable sobre el inmueble y sus condiciones de venta; conocer el precio total en Moneda Nacional; conocer la situación jurídica del inmueble antes de la operación; que se respete lo publicitado y lo pactado; y presentar quejas o reclamaciones.</p>
+      <p>Para presentar una queja o reclamación directamente con Demetrius, escríbenos a <a href="mailto:inmobiliariademetrius@gmail.com">inmobiliariademetrius@gmail.com</a> o por WhatsApp al <a href="https://wa.me/5213351070944" target="_blank" rel="noopener noreferrer">(33) 5107-0944</a>; te atendemos las 24 horas, los 7 días<span data-legal-si="domicilio" hidden>. También puedes acudir a nuestra oficina: <span data-legal="domicilio"></span></span>.</p>
       <p>Puedes consultar la Carta de Derechos del Consumidor y acudir a la <strong>Procuraduría Federal del Consumidor (PROFECO)</strong>: Teléfono del Consumidor 55 5568 8722 / 800 468 8722, o en <a href="https://www.gob.mx/profeco" target="_blank" rel="noopener noreferrer">www.gob.mx/profeco</a>.</p>
 
       <h3>9. Formularios y WhatsApp</h3>
@@ -3531,6 +3835,7 @@ FIN ZONAS -->
 
       <h3>1. Identidad y domicilio del Responsable</h3>
       <p><strong>Gerardo Yair Ocaña Vázquez</strong>, quien opera comercialmente como <strong>Demetrius Grupo Inmobiliario</strong> / Inmobiliaria Demetrius (el «Responsable»), con domicilio de operaciones en Guadalajara y Zapopan, Jalisco, México, es responsable del tratamiento de tus datos personales conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (<strong>LFPDPPP</strong>) y demás normatividad aplicable.</p>
+      <p data-legal-si="domicilio" hidden>Domicilio de la oficina del Responsable: <span data-legal="domicilio"></span>.</p>
       <p>Contacto de privacidad: <a href="mailto:inmobiliariademetrius@gmail.com">inmobiliariademetrius@gmail.com</a> · Tel. <a href="tel:+523351070944">(33) 5107-0944</a>.</p>
 
       <h3>2. Datos personales que recabamos</h3>
@@ -3594,10 +3899,110 @@ FIN ZONAS -->
   </div>
 </dialog>
 
+<!-- MODAL: PERFIL DEL ASESOR (js/asesores.js) -->
+<dialog class="legal-modal modal-ancho" id="modalAsesor" aria-labelledby="asesorTitulo">
+  <div class="legal-panel">
+    <div class="legal-head">
+      <div>
+        <span class="eyebrow" data-i18n="ases.perfil">Perfil verificado</span>
+        <h2 id="asesorTitulo" data-no-i18n>Acerca del asesor</h2>
+      </div>
+      <button type="button" class="legal-close" data-modal-close aria-label="Cerrar perfil" data-i18n-aria="ases.cerrar">✕</button>
+    </div>
+    <div class="legal-body asesor-cuerpo">
+      <div class="asesor-info">
+        <p class="asesor-desc" id="asesorDescripcion" data-no-i18n></p>
+        <div class="asesor-datos">
+          <div>
+            <span class="asesor-dato-icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 21V4.5h10V21M15 9h4v12M3 21h18M8 8h1M11 8h1M8 11.5h1M11 11.5h1M8 15h1M11 15h1"/></svg></span>
+            <span class="asesor-dato-label" data-i18n="ases.oficina">Oficina</span>
+            <b id="asesorOficina" data-no-i18n></b>
+          </div>
+          <div>
+            <span class="asesor-dato-icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-6.5-5.7-6.5-11a6.5 6.5 0 0 1 13 0c0 5.3-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.300"/></svg></span>
+            <span class="asesor-dato-label" data-i18n="ases.ciudad">Ciudad</span>
+            <b id="asesorCiudad" data-no-i18n></b>
+          </div>
+          <div>
+            <span class="asesor-dato-icono asesor-dato-icono--ok" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.2 4.2L18.5 8"/></svg></span>
+            <span class="asesor-dato-label" data-i18n="ases.estatus">Estatus</span>
+            <b data-i18n="ases.verificado">Verificado</b>
+          </div>
+        </div>
+        <p class="asesor-subtitulo" data-i18n="ases.idiomas">Idiomas</p>
+        <div class="asesor-pills" id="asesorIdiomas" data-no-i18n></div>
+      </div>
+
+      <form class="asesor-contacto" id="formAsesor" novalidate>
+        <h3 id="asesorContactoTitulo" data-no-i18n>Contactar</h3>
+
+        <!-- Honeypot anti-spam (invisible para personas) -->
+        <div class="hp-field" aria-hidden="true">
+          <label for="asEmpresaWeb">No llenar este campo</label>
+          <input type="text" id="asEmpresaWeb" name="empresa_web" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label class="sr-only" for="asNombre" data-i18n="ases.phNombre">Tu nombre completo</label>
+          <input type="text" id="asNombre" name="nombre" placeholder="Tu nombre completo" data-i18n-placeholder="ases.phNombre" autocomplete="name" required maxlength="60">
+        </div>
+        <div class="form-group">
+          <label class="sr-only" for="asCorreo" data-i18n="ases.correo">Correo electrónico</label>
+          <input type="email" id="asCorreo" name="correo" placeholder="juan@email.com" autocomplete="email" inputmode="email" required maxlength="100">
+        </div>
+        <div class="form-group">
+          <label class="sr-only" for="asTelefono" data-i18n="ases.phTelefono">Teléfono (opcional)</label>
+          <input type="tel" id="asTelefono" name="telefono" placeholder="Teléfono (opcional)" data-i18n-placeholder="ases.phTelefono" autocomplete="tel" inputmode="tel" maxlength="20">
+        </div>
+        <div class="form-group">
+          <label class="sr-only" for="asMensaje" data-i18n="ases.mensaje">Mensaje</label>
+          <textarea id="asMensaje" name="mensaje" maxlength="600" required></textarea>
+        </div>
+
+        <label class="consent" for="asAcepto">
+          <input type="checkbox" id="asAcepto" name="acepto" required>
+          <span>Acepto el <a href="#aviso-privacidad" data-modal-open="modalPrivacidad">Aviso de Privacidad</a> y los <a href="#terminos-y-condiciones" data-modal-open="modalTerminos">Términos y Condiciones</a></span>
+        </label>
+
+        <button type="submit" class="asesor-enviar" data-i18n="ases.enviar">Enviar mensaje</button>
+        <p class="form-msg" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<!-- MODAL: COMPARADOR DE PROPIEDADES (js/comparador.js) -->
+<dialog class="legal-modal modal-ancho" id="modalComparar" aria-labelledby="compararTitulo">
+  <div class="legal-panel">
+    <div class="legal-head">
+      <div>
+        <span class="eyebrow" data-i18n="cmp.eyebrow">Comparador</span>
+        <h2 id="compararTitulo" data-i18n="cmp.titulo">Propiedades lado a lado</h2>
+      </div>
+      <button type="button" class="legal-close" data-modal-close aria-label="Cerrar comparador" data-i18n-aria="cmp.cerrarAria">✕</button>
+    </div>
+    <div class="legal-body">
+      <div class="comparar-contenido" id="compararContenido" data-no-i18n></div>
+      <p class="comparar-nota" id="compararNota" data-no-i18n></p>
+    </div>
+    <div class="legal-foot">
+      <button type="button" class="legal-btn ghost" id="compararVaciar" data-i18n="cmp.vaciar">Quitar todas</button>
+      <button type="button" class="legal-btn" data-modal-close data-i18n="cmp.cerrar">Cerrar</button>
+    </div>
+  </div>
+</dialog>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha384-NElt3Op+9NBMCYaef5HxeJmU4Xeard/Lku8ek6hoPTvYkQPh3zLIrJP7KiRocsxO" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="js/yeucate-lotes.js"></script>
 <script src="js/config.js"></script>
+<script src="js/datos-legales.js"></script>
+<script src="js/ajustes.js"></script>
 <script src="js/propiedades-publicas.js"></script>
 <script src="js/principal.js"></script>
+<script src="js/i18n-en.js"></script>
+<script src="js/idioma-moneda.js"></script>
+<script src="js/herramientas.js"></script>
+<script src="js/asesores.js"></script>
+<script src="js/comparador.js"></script>
 </body>
 </html>
