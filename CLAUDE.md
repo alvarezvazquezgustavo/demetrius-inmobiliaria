@@ -434,6 +434,7 @@ Apartado privado del panel (`#documentos`) para compartir la documentación deli
 | `3ab298f` | Documentos privados del panel (dos pasos, aprobación, bitácora), Aviso de Privacidad y guía en PDF |
 | `e79d50c` | Las 48 propiedades escritas a mano pasan al panel sin cambiar cómo se ven (`catalogo-inicial.sql`) |
 | `8e3e22a` | Correo `inmobiliariademetrius@gmail.com`, horario 24/7 y Google Analytics `G-HENM9J0QYE` |
+| `4894760` | Analytics en subpáginas, moneda e idioma, calculadoras, valuación, asesores, comparador, botón de llamada y ajustes legales de la NOM-247 (2026-11-22) |
 
 ## 10. Cómo se prueba
 
